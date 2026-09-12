@@ -1,191 +1,399 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Advinced Management</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root {
-      --bg: var(--tg-theme-bg-color, #0f1115);
-      --sec: var(--tg-theme-secondary-bg-color, #1a1d24);
-      --text: var(--tg-theme-text-color, #f2f4f8);
-      --hint: var(--tg-theme-hint-color, #8b93a7);
-      --btn: var(--tg-theme-button-color, #2aabee);
-      --btn-text: var(--tg-theme-button-text-color, #ffffff);
-      --line: rgba(255,255,255,0.08);
-      --card: rgba(255,255,255,0.04);
-      --ok: #3dd68c;
-      --err: #ff6b6b;
+    :root, [data-theme="light"] {
+      --brand: #006AD2;
+      --brand-press: #0057B0;
+      --brand-soft: rgba(0, 106, 210, 0.08);
+      --brand-line: rgba(0, 106, 210, 0.18);
+      --bg: #F2F5F9;
+      --surface: #FFFFFF;
+      --text: #0F172A;
+      --text-secondary: #475569;
+      --hint: #94A3B8;
+      --line: #E2E8F0;
+      --danger: #DC2626;
+      --ok: #059669;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+      --radius: 12px;
+      --radius-sm: 10px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --btn-primary-text: #FFFFFF;
     }
+
+    /* Тёмная: инверсия — фон синий, поверхности тёмно-синие, акценты белые */
+    [data-theme="dark"] {
+      --brand: #FFFFFF;
+      --brand-press: #E8EEF7;
+      --brand-soft: rgba(255, 255, 255, 0.10);
+      --brand-line: rgba(255, 255, 255, 0.22);
+      --bg: #003F8A;
+      --surface: #0056B8;
+      --text: #FFFFFF;
+      --text-secondary: rgba(255, 255, 255, 0.78);
+      --hint: rgba(255, 255, 255, 0.55);
+      --line: rgba(255, 255, 255, 0.16);
+      --danger: #FCA5A5;
+      --ok: #6EE7B7;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 4px 14px rgba(0, 0, 0, 0.16);
+      --btn-primary-text: #006AD2;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      min-height: 100dvh;
+      transition: background 0.2s ease, color 0.2s ease;
     }
-    .wrap {
+
+    .app {
       max-width: 480px;
-      width: 100%;
       margin: 0 auto;
-      flex: 1;
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 12px 16px 20px;
+      padding: 16px 16px calc(16px + var(--safe-b));
     }
-    .spacer { flex: 1; min-height: 12px; }
-    .api-status {
-      font-size: 11px;
-      color: var(--hint);
-      text-align: center;
-      margin-bottom: 8px;
-      opacity: 0.85;
+
+    .screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
     }
-    .api-status.ok { color: var(--ok); }
-    .api-status.err { color: var(--err); }
-    .grid {
+    .screen.active { display: flex; }
+
+    .spacer { flex: 1 1 auto; min-height: 8px; }
+
+    .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
+
     .btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      min-height: 52px; padding: 12px 14px; border-radius: 14px;
-      border: 1px solid var(--line); background: var(--sec); color: var(--text);
-      font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
-    }
-    .btn:active { transform: scale(0.98); opacity: .9; }
-    .btn.wide { grid-column: 1 / -1; }
-    .screen { display: none; flex: 1; flex-direction: column; }
-    .screen.active { display: flex; }
-    .header {
-      background: var(--card);
+      appearance: none;
       border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease, color 0.12s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .btn:active { transform: scale(0.985); filter: brightness(0.97); }
+    .btn.wide { grid-column: 1 / -1; }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--btn-primary-text);
+      box-shadow: var(--shadow);
+    }
+    .btn.primary:active { background: var(--brand-press); border-color: var(--brand-press); }
+
+    .btn.ghost {
+      background: transparent;
+      box-shadow: none;
+      border-color: var(--brand-line);
+      color: var(--brand);
+    }
+    .btn.ghost:active { background: var(--brand-soft); }
+
+    .btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+    .btn.theme-opt {
+      font-size: 14px;
+      min-height: 44px;
+    }
+    .btn.theme-opt.active {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+      color: var(--brand);
+      box-shadow: none;
+    }
+    [data-theme="dark"] .btn.theme-opt.active {
+      color: #FFFFFF;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
       margin-bottom: 12px;
     }
-    .title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-    .muted { color: var(--hint); font-size: 13px; line-height: 1.4; }
-    .balance-big { font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
-    .list { display: grid; gap: 8px; margin: 8px 0; }
+    .panel h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .panel h2 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+    .muted {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .hint { color: var(--hint); font-size: 13px; line-height: 1.4; }
+
+    .balance {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin: 8px 0 4px;
+    }
+    .balance span {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-left: 4px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--brand-line);
+    }
+    .chip.neutral {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: var(--line);
+    }
+
+    .list { display: grid; gap: 8px; margin: 4px 0 12px; }
     .item {
-      background: var(--sec); border: 1px solid var(--line); border-radius: 12px;
-      padding: 12px 14px; cursor: pointer; font-size: 14px; font-weight: 600;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
     }
-    .item .sub { display: block; margin-top: 4px; font-weight: 400; color: var(--hint); font-size: 12px; }
-    .loading { text-align: center; color: var(--hint); padding: 16px; font-size: 14px; }
-    .pager { display: flex; gap: 8px; margin-top: 8px; }
-    .card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-      padding: 14px; margin-bottom: 10px;
+    .item:active { filter: brightness(0.98); }
+    .item .name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
     }
-    .nav-bottom { margin-top: auto; }
+    .item .sub {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--hint);
+    }
+
+    .pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--hint);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .field {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .field:last-child { border-bottom: none; }
+    .field .label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--hint);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+    .field .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .theme-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- MAIN: только кнопки внизу -->
+  <div class="app">
+    <!-- MAIN -->
     <div id="screen-main" class="screen active">
       <div class="spacer"></div>
-      <div class="api-status" id="api-status">API…</div>
-      <div class="nav-bottom grid">
-        <button class="btn" data-nav="balance">💵 Баланс</button>
-        <button class="btn" data-nav="settings">⚙️ Настройки</button>
-        <button class="btn wide" data-nav="projects">📂 Проекты</button>
-        <button class="btn" data-nav="help">❓ Помощь</button>
-        <button class="btn" data-nav="support">💬 Поддержка</button>
-        <button class="btn wide" data-nav="panel" id="btn-panel" style="display:none">🛠 Панель</button>
+      <div class="actions">
+        <button class="btn" data-nav="balance">Баланс</button>
+        <button class="btn" data-nav="settings">Настройки</button>
+        <button class="btn primary wide" data-nav="projects">Проекты</button>
+        <button class="btn" data-nav="help">Помощь</button>
+        <button class="btn" data-nav="support">Поддержка</button>
+        <button class="btn ghost wide" data-nav="panel" id="btn-panel" style="display:none">Панель</button>
       </div>
     </div>
 
+    <!-- BALANCE -->
     <div id="screen-balance" class="screen">
-      <div class="header">
-        <div class="title">💵 Баланс</div>
-        <div class="balance-big" id="bal-big">— ₽</div>
-        <div class="muted">ID: <span id="uid">—</span></div>
+      <div class="panel">
+        <h2>Баланс</h2>
+        <div class="balance" id="bal-big">—<span>₽</span></div>
+        <div class="meta-row">
+          <span class="chip neutral">ID <span id="uid">—</span></span>
+        </div>
       </div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
 
+    <!-- PROJECTS -->
     <div id="screen-projects" class="screen">
-      <div class="header">
-        <div class="title">📂 Проекты</div>
-        <div class="muted" id="proj-meta">—</div>
+      <div class="panel">
+        <h1>Проекты</h1>
+        <div class="hint" id="proj-meta">—</div>
       </div>
       <div class="list" id="proj-list"></div>
       <div class="pager">
-        <button class="btn" id="proj-prev">⬅️</button>
-        <button class="btn" id="proj-next">➡️</button>
+        <button class="btn" id="proj-prev">Назад</button>
+        <button class="btn" id="proj-next">Вперёд</button>
       </div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">В меню</button>
       </div>
     </div>
 
+    <!-- PROJECT DETAIL -->
     <div id="screen-project" class="screen">
-      <div class="header">
-        <div class="title" id="pd-title">—</div>
+      <div class="panel">
+        <h1 id="pd-title">—</h1>
         <div class="muted" id="pd-body">—</div>
       </div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="projects">⬅️ К проектам</button>
-        <button class="btn wide" data-nav="main">🏠 Меню</button>
+      <div class="actions">
+        <button class="btn" data-nav="projects">К проектам</button>
+        <button class="btn ghost" data-nav="main">Меню</button>
       </div>
     </div>
 
+    <!-- SETTINGS -->
     <div id="screen-settings" class="screen">
-      <div class="header">
-        <div class="title">⚙️ Настройки</div>
+      <div class="panel">
+        <h1>Настройки</h1>
+        <div class="field">
+          <div class="label">Язык</div>
+          <div class="value" id="set-lang">—</div>
+        </div>
+        <div class="field">
+          <div class="label">Тема</div>
+          <div class="value" id="set-theme">Светлая</div>
+          <div class="theme-row">
+            <button type="button" class="btn theme-opt" data-theme-set="light" id="theme-light">Светлая</button>
+            <button type="button" class="btn theme-opt" data-theme-set="dark" id="theme-dark">Тёмная</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="label">Роль</div>
+          <div class="value" id="set-role">—</div>
+        </div>
       </div>
-      <div class="card muted">Язык: <b id="set-lang">—</b></div>
-      <div class="card muted">Тема: <b id="set-theme">—</b></div>
-      <div class="card muted">Роль: <b id="set-role">—</b></div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
 
+    <!-- HELP -->
     <div id="screen-help" class="screen">
-      <div class="header">
-        <div class="title">❓ Помощь</div>
+      <div class="panel">
+        <h1>Помощь</h1>
+        <p class="muted">
+          Mini App синхронизирован с ботом через API.
+          Данные баланса и проектов загружаются с сервера.
+        </p>
       </div>
-      <div class="card muted">Данные синхронизированы с ботом через API Amvera.<br/>API: <span id="help-api"></span></div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
 
+    <!-- SUPPORT -->
     <div id="screen-support" class="screen">
-      <div class="header">
-        <div class="title">💬 Поддержка</div>
+      <div class="panel">
+        <h1>Поддержка</h1>
+        <p class="muted">Свяжитесь с администратором через Telegram-бота. Раздел поддержки в приложении будет расширен.</p>
       </div>
-      <div class="card muted">Напишите в бота или администратору.</div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
 
+    <!-- PANEL -->
     <div id="screen-panel" class="screen">
-      <div class="header">
-        <div class="title">🛠 Панель</div>
-        <div class="muted">Доступна стажёр+. Полное управление — в Telegram-боте.</div>
+      <div class="panel">
+        <h1>Панель</h1>
+        <p class="muted">Доступна сотрудникам (стажёр и выше). Полное управление выполняется в Telegram-боте.</p>
       </div>
       <div class="spacer"></div>
-      <div class="nav-bottom grid">
-        <button class="btn wide" data-nav="main">⬅️ Назад</button>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
   </div>
@@ -197,16 +405,51 @@
       3: "Стажер", 4: "Модератор", 5: "Админ", 6: "Владелец"
     };
     const ROLE_INTERN = 3;
+    const THEME_LABELS = { light: "Светлая", dark: "Тёмная" };
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
+
     const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     const USER_ID = user ? user.id : null;
-
     document.getElementById("uid").textContent = USER_ID || "—";
-    document.getElementById("help-api").textContent = API_BASE;
+
+    function applyTheme(theme) {
+      const t = theme === "dark" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+      try { localStorage.setItem("advinced_theme", t); } catch (e) {}
+      const label = THEME_LABELS[t] || "Светлая";
+      const el = document.getElementById("set-theme");
+      if (el) el.textContent = label;
+      document.querySelectorAll("[data-theme-set]").forEach((b) => {
+        b.classList.toggle("active", b.getAttribute("data-theme-set") === t);
+      });
+      if (tg) {
+        try {
+          if (t === "dark") {
+            tg.setHeaderColor("#003F8A");
+            tg.setBackgroundColor("#003F8A");
+          } else {
+            tg.setHeaderColor("#006AD2");
+            tg.setBackgroundColor("#F2F5F9");
+          }
+        } catch (e) {}
+      }
+    }
+
+    // начальная тема: localStorage → light
+    let initialTheme = "light";
+    try {
+      const saved = localStorage.getItem("advinced_theme");
+      if (saved === "dark" || saved === "light") initialTheme = saved;
+    } catch (e) {}
+    applyTheme(initialTheme);
+
+    document.querySelectorAll("[data-theme-set]").forEach((btn) => {
+      btn.addEventListener("click", () => applyTheme(btn.getAttribute("data-theme-set")));
+    });
 
     async function apiGet(path) {
       const url = API_BASE.replace(/\/$/, "") + path;
@@ -236,12 +479,17 @@
       try {
         me = await apiGet("/api/miniapp/me?user_id=" + encodeURIComponent(USER_ID));
         const bal = Number(me.balance || 0);
-        document.getElementById("bal-big").textContent = bal.toFixed(2) + " ₽";
+        document.getElementById("bal-big").innerHTML = bal.toFixed(2) + "<span>₽</span>";
         document.getElementById("set-lang").textContent = me.lang || "ru";
-        document.getElementById("set-theme").textContent = me.theme || "auto";
+        // тема UI — локальная; если с сервера dark/light — применим
+        if (me.theme === "dark" || me.theme === "light") {
+          applyTheme(me.theme);
+        } else {
+          const cur = document.documentElement.getAttribute("data-theme") || "light";
+          document.getElementById("set-theme").textContent = THEME_LABELS[cur] || "Светлая";
+        }
         const role = Number(me.role || 0);
         document.getElementById("set-role").textContent = ROLE_NAMES[role] || String(role);
-        // панель: стажёр+ (role >= 3)
         if (role >= ROLE_INTERN || me.is_staff) {
           document.getElementById("btn-panel").style.display = "";
         }
@@ -254,30 +502,33 @@
       const list = document.getElementById("proj-list");
       const meta = document.getElementById("proj-meta");
       if (!USER_ID) {
-        list.innerHTML = '<div class="loading">Откройте из Telegram-бота</div>';
+        list.innerHTML = '<div class="empty">Откройте приложение из Telegram-бота</div>';
         return;
       }
-      list.innerHTML = '<div class="loading">Загрузка…</div>';
+      list.innerHTML = '<div class="empty">Загрузка…</div>';
       try {
         const data = await apiGet("/api/miniapp/projects?user_id=" + encodeURIComponent(USER_ID) + "&page=" + page);
         projPage = data.page || 1;
-        meta.textContent = "Всего: " + (data.total || 0) + " · " + projPage + "/" + (data.pages || 1);
+        meta.textContent = "Всего " + (data.total || 0) + " · страница " + projPage + " из " + (data.pages || 1);
         const items = data.projects || [];
         if (!items.length) {
-          list.innerHTML = '<div class="loading">Нет проектов</div>';
+          list.innerHTML = '<div class="empty">Нет проектов</div>';
           return;
         }
         list.innerHTML = items.map((p) => {
           const role = p.role === "advertiser" ? "покупка" : (p.role === "partner" ? "партнёр" : "продажа");
-          return '<div class="item" data-pid="' + p.id + '">' +
-            (p.icon || "•") + " " + (p.name || ("#" + p.id)) +
-            '<span class="sub">' + role + " · " + (p.status || "") + "</span></div>";
+          return (
+            '<div class="item" data-pid="' + p.id + '">' +
+              '<div class="name">' + (p.icon || "") + " " + (p.name || ("#" + p.id)) + "</div>" +
+              '<div class="sub">' + role + " · " + (p.status || "") + "</div>" +
+            "</div>"
+          );
         }).join("");
         list.querySelectorAll("[data-pid]").forEach((el) => {
           el.addEventListener("click", () => openProject(el.getAttribute("data-pid")));
         });
       } catch (e) {
-        list.innerHTML = '<div class="loading">Ошибка загрузки</div>';
+        list.innerHTML = '<div class="empty">Ошибка загрузки</div>';
         meta.textContent = String(e.message || e);
       }
     }
@@ -292,25 +543,14 @@
         const p = data.project || {};
         document.getElementById("pd-title").textContent = p.name || ("#" + p.id);
         document.getElementById("pd-body").innerHTML =
-          "Статус: <b>" + (p.status || "—") + "</b><br/>Роль: <b>" + (p.role || "—") + "</b><br/>" +
-          "Подписки: <b>" + (p.current_subs || 0) + "/" + (p.target_subs || 0) + "</b><br/>" +
+          "Статус: <b>" + (p.status || "—") + "</b><br/>" +
+          "Тип: <b>" + (p.role || "—") + "</b><br/>" +
+          "Подписки: <b>" + (p.current_subs || 0) + " / " + (p.target_subs || 0) + "</b><br/>" +
           "Сниппет: <b>" + (p.snippet_status || "none") + "</b>";
       } catch (e) {
         document.getElementById("pd-body").textContent = "Ошибка: " + (e.message || e);
       }
     }
-
-    (async function ping() {
-      const el = document.getElementById("api-status");
-      try {
-        const d = await apiGet("/api/health");
-        el.textContent = d && d.ok ? "API: онлайн" : "API: ok";
-        el.classList.add("ok");
-      } catch (e) {
-        el.textContent = "API: нет связи";
-        el.classList.add("err");
-      }
-    })();
 
     loadMe();
 
@@ -329,7 +569,7 @@
     document.getElementById("proj-prev").onclick = () => { if (projPage > 1) loadProjects(projPage - 1); };
     document.getElementById("proj-next").onclick = () => loadProjects(projPage + 1);
 
-    window.AdvincedAPI = { API_BASE, apiGet, USER_ID };
+    window.AdvincedAPI = { API_BASE, apiGet, USER_ID, applyTheme };
   </script>
 </body>
 </html>
