@@ -135,16 +135,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .tx-detail-card .v{font-weight:700;text-align:right}
 
 
+
+.topbar{align-items:center;padding-top:0;padding-bottom:0;height:var(--header-h);min-height:var(--header-h)}
+.menu-back-bar{display:none;justify-content:flex-end;margin:0 0 12px;min-height:34px;pointer-events:none}
+.menu-back-bar.show{display:flex}
+.menu-back-btn{pointer-events:auto;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+.menu-back-btn:active{opacity:.8}
+.content.has-back{padding-top:6px}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="topbar-left topbar-left-col">
+    <div class="topbar-left">
       <button type="button" class="icon-btn" id="btn-gear" aria-label="settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
-      <button type="button" class="back-top" id="btn-back-top" data-i18n="back" style="display:none">Назад</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="lang-btn" id="btn-flag">🇷🇺</button>
@@ -154,6 +161,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   </div>
 
   <div class="content">
+    <div class="menu-back-bar" id="menu-back-bar" style="display:none">
+      <button type="button" class="menu-back-btn" id="btn-menu-back" data-i18n="back">Назад</button>
+    </div>
     <div id="screen-main" class="screen active">
       <div class="spacer"></div>
       <div class="actions" id="main-actions">
@@ -178,13 +188,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="t-sub" id="tile-theme-sub">Светлая</div>
         </button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-lang" class="screen">
       <div class="panel"><h1 data-i18n="language">Язык</h1></div>
       <div class="lang-list" id="lang-list"></div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-theme" class="screen">
@@ -194,7 +202,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="theme-item" data-theme-set="light"><span data-i18n="theme_light">Светлая</span></button>
         <button type="button" class="theme-item" data-theme-set="dark"><span data-i18n="theme_dark">Тёмная</span></button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-profile" class="screen">
@@ -209,7 +216,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           </div>
         </div>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-balance" class="screen">
@@ -225,7 +231,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <h2 data-i18n="my_transactions">Мои транзакции</h2>
         <div class="list" id="req-list"><div class="empty" data-i18n="no_transactions">Нет транзакций</div></div>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <!-- DEPOSIT FORM -->
@@ -257,7 +262,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         </label>
         <button class="btn primary wide" id="dep-continue" disabled data-i18n="continue">Продолжить</button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <!-- DEPOSIT CONFIRM -->
@@ -274,7 +278,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button class="btn primary wide" id="dc-pay" data-i18n="pay">Оплатить</button>
         <div class="muted" id="dc-status" style="margin-top:10px"></div>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <!-- WITHDRAW FORM -->
@@ -311,7 +314,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         </label>
         <button class="btn primary wide" id="wd-continue" disabled data-i18n="continue">Продолжить</button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <!-- WITHDRAW CONFIRM -->
@@ -328,7 +330,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button class="btn primary wide" id="wc-pay" data-i18n="confirm">Подтвердить</button>
         <div class="muted" id="wc-status" style="margin-top:10px"></div>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-projects" class="screen">
@@ -338,19 +339,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button class="btn" id="proj-prev" data-i18n="prev">Назад</button>
         <button class="btn" id="proj-next" data-i18n="next">Вперёд</button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-project" class="screen">
       <div class="panel"><h1 id="pd-title">—</h1><div class="muted" id="pd-body">—</div></div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-help" class="screen">
       <div class="panel"><h1 data-i18n="help">Помощь</h1>
         <p class="muted" data-i18n="help_body">Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.</p>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-support" class="screen">
@@ -361,7 +359,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="tile"><div class="t-title" data-i18n="support_email">Почта</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
         <button type="button" class="tile"><div class="t-title" data-i18n="support_faq">FAQ</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
       </div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
 
     <div id="screen-panel" class="screen">
@@ -374,11 +371,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
       </div>
       <div class="panel" id="panel-body" style="display:none"><div class="muted" data-i18n="panel_hint">Управление выполняется в боте. Данные синхронизированы по API.</div></div>
-      <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
   </div>
 </div>
 
+<div class="tx-detail-overlay" id="tx-overlay">
+  <div class="tx-detail-card">
+    <h3 data-i18n="transaction">Транзакция</h3>
+    <div id="tx-detail-body"></div>
+    <button class="btn ghost wide" style="margin-top:14px" id="tx-close" data-i18n="close">Закрыть</button>
+  </div>
+</div>
 <script>
 const API_BASE="https://advinced-bot5.waw0.amvera.tech";
 const ROLE_INTERN=3;
@@ -623,10 +626,15 @@ async function setTheme(theme){applyTheme(theme,true);if(USER_ID){try{await apiP
 
 function show(id,push){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById("screen-"+id).classList.add("active");
+  const el=document.getElementById("screen-"+id);
+  if(el)el.classList.add("active");
   if(push!==false&&state.history[state.history.length-1]!==id)state.history.push(id);
-  const bt=document.getElementById("btn-back-top");
-  if(bt){if(id==="main")bt.classList.remove("show");else bt.classList.add("show")}
+  const bar=document.getElementById("menu-back-bar");
+  const content=document.querySelector(".content");
+  if(bar){
+    if(id==="main"){bar.classList.remove("show");bar.style.display="none";if(content)content.classList.remove("has-back")}
+    else{bar.classList.add("show");bar.style.display="flex";if(content)content.classList.add("has-back")}
+  }
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
 function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
@@ -769,16 +777,16 @@ try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
 applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();
 
-document.getElementById("btn-gear").onclick=()=>{show("settings");loadMe()};
-document.getElementById("btn-flag").onclick=()=>{show("lang");renderLangList()};
-document.getElementById("btn-top-bal").onclick=()=>{show("balance");loadMe();loadRequests()};
-document.getElementById("btn-avatar").onclick=()=>{show("profile");loadMe()};
-document.querySelectorAll("[data-back]").forEach(b=>b.onclick=goBack);
-document.getElementById("btn-back-top").onclick=goBack;
-document.getElementById("tx-close").onclick=()=>document.getElementById("tx-overlay").classList.remove("open");
-document.getElementById("tx-overlay").onclick=(e)=>{if(e.target.id==="tx-overlay")e.target.classList.remove("open")};
-document.getElementById("tile-lang").onclick=()=>{show("lang");renderLangList()};
-document.getElementById("tile-theme").onclick=()=>show("theme");
+
+function on(id, ev, fn){const el=document.getElementById(id);if(el)el[ev]=fn;return el}
+on("btn-gear","onclick",()=>{show("settings");loadMe()});
+on("btn-flag","onclick",()=>{show("lang");renderLangList()});
+on("btn-top-bal","onclick",()=>{show("balance");loadMe();loadRequests()});
+on("btn-avatar","onclick",()=>{show("profile");loadMe()});
+on("btn-menu-back","onclick",goBack);
+(function(){const c=document.getElementById("tx-close");const o=document.getElementById("tx-overlay");if(c&&o){c.onclick=()=>o.classList.remove("open");o.onclick=(e)=>{if(e.target===o)o.classList.remove("open")}}})();
+on("tile-lang","onclick",()=>{show("lang");renderLangList()});
+on("tile-theme","onclick",()=>show("theme"));
 document.querySelectorAll("[data-theme-set]").forEach(b=>b.onclick=()=>setTheme(b.getAttribute("data-theme-set")));
 document.querySelectorAll("[data-nav]").forEach(btn=>{
   btn.addEventListener("click",()=>{
@@ -792,74 +800,76 @@ document.querySelectorAll("[data-nav]").forEach(btn=>{
   });
 });
 
-document.getElementById("btn-deposit").onclick=()=>{show("deposit");calcDep()};
-document.getElementById("btn-withdraw").onclick=()=>{show("withdraw");calcWd()};
-document.getElementById("dep-amount").oninput=calcDep;
-document.getElementById("dep-terms").onchange=calcDep;
+on("btn-deposit","onclick",()=>{show("deposit");calcDep()});
+on("btn-withdraw","onclick",()=>{show("withdraw");calcWd()});
+on("dep-amount","oninput",calcDep);
+on("dep-terms","onchange",calcDep);
 document.querySelectorAll("[data-dep-method]").forEach(b=>b.onclick=()=>{
   state.depMethod=b.getAttribute("data-dep-method");
   document.querySelectorAll("[data-dep-method]").forEach(x=>x.classList.toggle("selected",x===b));
   calcDep();
 });
-document.getElementById("dep-continue").onclick=()=>{
+on("dep-continue","onclick",()=>{
   calcDep();
-  if(document.getElementById("dep-continue").disabled)return;
+  const btn=document.getElementById("dep-continue");
+  if(btn&&btn.disabled)return;
   document.getElementById("dc-method").textContent=state.depMethod.toUpperCase();
   document.getElementById("dc-credit").textContent=money(state.dep.amount);
   document.getElementById("dc-fee").textContent=money(state.dep.fee);
   document.getElementById("dc-total").textContent=money(state.dep.total);
   document.getElementById("dc-requisites").textContent="";
   show("deposit-confirm");
-};
-document.getElementById("dc-pay").onclick=async()=>{
+});
+on("dc-pay","onclick",async()=>{
   const st=document.getElementById("dc-status");
-  st.textContent="…";
+  if(st)st.textContent="…";
   try{
     if(state.depMethod==="stars"){
       const r=await apiPost("/api/miniapp/deposit/stars",{user_id:USER_ID,amount:state.dep.amount});
       if(r.invoice_link&&tg&&tg.openInvoice){
         tg.openInvoice(r.invoice_link,function(status){
-          st.textContent=status==="paid"?("#"+r.request_id+" OK"):String(status||"");
+          if(st)st.textContent=status==="paid"?("#"+r.request_id+" OK"):String(status||"");
           if(status==="paid"){loadMe();loadRequests()}
         });
       }else if(r.invoice_link){
         window.location.href=r.invoice_link;
       }else{
-        st.textContent="#"+r.request_id+(r.error?(" · "+r.error):"");
+        if(st)st.textContent="#"+r.request_id+(r.error?(" · "+r.error):"");
       }
     }else{
       const r=await apiPost("/api/miniapp/deposit",{user_id:USER_ID,amount:state.dep.amount,method:state.depMethod,comment:""});
       let extra="";
       if(r.method==="crypto"&&r.crypto_address)extra=" · "+r.crypto_address;
       if(r.method==="sbp"&&r.sbp_phone)extra=" · "+r.sbp_phone;
-      st.textContent="#"+r.request_id+extra;
+      if(st)st.textContent="#"+r.request_id+extra;
       loadRequests();
     }
-  }catch(e){st.textContent=String(e.message||e)}
-};
+  }catch(e){if(st)st.textContent=String(e.message||e)}
+});
 
-document.getElementById("wd-amount").oninput=calcWd;
-document.getElementById("wd-recipient").oninput=calcWd;
-document.getElementById("wd-name").oninput=calcWd;
-document.getElementById("wd-terms").onchange=calcWd;
+on("wd-amount","oninput",calcWd);
+on("wd-recipient","oninput",calcWd);
+on("wd-name","oninput",calcWd);
+on("wd-terms","onchange",calcWd);
 document.querySelectorAll("[data-wd-method]").forEach(b=>b.onclick=()=>{
   state.wdMethod=b.getAttribute("data-wd-method");
   document.querySelectorAll("[data-wd-method]").forEach(x=>x.classList.toggle("selected",x===b));
   calcWd();
 });
-document.getElementById("wd-continue").onclick=()=>{
+on("wd-continue","onclick",()=>{
   calcWd();
-  if(document.getElementById("wd-continue").disabled)return;
+  const btn=document.getElementById("wd-continue");
+  if(btn&&btn.disabled)return;
   document.getElementById("wc-method").textContent=state.wdMethod.toUpperCase();
   document.getElementById("wc-recipient").textContent=(document.getElementById("wd-recipient").value||"—");
   document.getElementById("wc-credit").textContent=money(state.wd.amount);
   document.getElementById("wc-fee").textContent=money(state.wd.fee);
   document.getElementById("wc-total").textContent=money(state.wd.total);
   show("withdraw-confirm");
-};
-document.getElementById("wc-pay").onclick=async()=>{
+});
+on("wc-pay","onclick",async()=>{
   const st=document.getElementById("wc-status");
-  st.textContent="…";
+  if(st)st.textContent="…";
   try{
     const r=await apiPost("/api/miniapp/withdraw",{
       user_id:USER_ID,
@@ -868,14 +878,14 @@ document.getElementById("wc-pay").onclick=async()=>{
       recipient:(document.getElementById("wd-recipient").value||"").trim(),
       recipient_name:(document.getElementById("wd-name").value||"").trim()
     });
-    st.textContent="#"+r.request_id+" · "+money(r.amount);
+    if(st)st.textContent="#"+r.request_id+" · "+money(r.amount);
     loadMe();loadRequests();
-  }catch(e){st.textContent=String(e.message||e)}
-};
+  }catch(e){if(st)st.textContent=String(e.message||e)}
+});
 
-document.getElementById("proj-prev").onclick=()=>{if(state.projPage>1)loadProjects(state.projPage-1)};
-document.getElementById("proj-next").onclick=()=>loadProjects(state.projPage+1);
-document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{document.getElementById("panel-body").style.display="block"});
+on("proj-prev","onclick",()=>{if(state.projPage>1)loadProjects(state.projPage-1)});
+on("proj-next","onclick",()=>loadProjects(state.projPage+1));
+document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=document.getElementById("panel-body");if(pb)pb.style.display="block"});
 
 setInterval(async()=>{
   if(!USER_ID)return;
