@@ -616,18 +616,38 @@ const tgUser=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.use
 const USER_ID=tgUser?tgUser.id:null;
 
 
-const SLIDES=["slides/01.svg","slides/02.svg","slides/03.svg","slides/04.svg","slides/05.svg"];
+let SLIDES=[];
 let carIndex=0;
 function renderCarousel(){
   const img=document.getElementById("car-img");
   const dots=document.getElementById("car-dots");
   if(!img||!dots)return;
+  if(!SLIDES.length){
+    img.removeAttribute("src");
+    dots.innerHTML="";
+    return;
+  }
+  if(carIndex>=SLIDES.length)carIndex=0;
   img.src=SLIDES[carIndex];
   dots.innerHTML=SLIDES.map((_,i)=>'<button type="button" class="'+(i===carIndex?"active":"")+'" data-slide="'+i+'"></button>').join("");
   dots.querySelectorAll("[data-slide]").forEach(b=>b.onclick=()=>{carIndex=Number(b.getAttribute("data-slide"));renderCarousel()});
 }
-function carNext(){carIndex=(carIndex+1)%SLIDES.length;renderCarousel()}
-function carPrev(){carIndex=(carIndex-1+SLIDES.length)%SLIDES.length;renderCarousel()}
+function carNext(){if(!SLIDES.length)return;carIndex=(carIndex+1)%SLIDES.length;renderCarousel()}
+function carPrev(){if(!SLIDES.length)return;carIndex=(carIndex-1+SLIDES.length)%SLIDES.length;renderCarousel()}
+async function loadSlides(){
+  try{
+    const data=await apiGet("/api/miniapp/slides");
+    const items=data.slides||[];
+    SLIDES=items.map(s=>s.image).filter(Boolean);
+    if(!SLIDES.length)throw new Error("empty");
+    carIndex=0;
+    renderCarousel();
+  }catch(e){
+    console.warn("slides",e);
+    SLIDES=[];
+    renderCarousel();
+  }
+}
 
 let state={lang:"ru",theme:"light",history:["main"],depMethod:"sbp",wdMethod:"sbp",projPage:1,me:null,
   dep:{amount:0,fee:0,total:0},wd:{amount:0,fee:0,total:0}};
@@ -821,7 +841,7 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();loadSlides();
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
 const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
