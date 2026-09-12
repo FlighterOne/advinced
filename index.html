@@ -148,7 +148,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .main-menu .wide{grid-column:1 / -1}
 .carousel{margin:4px 0 8px}
 .carousel-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);aspect-ratio:16/9}
-.carousel-img{width:100%;height:100%;object-fit:cover;display:block}
+.carousel-slides{position:relative;width:100%;height:100%;min-height:160px}
+.slide{
+  position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:18px 48px 28px;box-sizing:border-box;
+  background:linear-gradient(135deg,#F2F5F9 0%,#E8F1FC 100%);
+  overflow:hidden;
+}
+[data-theme="dark"] .slide{
+  background:linear-gradient(135deg,#003F8A 0%,#0056B8 100%);
+}
+.slide.active{display:flex}
+.slide-bar{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#006AD2,#3B8FE8)}
+.slide-deco{position:absolute;border-radius:50%;pointer-events:none}
+.slide-deco.d1{width:120px;height:120px;right:-20px;top:10px;background:rgba(0,106,210,.08)}
+.slide-deco.d2{width:100px;height:100px;left:-16px;bottom:8px;background:rgba(0,106,210,.06)}
+[data-theme="dark"] .slide-deco.d1,[data-theme="dark"] .slide-deco.d2{background:rgba(255,255,255,.08)}
+.slide-accent{width:40px;height:4px;border-radius:2px;background:#006AD2;margin-bottom:10px;flex-shrink:0}
+[data-theme="dark"] .slide-accent{background:#fff}
+.slide-tag{font-size:11px;font-weight:700;letter-spacing:.12em;color:#006AD2;margin-bottom:8px}
+[data-theme="dark"] .slide-tag{color:rgba(255,255,255,.9)}
+.slide-title{font-size:20px;font-weight:700;color:#0F172A;letter-spacing:-.02em;line-height:1.2;margin-bottom:8px}
+[data-theme="dark"] .slide-title{color:#fff}
+.slide-text{font-size:13px;font-weight:500;color:#475569;line-height:1.4}
+[data-theme="dark"] .slide-text{color:rgba(255,255,255,.78)}
+.slide-foot{position:absolute;bottom:12px;left:0;right:0;font-size:11px;color:#94A3B8;font-weight:500}
+[data-theme="dark"] .slide-foot{color:rgba(255,255,255,.5)}
+@media (min-width:400px){
+  .slide-title{font-size:22px}
+  .slide-text{font-size:14px}
+}
 .carousel-arrow{
   position:absolute;top:50%;transform:translateY(-50%);
   width:40px;height:40px;border-radius:50%;
@@ -195,7 +224,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       <div class="carousel" id="carousel">
         <div class="carousel-frame">
           <button type="button" class="carousel-arrow left" id="car-prev" aria-label="prev"><span>‹</span></button>
-          <img id="car-img" class="carousel-img" src="slides/01.svg" alt=""/>
+          <div class="carousel-slides" id="car-slides">
+            <div class="slide active" data-i="0">
+              <div class="slide-bar"></div>
+              <div class="slide-deco d1"></div>
+              <div class="slide-deco d2"></div>
+              <div class="slide-accent"></div>
+              <div class="slide-tag">TRUST</div>
+              <div class="slide-title">Нам можно доверять</div>
+              <div class="slide-text">Прозрачная площадка для покупки<br/>и монетизации трафика</div>
+              <div class="slide-foot">Advinced Management</div>
+            </div>
+            <div class="slide" data-i="1">
+              <div class="slide-bar"></div>
+              <div class="slide-deco d1"></div>
+              <div class="slide-deco d2"></div>
+              <div class="slide-accent"></div>
+              <div class="slide-tag">RATES</div>
+              <div class="slide-title">Низкие тарифы</div>
+              <div class="slide-text">Комиссии без скрытых платежей.<br/>Честный расчёт за результат</div>
+              <div class="slide-foot">Advinced Management</div>
+            </div>
+            <div class="slide" data-i="2">
+              <div class="slide-bar"></div>
+              <div class="slide-deco d1"></div>
+              <div class="slide-deco d2"></div>
+              <div class="slide-accent"></div>
+              <div class="slide-tag">PAYOUTS</div>
+              <div class="slide-title">Высокие выплаты</div>
+              <div class="slide-text">Быстрые выплаты партнёрам<br/>и прозрачная аналитика</div>
+              <div class="slide-foot">Advinced Management</div>
+            </div>
+            <div class="slide" data-i="3">
+              <div class="slide-bar"></div>
+              <div class="slide-deco d1"></div>
+              <div class="slide-deco d2"></div>
+              <div class="slide-accent"></div>
+              <div class="slide-tag">GROWTH</div>
+              <div class="slide-title">Инструменты роста</div>
+              <div class="slide-text">Сниппеты, модерация и контроль<br/>подписок в одном месте</div>
+              <div class="slide-foot">Advinced Management</div>
+            </div>
+            <div class="slide" data-i="4">
+              <div class="slide-bar"></div>
+              <div class="slide-deco d1"></div>
+              <div class="slide-deco d2"></div>
+              <div class="slide-accent"></div>
+              <div class="slide-tag">SUPPORT</div>
+              <div class="slide-title">Поддержка рядом</div>
+              <div class="slide-text">Помогаем запустить проект<br/>и масштабировать трафик</div>
+              <div class="slide-foot">Advinced Management</div>
+            </div>
+          </div>
           <button type="button" class="carousel-arrow right" id="car-next" aria-label="next"><span>›</span></button>
         </div>
         <div class="carousel-dots" id="car-dots"></div>
@@ -618,38 +698,22 @@ const tgUser=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.use
 const USER_ID=tgUser?tgUser.id:null;
 
 
-let SLIDES=[];
+const SLIDE_COUNT=5;
 let carIndex=0;
 function renderCarousel(){
-  const img=document.getElementById("car-img");
+  const slides=document.querySelectorAll("#car-slides .slide");
   const dots=document.getElementById("car-dots");
-  if(!img||!dots)return;
-  if(!SLIDES.length){
-    img.removeAttribute("src");
-    dots.innerHTML="";
-    return;
-  }
-  if(carIndex>=SLIDES.length)carIndex=0;
-  img.src=SLIDES[carIndex];
-  dots.innerHTML=SLIDES.map((_,i)=>'<button type="button" class="'+(i===carIndex?"active":"")+'" data-slide="'+i+'"></button>').join("");
+  if(!slides.length||!dots)return;
+  if(carIndex<0)carIndex=SLIDE_COUNT-1;
+  if(carIndex>=SLIDE_COUNT)carIndex=0;
+  slides.forEach((el,i)=>el.classList.toggle("active",i===carIndex));
+  dots.innerHTML=Array.from({length:SLIDE_COUNT},(_,i)=>
+    '<button type="button" class="'+(i===carIndex?"active":"")+'" data-slide="'+i+'"></button>'
+  ).join("");
   dots.querySelectorAll("[data-slide]").forEach(b=>b.onclick=()=>{carIndex=Number(b.getAttribute("data-slide"));renderCarousel()});
 }
-function carNext(){if(!SLIDES.length)return;carIndex=(carIndex+1)%SLIDES.length;renderCarousel()}
-function carPrev(){if(!SLIDES.length)return;carIndex=(carIndex-1+SLIDES.length)%SLIDES.length;renderCarousel()}
-async function loadSlides(){
-  try{
-    const data=await apiGet("/api/miniapp/slides");
-    const items=data.slides||[];
-    SLIDES=items.map(s=>s.image).filter(Boolean);
-    if(!SLIDES.length)throw new Error("empty");
-    carIndex=0;
-    renderCarousel();
-  }catch(e){
-    console.warn("slides",e);
-    SLIDES=[];
-    renderCarousel();
-  }
-}
+function carNext(){carIndex=(carIndex+1)%SLIDE_COUNT;renderCarousel()}
+function carPrev(){carIndex=(carIndex-1+SLIDE_COUNT)%SLIDE_COUNT;renderCarousel()}
 
 let state={lang:"ru",theme:"light",history:["main"],depMethod:"sbp",wdMethod:"sbp",projPage:1,me:null,
   dep:{amount:0,fee:0,total:0},wd:{amount:0,fee:0,total:0}};
@@ -843,7 +907,7 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();loadSlides();
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
 const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
