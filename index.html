@@ -137,11 +137,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 
 .topbar{align-items:center;padding-top:0;padding-bottom:0;height:var(--header-h);min-height:var(--header-h)}
-.menu-back-bar{display:none;justify-content:flex-end;margin:0 0 12px;min-height:34px;pointer-events:none}
+.menu-back-bar{display:none;justify-content:flex-start;margin:0 0 12px;min-height:34px;pointer-events:none}
 .menu-back-bar.show{display:flex}
 .menu-back-btn{pointer-events:auto;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
 .menu-back-btn:active{opacity:.8}
 .content.has-back{padding-top:6px}
+
+
+.main-menu{grid-template-columns:1fr 1fr}
+.main-menu .wide{grid-column:1 / -1}
+.carousel{margin:4px 0 8px}
+.carousel-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);aspect-ratio:16/9}
+.carousel-img{width:100%;height:100%;object-fit:cover;display:block}
+.carousel-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(255,255,255,.92);
+  color:#0F172A;font-size:22px;line-height:1;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:var(--shadow);z-index:2;
+}
+[data-theme="dark"] .carousel-arrow{background:rgba(0,63,138,.85);color:#fff;border-color:var(--line)}
+.carousel-arrow.left{left:10px}
+.carousel-arrow.right{right:10px}
+.carousel-arrow:active{transform:translateY(-50%) scale(.96)}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.carousel-dots button{
+  width:8px;height:8px;border-radius:50%;padding:0;border:1.5px solid var(--brand);
+  background:transparent;cursor:pointer;
+}
+.carousel-dots button.active{background:var(--brand)}
 
 </style>
 </head>
@@ -165,12 +190,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       <button type="button" class="menu-back-btn" id="btn-menu-back" data-i18n="back">Назад</button>
     </div>
     <div id="screen-main" class="screen active">
+      <div class="carousel" id="carousel">
+        <div class="carousel-frame">
+          <button type="button" class="carousel-arrow left" id="car-prev" aria-label="prev">‹</button>
+          <img id="car-img" class="carousel-img" src="slides/01.svg" alt=""/>
+          <button type="button" class="carousel-arrow right" id="car-next" aria-label="next">›</button>
+        </div>
+        <div class="carousel-dots" id="car-dots"></div>
+      </div>
       <div class="spacer"></div>
-      <div class="actions" id="main-actions">
-        <button class="btn" data-nav="balance" data-i18n="balance">Баланс</button>
+      <div class="actions main-menu" id="main-actions">
+        <button class="btn primary wide" data-nav="balance" data-i18n="balance">Баланс</button>
+        <button class="btn wide" data-nav="projects" data-i18n="projects">Проекты</button>
         <button class="btn" data-nav="settings" data-i18n="settings">Настройки</button>
-        <button class="btn primary wide" data-nav="projects" data-i18n="projects">Проекты</button>
-        <button class="btn" data-nav="help" data-i18n="help">Помощь</button>
         <button class="btn" data-nav="support" data-i18n="support">Поддержка</button>
         <button class="btn ghost wide" data-nav="panel" id="btn-panel" style="display:none" data-i18n="panel">Панель</button>
       </div>
@@ -583,6 +615,20 @@ if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const tgUser=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.user:null;
 const USER_ID=tgUser?tgUser.id:null;
 
+
+const SLIDES=["slides/01.svg","slides/02.svg","slides/03.svg","slides/04.svg","slides/05.svg"];
+let carIndex=0;
+function renderCarousel(){
+  const img=document.getElementById("car-img");
+  const dots=document.getElementById("car-dots");
+  if(!img||!dots)return;
+  img.src=SLIDES[carIndex];
+  dots.innerHTML=SLIDES.map((_,i)=>'<button type="button" class="'+(i===carIndex?"active":"")+'" data-slide="'+i+'"></button>').join("");
+  dots.querySelectorAll("[data-slide]").forEach(b=>b.onclick=()=>{carIndex=Number(b.getAttribute("data-slide"));renderCarousel()});
+}
+function carNext(){carIndex=(carIndex+1)%SLIDES.length;renderCarousel()}
+function carPrev(){carIndex=(carIndex-1+SLIDES.length)%SLIDES.length;renderCarousel()}
+
 let state={lang:"ru",theme:"light",history:["main"],depMethod:"sbp",wdMethod:"sbp",projPage:1,me:null,
   dep:{amount:0,fee:0,total:0},wd:{amount:0,fee:0,total:0}};
 
@@ -775,7 +821,10 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();
+const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
+const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
+
 
 
 function on(id, ev, fn){const el=document.getElementById(id);if(el)el[ev]=fn;return el}
