@@ -110,15 +110,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 .foot-actions{margin-top:auto;padding-top:12px}
 .foot-actions .actions{grid-template-columns:1fr}
+
+.topbar-left-col{flex-direction:column;align-items:flex-start;gap:6px}
+.back-top{height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);line-height:28px}
+.back-top:active{opacity:.8}
+.method-btn{display:flex!important;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;text-align:left}
+.method-btn .m-name{font-weight:600}
+.method-btn .m-fee{font-size:11px;font-weight:600;color:var(--hint);white-space:nowrap}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="topbar-left">
+    <div class="topbar-left topbar-left-col">
       <button type="button" class="icon-btn" id="btn-gear" aria-label="settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
+      <button type="button" class="back-top" id="btn-back-top" data-i18n="back" style="display:none">Назад</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="lang-btn" id="btn-flag">🇷🇺</button>
@@ -213,11 +222,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <div class="form-group">
           <label class="form-label" data-i18n="method">Способ оплаты</label>
           <div class="btn-row" style="margin-top:0">
-            <button type="button" class="btn selected" data-dep-method="sbp">СБП</button>
-            <button type="button" class="btn" data-dep-method="crypto">Crypto</button>
+            <button type="button" class="btn method-btn selected" data-dep-method="sbp"><span class="m-name">СБП</span><span class="m-fee">8.5%</span></button>
+            <button type="button" class="btn method-btn" data-dep-method="crypto"><span class="m-name">Crypto</span><span class="m-fee">5%</span></button>
           </div>
           <div class="btn-stack" style="margin-top:8px">
-            <button type="button" class="btn" data-dep-method="stars">Telegram Stars</button>
+            <button type="button" class="btn method-btn" data-dep-method="stars"><span class="m-name">Telegram Stars</span><span class="m-fee">0%</span></button>
           </div>
         </div>
         <div class="pay-summary" id="dep-summary">
@@ -246,7 +255,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         </div>
         <div class="muted" id="dc-requisites" style="margin:10px 0"></div>
         <button class="btn primary wide" id="dc-pay" data-i18n="pay">Оплатить</button>
-        <p class="hint" style="margin-top:10px" data-i18n="pay_placeholder">Оплата будет доступна после подключения эквайринга.</p>
+        <div class="muted" id="dc-status" style="margin-top:10px"></div>
       </div>
       <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
@@ -262,8 +271,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <div class="form-group">
           <label class="form-label" data-i18n="method">Способ вывода</label>
           <div class="btn-row" style="margin-top:0">
-            <button type="button" class="btn selected" data-wd-method="sbp">СБП</button>
-            <button type="button" class="btn" data-wd-method="crypto">Crypto</button>
+            <button type="button" class="btn method-btn selected" data-wd-method="sbp"><span class="m-name">СБП</span><span class="m-fee">8.5%</span></button>
+            <button type="button" class="btn method-btn" data-wd-method="crypto"><span class="m-name">Crypto</span><span class="m-fee">5%</span></button>
           </div>
         </div>
         <div class="form-group">
@@ -300,7 +309,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="row total"><span data-i18n="total_to_debit">Итого к списанию</span><span id="wc-total">—</span></div>
         </div>
         <button class="btn primary wide" id="wc-pay" data-i18n="confirm">Подтвердить</button>
-        <p class="hint" style="margin-top:10px" data-i18n="pay_placeholder">Операция будет доступна после подключения эквайринга.</p>
+        <div class="muted" id="wc-status" style="margin-top:10px"></div>
       </div>
       <div class="foot-actions"><div class="actions"><button class="btn ghost" data-back data-i18n="back">Назад</button></div></div>
     </div>
@@ -599,6 +608,8 @@ function show(id,push){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById("screen-"+id).classList.add("active");
   if(push!==false&&state.history[state.history.length-1]!==id)state.history.push(id);
+  const bt=document.getElementById("btn-back-top");
+  if(bt)bt.style.display=id==="main"?"none":"";
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
 function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
@@ -712,6 +723,7 @@ document.getElementById("btn-flag").onclick=()=>{show("lang");renderLangList()};
 document.getElementById("btn-top-bal").onclick=()=>{show("balance");loadMe();loadRequests()};
 document.getElementById("btn-avatar").onclick=()=>{show("profile");loadMe()};
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=goBack);
+document.getElementById("btn-back-top").onclick=goBack;
 document.getElementById("tile-lang").onclick=()=>{show("lang");renderLangList()};
 document.getElementById("tile-theme").onclick=()=>show("theme");
 document.querySelectorAll("[data-theme-set]").forEach(b=>b.onclick=()=>setTheme(b.getAttribute("data-theme-set")));
@@ -746,7 +758,32 @@ document.getElementById("dep-continue").onclick=()=>{
   document.getElementById("dc-requisites").textContent="";
   show("deposit-confirm");
 };
-document.getElementById("dc-pay").onclick=()=>{/* acquiring later — no-op */};
+document.getElementById("dc-pay").onclick=async()=>{
+  const st=document.getElementById("dc-status");
+  st.textContent="…";
+  try{
+    if(state.depMethod==="stars"){
+      const r=await apiPost("/api/miniapp/deposit/stars",{user_id:USER_ID,amount:state.dep.amount});
+      if(r.invoice_link&&tg&&tg.openInvoice){
+        tg.openInvoice(r.invoice_link,function(status){
+          st.textContent=status==="paid"?("#"+r.request_id+" OK"):String(status||"");
+          if(status==="paid"){loadMe();loadRequests()}
+        });
+      }else if(r.invoice_link){
+        window.location.href=r.invoice_link;
+      }else{
+        st.textContent="#"+r.request_id+(r.error?(" · "+r.error):"");
+      }
+    }else{
+      const r=await apiPost("/api/miniapp/deposit",{user_id:USER_ID,amount:state.dep.amount,method:state.depMethod,comment:""});
+      let extra="";
+      if(r.method==="crypto"&&r.crypto_address)extra=" · "+r.crypto_address;
+      if(r.method==="sbp"&&r.sbp_phone)extra=" · "+r.sbp_phone;
+      st.textContent="#"+r.request_id+extra;
+      loadRequests();
+    }
+  }catch(e){st.textContent=String(e.message||e)}
+};
 
 document.getElementById("wd-amount").oninput=calcWd;
 document.getElementById("wd-recipient").oninput=calcWd;
@@ -767,7 +804,21 @@ document.getElementById("wd-continue").onclick=()=>{
   document.getElementById("wc-total").textContent=money(state.wd.total);
   show("withdraw-confirm");
 };
-document.getElementById("wc-pay").onclick=()=>{/* acquiring later — no-op */};
+document.getElementById("wc-pay").onclick=async()=>{
+  const st=document.getElementById("wc-status");
+  st.textContent="…";
+  try{
+    const r=await apiPost("/api/miniapp/withdraw",{
+      user_id:USER_ID,
+      amount:state.wd.amount,
+      method:state.wdMethod,
+      recipient:(document.getElementById("wd-recipient").value||"").trim(),
+      recipient_name:(document.getElementById("wd-name").value||"").trim()
+    });
+    st.textContent="#"+r.request_id+" · "+money(r.amount);
+    loadMe();loadRequests();
+  }catch(e){st.textContent=String(e.message||e)}
+};
 
 document.getElementById("proj-prev").onclick=()=>{if(state.projPage>1)loadProjects(state.projPage-1)};
 document.getElementById("proj-next").onclick=()=>loadProjects(state.projPage+1);
