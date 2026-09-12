@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Granville</title>
+  <title>Advinced Management</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -13,16 +13,18 @@
       --hint: var(--tg-theme-hint-color, #8b93a7);
       --btn: var(--tg-theme-button-color, #2aabee);
       --btn-text: var(--tg-theme-button-text-color, #ffffff);
-      --line: rgba(255, 255, 255, 0.08);
-      --card: rgba(255, 255, 255, 0.04);
+      --line: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.04);
+      --ok: #3dd68c;
+      --err: #ff6b6b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 16px 16px 28px;
+      padding: 16px 16px 32px;
     }
     .wrap { max-width: 480px; margin: 0 auto; }
     .header {
@@ -32,221 +34,231 @@
       padding: 16px;
       margin-bottom: 14px;
     }
-    .brand {
-      font-size: 13px;
-      letter-spacing: 0.04em;
-      color: var(--hint);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .title {
-      font-size: 20px;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 10px;
-    }
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .brand { font-size: 12px; letter-spacing: .06em; color: var(--hint); text-transform: uppercase; margin-bottom: 6px; }
+    .title { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
-      background: var(--sec);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 13px;
-      color: var(--text);
+      background: var(--sec); border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 12px; font-size: 13px;
     }
     .chip span { color: var(--hint); margin-right: 4px; }
-    .desc {
-      margin: 14px 0 16px;
-      color: var(--hint);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .desc { margin: 14px 0 16px; color: var(--hint); font-size: 14px; line-height: 1.45; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 52px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--sec);
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.15s ease;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 52px; padding: 12px 14px; border-radius: 14px;
+      border: 1px solid var(--line); background: var(--sec); color: var(--text);
+      font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
     }
-    .btn:active { transform: scale(0.98); opacity: 0.9; }
-    .btn.full { grid-column: 1 / -1; }
-    .btn.primary {
-      background: var(--btn);
-      color: var(--btn-text);
-      border-color: transparent;
-    }
-    .btn.ghost { background: transparent; }
-    .footer {
-      margin-top: 18px;
-      text-align: center;
-      color: var(--hint);
-      font-size: 12px;
-      line-height: 1.4;
-    }
+    .btn:active { transform: scale(0.98); opacity: .9; }
+    .btn.primary { background: var(--btn); color: var(--btn-text); border-color: transparent; }
+    .btn.wide { grid-column: 1 / -1; }
+    .btn:disabled { opacity: .5; cursor: default; }
     .points { margin-top: 12px; display: grid; gap: 8px; }
     .point {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 13px;
-      color: var(--hint);
+      background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px 12px; font-size: 13px; color: var(--hint);
     }
-    .point b { color: var(--text); font-weight: 600; }
+    .point b { color: var(--text); }
     .screen { display: none; }
     .screen.active { display: block; }
-    .api-status {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--hint);
+    .api-status { margin-top: 10px; font-size: 12px; color: var(--hint); }
+    .api-status.ok { color: var(--ok); }
+    .api-status.err { color: var(--err); }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 14px; margin-bottom: 10px;
     }
-    .api-status.ok { color: #3dd68c; }
-    .api-status.err { color: #ff6b6b; }
+    .card h3 { font-size: 16px; margin-bottom: 8px; }
+    .muted { color: var(--hint); font-size: 13px; line-height: 1.4; }
+    .row { display: flex; gap: 8px; margin-top: 12px; }
+    .row .btn { flex: 1; }
+    .list { display: grid; gap: 8px; margin: 12px 0; }
+    .item {
+      background: var(--sec); border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 14px; cursor: pointer; font-size: 14px; font-weight: 600;
+    }
+    .item:active { opacity: .85; }
+    .item .sub { display: block; margin-top: 4px; font-weight: 400; color: var(--hint); font-size: 12px; }
+    .loading { text-align: center; color: var(--hint); padding: 20px; font-size: 14px; }
+    .balance-big { font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
+    .pager { display: flex; gap: 8px; margin-top: 8px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <section id="screen-main" class="screen active">
+    <!-- MAIN -->
+    <div id="screen-main" class="screen active">
       <div class="header">
-        <div class="brand">Granville</div>
+        <div class="brand">Advinced Management</div>
         <div class="title">Главное меню</div>
         <div class="meta">
-          <div class="chip"><span>Баланс</span><b id="balance">— ₽</b></div>
           <div class="chip"><span>ID</span><b id="uid">—</b></div>
+          <div class="chip"><span>₽</span><b id="bal-chip">…</b></div>
         </div>
-        <div class="api-status" id="api-status">API: подключение…</div>
+        <div class="api-status" id="api-status">API: проверка…</div>
       </div>
-
-      <p class="desc">
-        Наши пользователи получают возможность монетизировать ботов,
-        а цифровые проекты — инструмент для получения дохода.
-      </p>
-
+      <div class="desc">
+        Наши пользователи получают возможность монетизировать ботов, а цифровые проекты — инструмент для получения дохода.
+      </div>
       <div class="grid">
         <button class="btn" data-nav="balance">💵 Баланс</button>
         <button class="btn" data-nav="settings">⚙️ Настройки</button>
-        <button class="btn full primary" data-nav="projects">📂 Проекты</button>
-        <button class="btn" data-nav="help">📄 Помощь</button>
+        <button class="btn wide" data-nav="projects">📂 Проекты</button>
+        <button class="btn" data-nav="help">❓ Помощь</button>
         <button class="btn" data-nav="support">💬 Поддержка</button>
-        <button class="btn full ghost" id="btn-panel" data-nav="panel" style="display:none">🛡 Панель</button>
+        <button class="btn wide" data-nav="panel" id="btn-panel" style="display:none">🛠 Панель</button>
       </div>
-
       <div class="points">
-        <div class="point"><b>Стабильные выплаты</b> — прозрачный учёт и вывод средств</div>
-        <div class="point"><b>Работаем стабильно без перебоев</b> — API и модерация 24/7</div>
+        <div class="point"><b>Стабильные выплаты</b></div>
+        <div class="point"><b>Работаем стабильно без перебоев</b></div>
       </div>
+    </div>
 
-      <div class="footer">Mini App · данные через API Amvera</div>
-    </section>
-
-    <section id="screen-stub" class="screen">
+    <!-- BALANCE -->
+    <div id="screen-balance" class="screen">
       <div class="header">
-        <div class="brand">Granville</div>
-        <div class="title" id="stub-title">Раздел</div>
+        <div class="brand">Баланс</div>
+        <div class="title">💵 Баланс</div>
+        <div class="balance-big" id="bal-big">— ₽</div>
+        <div class="muted">Данные с сервера Amvera</div>
       </div>
-      <p class="desc" id="stub-text">Этот раздел заполним позже.</p>
       <div class="grid">
-        <button class="btn full primary" data-nav="main">🏠 В главное меню</button>
+        <button class="btn" disabled>➕ Пополнение</button>
+        <button class="btn" disabled>➖ Вывод</button>
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
       </div>
-    </section>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="screen-projects" class="screen">
+      <div class="header">
+        <div class="brand">Проекты</div>
+        <div class="title">📂 Проекты</div>
+        <div class="muted" id="proj-meta">Загрузка…</div>
+      </div>
+      <div class="list" id="proj-list"></div>
+      <div class="pager">
+        <button class="btn" id="proj-prev">⬅️</button>
+        <button class="btn" id="proj-next">➡️</button>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
+      </div>
+    </div>
+
+    <!-- PROJECT DETAIL -->
+    <div id="screen-project" class="screen">
+      <div class="header">
+        <div class="brand">Проект</div>
+        <div class="title" id="pd-title">—</div>
+        <div class="muted" id="pd-body">—</div>
+      </div>
+      <div class="grid">
+        <button class="btn wide" data-nav="projects">⬅️ К проектам</button>
+        <button class="btn wide" data-nav="main">🏠 В меню</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="screen-settings" class="screen">
+      <div class="header">
+        <div class="brand">Настройки</div>
+        <div class="title">⚙️ Настройки</div>
+        <div class="muted">Язык и тема синхронизируются с ботом позже. Сейчас — интерфейс миниаппа.</div>
+      </div>
+      <div class="card">
+        <h3>Язык</h3>
+        <div class="muted" id="set-lang">—</div>
+      </div>
+      <div class="card">
+        <h3>Тема</h3>
+        <div class="muted" id="set-theme">Telegram theme</div>
+      </div>
+      <div class="grid">
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
+      </div>
+    </div>
+
+    <!-- HELP -->
+    <div id="screen-help" class="screen">
+      <div class="header">
+        <div class="brand">Помощь</div>
+        <div class="title">❓ Помощь</div>
+      </div>
+      <div class="card muted">
+        Mini App связан с ботом через API Amvera.<br/><br/>
+        <b>API:</b> <span id="help-api"></span><br/>
+        В боте доступны проекты, баланс, модерация и сниппеты.
+      </div>
+      <div class="grid">
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
+      </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <div id="screen-support" class="screen">
+      <div class="header">
+        <div class="brand">Поддержка</div>
+        <div class="title">💬 Поддержка</div>
+      </div>
+      <div class="card muted">Напишите в бота или администратору. Раздел поддержки в миниаппе будет расширен.</div>
+      <div class="grid">
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div id="screen-panel" class="screen">
+      <div class="header">
+        <div class="brand">Панель</div>
+        <div class="title">🛠 Панель</div>
+        <div class="muted">Доступна сотрудникам (стажёр+). Полное управление — в Telegram-боте.</div>
+      </div>
+      <div class="grid">
+        <button class="btn wide" data-nav="main">⬅️ В меню</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // === API бота на Amvera (обмен данными только через HTTP API) ===
-    const API_BASE = "https://granville-bot4.waw0.amvera.tech";
-
-    async function apiGet(path, opts = {}) {
-      const url = API_BASE.replace(/\/$/, "") + path;
-      const res = await fetch(url, {
-        method: "GET",
-        headers: { "Accept": "application/json", ...(opts.headers || {}) },
-        ...opts,
-      });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.json();
-    }
-
-    async function apiPost(path, body, opts = {}) {
-      const url = API_BASE.replace(/\/$/, "") + path;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          ...(opts.headers || {}),
-        },
-        body: JSON.stringify(body || {}),
-        ...opts,
-      });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.json();
-    }
+    // === Amvera API (бот на Amvera) ===
+    const API_BASE = "https://advinced-bot5.waw0.amvera.tech";
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
-      tg.ready();
-      tg.expand();
+      try { tg.ready(); } catch (e) {}
+      try { tg.expand(); } catch (e) {}
       try { tg.setHeaderColor("secondary_bg_color"); } catch (e) {}
       try { tg.setBackgroundColor("bg_color"); } catch (e) {}
     }
 
     const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-    document.getElementById("uid").textContent = user ? user.id : "—";
+    const USER_ID = user ? user.id : null;
 
-    // Проверка связи с API (health)
-    (async function pingApi() {
-      const el = document.getElementById("api-status");
-      try {
-        const data = await apiGet("/api/health");
-        if (data && (data.ok || data.status === "ok" || data.service)) {
-          el.textContent = "API: онлайн · Amvera";
-          el.classList.add("ok");
-        } else {
-          el.textContent = "API: ответ получен";
-          el.classList.add("ok");
-        }
-      } catch (e) {
-        // fallback: корень или /health
-        try {
-          await apiGet("/");
-          el.textContent = "API: онлайн · Amvera";
-          el.classList.add("ok");
-        } catch (e2) {
-          el.textContent = "API: нет связи (проверьте CORS / деплой)";
-          el.classList.add("err");
-        }
-      }
-    })();
+    document.getElementById("uid").textContent = USER_ID || "—";
+    document.getElementById("help-api").textContent = API_BASE;
 
-    const titles = {
-      balance: "💵 Баланс",
-      settings: "⚙️ Настройки",
-      projects: "📂 Проекты",
-      help: "📄 Помощь",
-      support: "💬 Поддержка",
-      panel: "🛡 Панель",
-    };
+    async function apiGet(path) {
+      const url = API_BASE.replace(/\/$/, "") + path;
+      const r = await fetch(url, { method: "GET", headers: { "Accept": "application/json" } });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }
+
+    async function apiPost(path, body) {
+      const url = API_BASE.replace(/\/$/, "") + path;
+      const r = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(body || {}),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }
+
+    let me = null;
+    let projPage = 1;
 
     function show(id) {
       document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
@@ -256,31 +268,138 @@
           if (id === "screen-main") tg.BackButton.hide();
           else {
             tg.BackButton.show();
-            tg.BackButton.onClick(() => show("screen-main"));
+            tg.BackButton.onClick(() => {
+              if (id === "screen-project") show("screen-projects");
+              else show("screen-main");
+            });
           }
         } catch (e) {}
       }
     }
 
+    async function loadMe() {
+      if (!USER_ID) {
+        document.getElementById("bal-chip").textContent = "—";
+        return;
+      }
+      try {
+        me = await apiGet("/api/miniapp/me?user_id=" + encodeURIComponent(USER_ID));
+        const bal = (me.balance != null) ? Number(me.balance) : 0;
+        document.getElementById("bal-chip").textContent = bal.toFixed(2);
+        document.getElementById("bal-big").textContent = bal.toFixed(2) + " ₽";
+        document.getElementById("set-lang").textContent = me.lang || "ru";
+        document.getElementById("set-theme").textContent = me.theme || "auto";
+        if (me.is_staff) {
+          document.getElementById("btn-panel").style.display = "";
+        }
+      } catch (e) {
+        document.getElementById("bal-chip").textContent = "—";
+        console.warn("me", e);
+      }
+    }
+
+    async function loadProjects(page) {
+      const list = document.getElementById("proj-list");
+      const meta = document.getElementById("proj-meta");
+      if (!USER_ID) {
+        list.innerHTML = '<div class="loading">Откройте миниапп из Telegram-бота</div>';
+        meta.textContent = "Нет user_id";
+        return;
+      }
+      list.innerHTML = '<div class="loading">Загрузка…</div>';
+      try {
+        const data = await apiGet(
+          "/api/miniapp/projects?user_id=" + encodeURIComponent(USER_ID) + "&page=" + page
+        );
+        projPage = data.page || 1;
+        meta.textContent = "Всего: " + (data.total || 0) + " · стр. " + projPage + "/" + (data.pages || 1);
+        const items = data.projects || [];
+        if (!items.length) {
+          list.innerHTML = '<div class="loading">Нет проектов</div>';
+          return;
+        }
+        list.innerHTML = items.map((p) => {
+          const role = p.role === "advertiser" ? "покупка" : (p.role === "partner" ? "партнёр" : "продажа");
+          return (
+            '<div class="item" data-pid="' + p.id + '">' +
+              (p.icon || "•") + " " + (p.name || ("#" + p.id)) +
+              '<span class="sub">' + role + " · " + (p.status || "") +
+              (p.role !== "partner" ? (" · " + (p.current_subs || 0) + "/" + (p.target_subs || 0)) : "") +
+              "</span></div>"
+          );
+        }).join("");
+        list.querySelectorAll("[data-pid]").forEach((el) => {
+          el.addEventListener("click", () => openProject(el.getAttribute("data-pid")));
+        });
+      } catch (e) {
+        list.innerHTML = '<div class="loading">Ошибка загрузки</div>';
+        meta.textContent = String(e.message || e);
+      }
+    }
+
+    async function openProject(pid) {
+      show("screen-project");
+      document.getElementById("pd-title").textContent = "Проект #" + pid;
+      document.getElementById("pd-body").textContent = "Загрузка…";
+      try {
+        const q = USER_ID ? ("?user_id=" + encodeURIComponent(USER_ID)) : "";
+        const data = await apiGet("/api/miniapp/project/" + pid + q);
+        const p = data.project || {};
+        document.getElementById("pd-title").textContent = (p.name || ("#" + p.id));
+        document.getElementById("pd-body").innerHTML =
+          "Статус: <b>" + (p.status || "—") + "</b><br/>" +
+          "Роль: <b>" + (p.role || "—") + "</b><br/>" +
+          "Тип: <b>" + (p.resource_type || "—") + "</b><br/>" +
+          (p.resource_url ? ('URL: <b>' + p.resource_url + "</b><br/>") : "") +
+          (p.contract_number ? ("Договор: <b>" + p.contract_number + "</b><br/>") : "") +
+          "Подписки: <b>" + (p.current_subs || 0) + "/" + (p.target_subs || 0) + "</b><br/>" +
+          "Сниппет: <b>" + (p.snippet_status || "none") + "</b>";
+      } catch (e) {
+        document.getElementById("pd-body").textContent = "Ошибка: " + (e.message || e);
+      }
+    }
+
+    // Health
+    (async function pingApi() {
+      const el = document.getElementById("api-status");
+      try {
+        const data = await apiGet("/api/health");
+        if (data && data.ok) {
+          el.textContent = "API: онлайн · Amvera";
+          el.classList.add("ok");
+        } else {
+          el.textContent = "API: ответ получен";
+          el.classList.add("ok");
+        }
+      } catch (e) {
+        el.textContent = "API: нет связи (CORS / деплой Amvera)";
+        el.classList.add("err");
+      }
+    })();
+
+    loadMe();
+
     document.querySelectorAll("[data-nav]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const nav = btn.getAttribute("data-nav");
-        if (nav === "main") {
-          show("screen-main");
-          return;
-        }
-        document.getElementById("stub-title").textContent = titles[nav] || "Раздел";
-        document.getElementById("stub-text").textContent =
-          "Раздел «" + (titles[nav] || nav) + "» пока пустой. Данные будут через API: " + API_BASE;
-        show("screen-stub");
-        if (tg && tg.HapticFeedback) {
-          try { tg.HapticFeedback.selectionChanged(); } catch (e) {}
-        }
+        if (nav === "main") { show("screen-main"); return; }
+        if (nav === "balance") { show("screen-balance"); loadMe(); return; }
+        if (nav === "projects") { show("screen-projects"); loadProjects(1); return; }
+        if (nav === "settings") { show("screen-settings"); return; }
+        if (nav === "help") { show("screen-help"); return; }
+        if (nav === "support") { show("screen-support"); return; }
+        if (nav === "panel") { show("screen-panel"); return; }
       });
     });
 
-    // Экспорт для будущих экранов
-    window.GranvilleAPI = { API_BASE, apiGet, apiPost };
+    document.getElementById("proj-prev").addEventListener("click", () => {
+      if (projPage > 1) loadProjects(projPage - 1);
+    });
+    document.getElementById("proj-next").addEventListener("click", () => {
+      loadProjects(projPage + 1);
+    });
+
+    window.AdvincedAPI = { API_BASE, apiGet, apiPost, USER_ID };
   </script>
 </body>
 </html>
