@@ -22,11 +22,11 @@
       --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
       --radius: 12px;
       --radius-sm: 10px;
+      --safe-t: env(safe-area-inset-top, 0px);
       --safe-b: env(safe-area-inset-bottom, 0px);
       --btn-primary-text: #FFFFFF;
     }
 
-    /* Тёмная: инверсия — фон синий, поверхности тёмно-синие, акценты белые */
     [data-theme="dark"] {
       --brand: #FFFFFF;
       --brand-press: #E8EEF7;
@@ -63,7 +63,113 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 16px 16px calc(16px + var(--safe-b));
+      padding: calc(12px + var(--safe-t)) 16px calc(16px + var(--safe-b));
+    }
+
+    /* ===== Top bar ===== */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      min-height: 44px;
+    }
+    .topbar-left, .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar-right { margin-left: auto; }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .icon-btn:active { transform: scale(0.96); filter: brightness(0.97); }
+    .icon-btn svg { width: 20px; height: 20px; display: block; }
+
+    .lang-flag {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lang-flag:active { transform: scale(0.96); }
+
+    .bal-chip {
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .bal-chip:active { transform: scale(0.96); }
+    .bal-chip .cur {
+      color: var(--hint);
+      font-weight: 600;
+      font-size: 11px;
+      margin-left: 2px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--brand-line);
+      background: var(--brand-soft);
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: var(--shadow);
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+    .avatar:active { transform: scale(0.96); }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .screen {
@@ -124,17 +230,18 @@
 
     .btn:disabled { opacity: 0.45; cursor: default; transform: none; }
 
-    .btn.theme-opt {
+    .btn.theme-opt, .btn.lang-opt {
       font-size: 14px;
       min-height: 44px;
     }
-    .btn.theme-opt.active {
+    .btn.theme-opt.active, .btn.lang-opt.active {
       border-color: var(--brand);
       background: var(--brand-soft);
       color: var(--brand);
       box-shadow: none;
     }
-    [data-theme="dark"] .btn.theme-opt.active {
+    [data-theme="dark"] .btn.theme-opt.active,
+    [data-theme="dark"] .btn.lang-opt.active {
       color: #FFFFFF;
       background: rgba(255,255,255,0.12);
     }
@@ -263,16 +370,79 @@
       color: var(--text);
     }
 
-    .theme-row {
+    .theme-row, .lang-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin-top: 8px;
     }
+    .lang-row { grid-template-columns: 1fr 1fr 1fr; }
+
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .profile-head .avatar-lg {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--brand-line);
+      overflow: hidden;
+      background: var(--brand-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand);
+      flex-shrink: 0;
+    }
+    .profile-head .avatar-lg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .profile-head .info { min-width: 0; }
+    .profile-head .info .name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .profile-head .info .uname {
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--hint);
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
   <div class="app">
+    <!-- Top bar (всегда видна) -->
+    <div class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn" id="btn-settings" title="Настройки" aria-label="Настройки">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="lang-flag" id="btn-lang-flag" title="Язык" aria-label="Язык">🇷🇺</button>
+        <button type="button" class="bal-chip" id="btn-bal-chip" title="Баланс">
+          <span id="top-bal">—</span><span class="cur">₽</span>
+        </button>
+        <button type="button" class="avatar" id="btn-avatar" title="Профиль" aria-label="Профиль">
+          <span id="avatar-fallback">A</span>
+          <img id="avatar-img" alt="" style="display:none" />
+        </button>
+      </div>
+    </div>
+
     <!-- MAIN -->
     <div id="screen-main" class="screen active">
       <div class="spacer"></div>
@@ -283,6 +453,38 @@
         <button class="btn" data-nav="help">Помощь</button>
         <button class="btn" data-nav="support">Поддержка</button>
         <button class="btn ghost wide" data-nav="panel" id="btn-panel" style="display:none">Панель</button>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="screen-profile" class="screen">
+      <div class="panel">
+        <div class="profile-head">
+          <div class="avatar-lg" id="profile-avatar">
+            <span id="profile-avatar-fb">A</span>
+            <img id="profile-avatar-img" alt="" style="display:none" />
+          </div>
+          <div class="info">
+            <div class="name" id="profile-name">—</div>
+            <div class="uname" id="profile-uname">—</div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="label">ID</div>
+          <div class="value" id="profile-id">—</div>
+        </div>
+        <div class="field">
+          <div class="label">Роль</div>
+          <div class="value" id="profile-role">—</div>
+        </div>
+        <div class="field">
+          <div class="label">Баланс</div>
+          <div class="value" id="profile-bal">— ₽</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="actions">
+        <button class="btn ghost wide" data-nav="main">Назад</button>
       </div>
     </div>
 
@@ -337,7 +539,12 @@
         <h1>Настройки</h1>
         <div class="field">
           <div class="label">Язык</div>
-          <div class="value" id="set-lang">—</div>
+          <div class="value" id="set-lang">Русский</div>
+          <div class="lang-row">
+            <button type="button" class="btn lang-opt" data-lang-set="ru">🇷🇺 RU</button>
+            <button type="button" class="btn lang-opt" data-lang-set="en">🇬🇧 EN</button>
+            <button type="button" class="btn lang-opt" data-lang-set="uk">🇺🇦 UK</button>
+          </div>
         </div>
         <div class="field">
           <div class="label">Тема</div>
@@ -406,23 +613,32 @@
     };
     const ROLE_INTERN = 3;
     const THEME_LABELS = { light: "Светлая", dark: "Тёмная" };
+    const LANG_META = {
+      ru: { flag: "🇷🇺", name: "Русский" },
+      en: { flag: "🇬🇧", name: "English" },
+      uk: { flag: "🇺🇦", name: "Українська" },
+      de: { flag: "🇩🇪", name: "Deutsch" },
+      tr: { flag: "🇹🇷", name: "Türkçe" },
+      zh: { flag: "🇨🇳", name: "中文" },
+      ja: { flag: "🇯🇵", name: "日本語" },
+      ko: { flag: "🇰🇷", name: "한국어" },
+    };
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
 
-    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-    const USER_ID = user ? user.id : null;
+    const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+    const USER_ID = tgUser ? tgUser.id : null;
     document.getElementById("uid").textContent = USER_ID || "—";
 
     function applyTheme(theme) {
       const t = theme === "dark" ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", t);
       try { localStorage.setItem("advinced_theme", t); } catch (e) {}
-      const label = THEME_LABELS[t] || "Светлая";
       const el = document.getElementById("set-theme");
-      if (el) el.textContent = label;
+      if (el) el.textContent = THEME_LABELS[t] || "Светлая";
       document.querySelectorAll("[data-theme-set]").forEach((b) => {
         b.classList.toggle("active", b.getAttribute("data-theme-set") === t);
       });
@@ -439,7 +655,19 @@
       }
     }
 
-    // начальная тема: localStorage → light
+    function applyLang(code) {
+      const c = (code && LANG_META[code]) ? code : "ru";
+      try { localStorage.setItem("advinced_lang", c); } catch (e) {}
+      const meta = LANG_META[c];
+      document.getElementById("btn-lang-flag").textContent = meta.flag;
+      document.getElementById("set-lang").textContent = meta.name;
+      document.querySelectorAll("[data-lang-set]").forEach((b) => {
+        b.classList.toggle("active", b.getAttribute("data-lang-set") === c);
+      });
+      return c;
+    }
+
+    // defaults
     let initialTheme = "light";
     try {
       const saved = localStorage.getItem("advinced_theme");
@@ -447,9 +675,52 @@
     } catch (e) {}
     applyTheme(initialTheme);
 
+    let initialLang = "ru";
+    try {
+      const saved = localStorage.getItem("advinced_lang");
+      if (saved && LANG_META[saved]) initialLang = saved;
+    } catch (e) {}
+    applyLang(initialLang);
+
     document.querySelectorAll("[data-theme-set]").forEach((btn) => {
       btn.addEventListener("click", () => applyTheme(btn.getAttribute("data-theme-set")));
     });
+    document.querySelectorAll("[data-lang-set]").forEach((btn) => {
+      btn.addEventListener("click", () => applyLang(btn.getAttribute("data-lang-set")));
+    });
+
+    // Avatar from Telegram
+    function setAvatar() {
+      const img = document.getElementById("avatar-img");
+      const fb = document.getElementById("avatar-fallback");
+      const pImg = document.getElementById("profile-avatar-img");
+      const pFb = document.getElementById("profile-avatar-fb");
+      const letter = ((tgUser && (tgUser.first_name || tgUser.username)) || "A").charAt(0).toUpperCase();
+      fb.textContent = letter;
+      pFb.textContent = letter;
+      const photo = tgUser && tgUser.photo_url;
+      if (photo) {
+        img.src = photo;
+        img.style.display = "block";
+        fb.style.display = "none";
+        pImg.src = photo;
+        pImg.style.display = "block";
+        pFb.style.display = "none";
+      } else {
+        img.style.display = "none";
+        fb.style.display = "";
+        pImg.style.display = "none";
+        pFb.style.display = "";
+      }
+      const name = tgUser
+        ? [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || ("ID " + tgUser.id)
+        : "Гость";
+      const uname = tgUser && tgUser.username ? ("@" + tgUser.username) : (USER_ID ? ("ID " + USER_ID) : "—");
+      document.getElementById("profile-name").textContent = name;
+      document.getElementById("profile-uname").textContent = uname;
+      document.getElementById("profile-id").textContent = USER_ID || "—";
+    }
+    setAvatar();
 
     async function apiGet(path) {
       const url = API_BASE.replace(/\/$/, "") + path;
@@ -468,33 +739,47 @@
           if (id === "screen-main") tg.BackButton.hide();
           else {
             tg.BackButton.show();
-            tg.BackButton.onClick(() => show(id === "screen-project" ? "screen-projects" : "screen-main"));
+            tg.BackButton.onClick(() => {
+              if (id === "screen-project") show("screen-projects");
+              else show("screen-main");
+            });
           }
         } catch (e) {}
       }
     }
 
+    function formatBal(n) {
+      const v = Number(n || 0);
+      return (Math.round(v * 100) / 100).toFixed(2);
+    }
+
     async function loadMe() {
-      if (!USER_ID) return;
+      if (!USER_ID) {
+        document.getElementById("top-bal").textContent = "0.00";
+        return;
+      }
       try {
         me = await apiGet("/api/miniapp/me?user_id=" + encodeURIComponent(USER_ID));
-        const bal = Number(me.balance || 0);
-        document.getElementById("bal-big").innerHTML = bal.toFixed(2) + "<span>₽</span>";
-        document.getElementById("set-lang").textContent = me.lang || "ru";
-        // тема UI — локальная; если с сервера dark/light — применим
-        if (me.theme === "dark" || me.theme === "light") {
-          applyTheme(me.theme);
-        } else {
+        const bal = formatBal(me.balance);
+        document.getElementById("top-bal").textContent = bal;
+        document.getElementById("bal-big").innerHTML = bal + "<span>₽</span>";
+        document.getElementById("profile-bal").textContent = bal + " ₽";
+        if (me.lang && LANG_META[me.lang]) applyLang(me.lang);
+        if (me.theme === "dark" || me.theme === "light") applyTheme(me.theme);
+        else {
           const cur = document.documentElement.getAttribute("data-theme") || "light";
           document.getElementById("set-theme").textContent = THEME_LABELS[cur] || "Светлая";
         }
         const role = Number(me.role || 0);
-        document.getElementById("set-role").textContent = ROLE_NAMES[role] || String(role);
+        const roleName = ROLE_NAMES[role] || String(role);
+        document.getElementById("set-role").textContent = roleName;
+        document.getElementById("profile-role").textContent = roleName;
         if (role >= ROLE_INTERN || me.is_staff) {
           document.getElementById("btn-panel").style.display = "";
         }
       } catch (e) {
         console.warn(e);
+        document.getElementById("top-bal").textContent = "—";
       }
     }
 
@@ -552,6 +837,12 @@
       }
     }
 
+    // Top bar actions
+    document.getElementById("btn-settings").onclick = () => { show("screen-settings"); loadMe(); };
+    document.getElementById("btn-bal-chip").onclick = () => { show("screen-balance"); loadMe(); };
+    document.getElementById("btn-avatar").onclick = () => { show("screen-profile"); loadMe(); };
+    document.getElementById("btn-lang-flag").onclick = () => { show("screen-settings"); };
+
     loadMe();
 
     document.querySelectorAll("[data-nav]").forEach((btn) => {
@@ -564,12 +855,13 @@
         if (nav === "help") return show("screen-help");
         if (nav === "support") return show("screen-support");
         if (nav === "panel") return show("screen-panel");
+        if (nav === "profile") { show("screen-profile"); loadMe(); return; }
       });
     });
     document.getElementById("proj-prev").onclick = () => { if (projPage > 1) loadProjects(projPage - 1); };
     document.getElementById("proj-next").onclick = () => loadProjects(projPage + 1);
 
-    window.AdvincedAPI = { API_BASE, apiGet, USER_ID, applyTheme };
+    window.AdvincedAPI = { API_BASE, apiGet, USER_ID, applyTheme, applyLang };
   </script>
 </body>
 </html>
