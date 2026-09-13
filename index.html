@@ -226,6 +226,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle.on::after{transform:translateX(18px)}
 .toggle:disabled{opacity:.5;cursor:default}
 
+
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.support-tile{
+  text-align:left;border:1px solid var(--line);background:var(--surface);
+  border-radius:14px;padding:14px 12px;cursor:pointer;box-shadow:var(--shadow);
+  min-height:84px;display:flex;flex-direction:column;justify-content:center;gap:6px;
+}
+.support-tile:active{opacity:.85}
+.support-tile-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
+.support-tile-sub{font-size:11px;color:var(--hint);line-height:1.2;word-break:break-all}
+.chat-messages{
+  display:flex;flex-direction:column;gap:8px;margin:10px 0 12px;
+  min-height:220px;max-height:48vh;overflow-y:auto;padding:4px 2px;
+}
+.chat-bubble{
+  max-width:88%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.35;
+  background:var(--surface);border:1px solid var(--line);color:var(--text);
+}
+.chat-bubble.me{align-self:flex-end;background:var(--brand-soft);border-color:var(--brand-line)}
+.chat-bubble.staff{align-self:flex-start}
+.chat-bubble .meta{display:block;font-size:10px;color:var(--hint);margin-top:4px}
+.chat-footer{position:sticky;bottom:0;padding-bottom:4px}
+.chat-input-row{display:flex;gap:8px;align-items:center}
+.chat-input-row .form-input{flex:1}
+
 </style>
 </head>
 <body>
@@ -496,15 +521,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-support" class="screen">
       <div class="panel"><h1 data-i18n="support">Поддержка</h1></div>
-      <div class="tile-grid">
-        <button type="button" class="tile"><div class="t-title" data-i18n="support_manager">Менеджер</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
-        <button type="button" class="tile"><div class="t-title" data-i18n="support_bot">Бот</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
-        <button type="button" class="tile"><div class="t-title" data-i18n="support_email">Почта</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
-        <button type="button" class="tile"><div class="t-title" data-i18n="support_faq">FAQ</div><div class="t-sub" data-i18n="soon">Скоро</div></button>
+      <div class="support-grid">
+        <button type="button" class="support-tile" id="sup-chat">
+          <div class="support-tile-title" data-i18n="support_ticket">Написать обращение</div>
+          <div class="support-tile-sub" data-i18n="support_chat_manager">Чат с менеджером</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-manager">
+          <div class="support-tile-title" data-i18n="support_manager">Менеджер в Telegram</div>
+          <div class="support-tile-sub">@mediamanagering</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-bot">
+          <div class="support-tile-title" data-i18n="support_bot">Бот поддержки</div>
+          <div class="support-tile-sub">@clossrsuppbot</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-mail">
+          <div class="support-tile-title" data-i18n="support_mail">Написать на почту</div>
+          <div class="support-tile-sub">clossr.support@gmail.com</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-hire">
+          <div class="support-tile-title" data-i18n="support_hire">Сотрудничать</div>
+          <div class="support-tile-sub" data-i18n="ads_and_jobs">Реклама и вакансии</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-faq">
+          <div class="support-tile-title" data-i18n="support_faq">FAQ</div>
+          <div class="support-tile-sub">clossr.site</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-privacy">
+          <div class="support-tile-title" data-i18n="support_privacy">Политика конфиденциальности</div>
+          <div class="support-tile-sub">clossr.site/privacy</div>
+        </button>
+        <button type="button" class="support-tile" id="sup-terms">
+          <div class="support-tile-title" data-i18n="support_terms">Пользовательское соглашение</div>
+          <div class="support-tile-sub">clossr.site/terms</div>
+        </button>
       </div>
+      <button type="button" class="btn wide" id="sup-other" data-i18n="support_other_info" style="margin-top:12px">Другая информация</button>
     </div>
 
-    <div id="screen-panel" class="screen">
+    <div id="screen-support-chat" class="screen">
+      <div class="panel"><h1 data-i18n="support">Поддержка</h1>
+        <div class="hint" data-i18n="manager_eta">*менеджер напишет вам в течение 96ч</div>
+      </div>
+      <div id="support-chat-messages" class="chat-messages"></div>
+      <div class="chat-footer">
+        <div class="chat-input-row">
+          <input class="form-input" type="text" id="support-chat-input" maxlength="4000" data-i18n-placeholder="message_ph" placeholder="Сообщение..."/>
+          <button type="button" class="btn primary" id="support-chat-send" data-i18n="send">Отправить</button>
+        </div>
+      </div>
+    </div>
+<div id="screen-panel" class="screen">
       <div class="panel"><h1 data-i18n="panel">Панель</h1><div class="hint" id="panel-role">—</div></div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
@@ -526,6 +592,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   </div>
 </div>
 <script>
+
+const SUPPORT_MANAGER_URL="https://t.me/mediamanagering";
+const SUPPORT_BOT_URL="https://t.me/clossrsuppbot";
+const SUPPORT_EMAIL_ADDR="clossr.support@gmail.com";
+const SUPPORT_FAQ_LINK="https://clossr.site/#about";
+const PRIVACY_POLICY_URL="https://clossr.site/privacy.html";
+const TERMS_URL="https://clossr.site/terms.html";
+function openExternal(url){
+  try{
+    if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){Telegram.WebApp.openLink(url);return}
+  }catch(e){}
+  window.open(url,"_blank");
+}
+function openTgLink(url){
+  try{
+    if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openTelegramLink){Telegram.WebApp.openTelegramLink(url);return}
+  }catch(e){}
+  openExternal(url);
+}
+
 const API_BASE="https://advinced-bot5.waw0.amvera.tech";
 const ROLE_INTERN=3;
 const ROLE_NAMES={0:"user",1:"partner",2:"corp",3:"intern",4:"mod",5:"admin",6:"owner"};
@@ -553,7 +639,7 @@ const LANGS=[
 function baseI18n(o){return o}
 const I18N={
 ru:baseI18n({back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
-language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
+language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
 recipient:"Реквизиты",recipient_name:"Получатель",credit_amount:"К зачислению",fee:"Комиссия",total_to_pay:"Итого к оплате",
@@ -566,7 +652,7 @@ staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",
 panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
-language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
+language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
 recipient:"Details",recipient_name:"Recipient",credit_amount:"To be credited",fee:"Fee",total_to_pay:"Total to pay",
@@ -878,7 +964,8 @@ async function pollEventsOnce(){
       if(ev.type==="balance"&&ev.data){
         if(ev.data.balance!=null)applyBalanceUI(ev.data.balance);
         else loadMe();
-      }else if(ev.type==="project"){
+      }else if(ev.type==="support"){const sc=document.getElementById("screen-support-chat");if(sc&&sc.classList.contains("active"))loadSupportChat();}
+      else if(ev.type==="project"){
         const scr=document.getElementById("screen-projects");
         if(scr&&scr.classList.contains("active"))loadProjects();
         const pscr=document.getElementById("screen-project");
@@ -892,6 +979,56 @@ async function pollEventsOnce(){
   }
   _eventBusy=false;
 }
+
+function wireSupport(){
+  const open = (url, tg)=>{ if(tg) openTgLink(url); else openExternal(url); };
+  on("sup-manager","onclick",()=>open(SUPPORT_MANAGER_URL,true));
+  on("sup-bot","onclick",()=>open(SUPPORT_BOT_URL,true));
+  on("sup-mail","onclick",()=>open("https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(SUPPORT_EMAIL_ADDR),false));
+  on("sup-faq","onclick",()=>open(SUPPORT_FAQ_LINK,false));
+  on("sup-privacy","onclick",()=>open(PRIVACY_POLICY_URL,false));
+  on("sup-terms","onclick",()=>open(TERMS_URL,false));
+  on("sup-hire","onclick",()=>open(SUPPORT_MANAGER_URL,true));
+  on("sup-other","onclick",()=>{ try{ (window.Telegram&&Telegram.WebApp&&Telegram.WebApp.showAlert)?Telegram.WebApp.showAlert(t("support_other_info_empty")):alert(t("support_other_info_empty")); }catch(e){alert(t("support_other_info_empty"));} });
+  on("sup-chat","onclick",()=>{show("support-chat");loadSupportChat();});
+  on("support-chat-send","onclick",sendSupportMessage);
+  const inp=document.getElementById("support-chat-input");
+  if(inp)inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();sendSupportMessage();}});
+}
+async function loadSupportChat(){
+  const box=document.getElementById("support-chat-messages");
+  if(!box)return;
+  if(!USER_ID){box.innerHTML='<div class="empty">Telegram</div>';return}
+  box.innerHTML='<div class="empty">…</div>';
+  try{
+    const data=await apiGet("/api/support/messages?user_id="+encodeURIComponent(USER_ID));
+    const msgs=data.messages||[];
+    if(!msgs.length){box.innerHTML='<div class="empty">'+t("support_chat_empty")+"</div>";return}
+    box.innerHTML=msgs.map(m=>{
+      const me=m.sender==="user";
+      return '<div class="chat-bubble '+(me?"me":"staff")+'">'+
+        String(m.text||"").replace(/</g,"&lt;")+
+        '<span class="meta">'+(m.created_at||"")+"</span></div>";
+    }).join("");
+    box.scrollTop=box.scrollHeight;
+  }catch(e){box.innerHTML='<div class="empty">'+String(e.message||e)+"</div>"}
+}
+async function sendSupportMessage(){
+  const input=document.getElementById("support-chat-input");
+  const text=(input&&input.value||"").trim();
+  if(!text||!USER_ID)return;
+  const btn=document.getElementById("support-chat-send");
+  if(btn)btn.disabled=true;
+  try{
+    await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
+    if(input)input.value="";
+    await loadSupportChat();
+  }catch(e){
+    try{ (window.Telegram&&Telegram.WebApp&&Telegram.WebApp.showAlert)?Telegram.WebApp.showAlert(String(e.message||e)):alert(String(e.message||e)); }catch(_e){alert(String(e.message||e));}
+  }
+  if(btn)btn.disabled=false;
+}
+
 function startEventLoop(){
   if(_eventTimer)return;
   // long-poll: сразу и цикл
@@ -1084,7 +1221,7 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();startEventLoop();
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();startEventLoop();wireSupport();
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
 const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
