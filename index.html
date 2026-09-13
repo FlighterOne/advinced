@@ -229,10 +229,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .support-tile{
-  text-align:left;border:1px solid var(--line);background:var(--surface);
+  text-align:center;border:1px solid var(--line);background:var(--surface);
   border-radius:14px;padding:14px 12px;cursor:pointer;box-shadow:var(--shadow);
-  min-height:84px;display:flex;flex-direction:column;justify-content:center;gap:6px;
+  min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
 }
+.support-tile.no-sub{min-height:64px}
 .support-tile:active{opacity:.85}
 .support-tile-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
 .support-tile-sub{font-size:11px;color:var(--hint);line-height:1.2;word-break:break-all}
@@ -250,6 +251,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-footer{position:sticky;bottom:0;padding-bottom:4px}
 .chat-input-row{display:flex;gap:8px;align-items:center}
 .chat-input-row .form-input{flex:1}
+
+
+.section-title{font-size:20px;font-weight:700;margin:0 0 14px;color:var(--text);line-height:1.25;padding-right:4px}
+.support-tile{text-align:center;align-items:center}
+.support-tile-title{text-align:center}
+.support-tile-sub{text-align:center}
+.support-tile.no-sub{min-height:64px;justify-content:center}
+.seg-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin:0 0 12px}
+.seg-toggle button{
+  height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);font-size:14px;font-weight:600;cursor:pointer;
+}
+.seg-toggle button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+[data-theme="dark"] .seg-toggle button.active{background:#fff;color:#006AD2}
+.info-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:1.45;color:var(--text);margin-bottom:12px}
+.form-group{margin:0 0 12px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--hint);margin:0 0 6px}
+.form-input{width:100%;box-sizing:border-box;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:0 12px;font-size:14px}
+.method-list{display:grid;gap:8px}
+.method-item{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;cursor:pointer}
+.method-item.active{border-color:var(--brand);background:var(--brand-soft)}
+.method-item .title{font-size:14px;font-weight:600}
+.chat-page .chat-messages{min-height:40vh;max-height:55vh;background:transparent;border:none;padding:8px 0 12px}
+.chat-footer{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;background:var(--bg)}
 
 </style>
 </head>
@@ -343,7 +368,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-settings" class="screen">
-      <div class="panel"><h1 data-i18n="settings">Настройки</h1></div>
+      <div class="section-title" data-i18n="settings">Настройки</div>
       <div class="tile-grid">
         <button type="button" class="tile" id="tile-lang">
           <div class="t-title" data-i18n="language">Язык</div>
@@ -357,12 +382,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-lang" class="screen">
-      <div class="panel"><h1 data-i18n="language">Язык</h1></div>
+      <div class="section-title" data-i18n="language">Язык</div>
       <div class="lang-list" id="lang-list"></div>
     </div>
 
     <div id="screen-theme" class="screen">
-      <div class="panel"><h1 data-i18n="theme">Тема</h1></div>
+      <div class="section-title" data-i18n="theme">Тема</div>
       <div class="theme-list">
         <button type="button" class="theme-item" data-theme-set="auto"><span data-i18n="theme_auto">Как в Telegram</span></button>
         <button type="button" class="theme-item" data-theme-set="light"><span data-i18n="theme_light">Светлая</span></button>
@@ -403,8 +428,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <!-- DEPOSIT FORM -->
     <div id="screen-deposit" class="screen">
-      <div class="panel">
-        <h1 data-i18n="deposit">Пополнение</h1>
+      <div class="section-title" data-i18n="deposit">Пополнение</div><div class="panel">
         <div class="form-group">
           <label class="form-label" data-i18n="amount_rub">Сумма (₽)</label>
           <input class="form-input" id="dep-amount" type="number" min="1" step="0.01" placeholder="100" inputmode="decimal"/>
@@ -434,8 +458,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <!-- DEPOSIT CONFIRM -->
     <div id="screen-deposit-confirm" class="screen">
-      <div class="panel">
-        <h1 data-i18n="confirm_payment">Подтверждение</h1>
+      <div class="section-title" data-i18n="confirm_payment">Подтверждение</div><div class="panel">
         <div class="pay-summary">
           <div class="row"><span class="muted-v" data-i18n="method">Способ оплаты</span><span id="dc-method">—</span></div>
           <div class="row"><span class="muted-v" data-i18n="credit_amount">К зачислению</span><span id="dc-credit">—</span></div>
@@ -450,8 +473,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <!-- WITHDRAW FORM -->
     <div id="screen-withdraw" class="screen">
-      <div class="panel">
-        <h1 data-i18n="withdraw">Вывод</h1>
+      <div class="section-title" data-i18n="withdraw">Вывод</div><div class="panel">
         <div class="form-group">
           <label class="form-label" data-i18n="amount_rub">Сумма (₽)</label>
           <input class="form-input" id="wd-amount" type="number" min="5" step="0.01" placeholder="100" inputmode="decimal"/>
@@ -486,8 +508,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <!-- WITHDRAW CONFIRM -->
     <div id="screen-withdraw-confirm" class="screen">
-      <div class="panel">
-        <h1 data-i18n="confirm_withdraw">Подтверждение вывода</h1>
+      <div class="section-title" data-i18n="confirm_withdraw">Подтверждение вывода</div><div class="panel">
         <div class="pay-summary">
           <div class="row"><span class="muted-v" data-i18n="method">Способ вывода</span><span id="wc-method">—</span></div>
           <div class="row"><span class="muted-v" data-i18n="recipient">Реквизиты</span><span id="wc-recipient">—</span></div>
@@ -501,26 +522,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-projects" class="screen">
-      <div class="panel"><h1 data-i18n="projects">Проекты</h1><div class="hint" id="proj-meta">—</div></div>
+      <div class="section-title" data-i18n="projects">Проекты</div><div class="hint" id="proj-meta">—</div>
       <div class="list proj-scroll" id="proj-list"></div>
     </div>
 
     <div id="screen-project" class="screen">
       <div class="panel">
-        <h1 id="pd-title">—</h1>
+        <div class="section-title" id="pd-title">—</div>
         <div class="muted" id="pd-body">—</div>
       </div>
       <div class="btn-stack" id="pd-actions"></div>
     </div>
 
     <div id="screen-help" class="screen">
-      <div class="panel"><h1 data-i18n="help">Помощь</h1>
+      <div class="section-title" data-i18n="help">Помощь</div>
         <p class="muted" data-i18n="help_body">Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.</p>
       </div>
     </div>
 
     <div id="screen-support" class="screen">
-      <div class="panel"><h1 data-i18n="support">Поддержка</h1></div>
+      <div class="section-title" data-i18n="support">Поддержка</div>
       <div class="support-grid">
         <button type="button" class="support-tile" id="sup-chat">
           <div class="support-tile-title" data-i18n="support_ticket">Написать обращение</div>
@@ -538,30 +559,79 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="support-tile-title" data-i18n="support_mail">Написать на почту</div>
           <div class="support-tile-sub">clossr.support@gmail.com</div>
         </button>
-        <button type="button" class="support-tile" id="sup-hire">
+        <button type="button" class="support-tile no-sub" id="sup-hire">
           <div class="support-tile-title" data-i18n="support_hire">Сотрудничать</div>
-          <div class="support-tile-sub" data-i18n="ads_and_jobs">Реклама и вакансии</div>
         </button>
-        <button type="button" class="support-tile" id="sup-faq">
+        <button type="button" class="support-tile no-sub" id="sup-faq">
           <div class="support-tile-title" data-i18n="support_faq">FAQ</div>
-          <div class="support-tile-sub">clossr.site</div>
         </button>
-        <button type="button" class="support-tile" id="sup-privacy">
+        <button type="button" class="support-tile no-sub" id="sup-privacy">
           <div class="support-tile-title" data-i18n="support_privacy">Политика конфиденциальности</div>
-          <div class="support-tile-sub">clossr.site/privacy</div>
         </button>
-        <button type="button" class="support-tile" id="sup-terms">
+        <button type="button" class="support-tile no-sub" id="sup-terms">
           <div class="support-tile-title" data-i18n="support_terms">Пользовательское соглашение</div>
-          <div class="support-tile-sub">clossr.site/terms</div>
         </button>
       </div>
       <button type="button" class="btn wide" id="sup-other" data-i18n="support_other_info" style="margin-top:12px">Другая информация</button>
     </div>
 
-    <div id="screen-support-chat" class="screen">
-      <div class="panel"><h1 data-i18n="support">Поддержка</h1>
-        <div class="hint" data-i18n="manager_eta">*менеджер напишет вам в течение 96ч</div>
+        
+    <div id="screen-collaborate" class="screen">
+      <div class="section-title" data-i18n="support_hire">Сотрудничать</div>
+      <div class="seg-toggle" id="collab-seg">
+        <button type="button" id="collab-seg-ads" class="active" data-i18n="collab_ads">Реклама</button>
+        <button type="button" id="collab-seg-work" data-i18n="collab_work">Работа</button>
       </div>
+      <div id="collab-ads-panel">
+        <div id="referral-panel" class="info-block" data-i18n="collab_ads_hint">Размещение рекламы и партнёрские материалы — напишите менеджеру.</div>
+        <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
+      </div>
+      <div id="collab-work-panel" style="display:none">
+        <div class="info-block" id="hire-info-block"></div>
+        <div class="btn-stack">
+          <button type="button" class="btn primary wide" id="collab-job-form" data-i18n="application_form">Составить анкету</button>
+          <button type="button" class="btn wide" id="collab-work-mgr" data-i18n="write_manager">Написать менеджеру</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-job-form" class="screen">
+      <div class="section-title" data-i18n="job_form_title">Анкета</div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="fio">ФИО</label>
+        <input class="form-input" type="text" id="job-fio" placeholder="Иванов Иван Иванович"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="age_min16">Возраст (минимум 16)</label>
+        <input class="form-input" type="number" id="job-age" placeholder="18" min="16"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="employment">Занятость</label>
+        <div class="method-list" id="job-employment-list">
+          <div class="method-item" data-emp="school"><div class="title" data-i18n="school">Школьник</div></div>
+          <div class="method-item" data-emp="student"><div class="title" data-i18n="student">Студент</div></div>
+          <div class="method-item" data-emp="working"><div class="title" data-i18n="working">Работаю</div></div>
+          <div class="method-item" data-emp="retired"><div class="title" data-i18n="retired">На пенсии</div></div>
+          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">В поиске</div></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="username">Username</label>
+        <input class="form-input" type="text" id="job-username" placeholder="@username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="phone_number">Номер телефона</label>
+        <input class="form-input" type="tel" id="job-phone" placeholder="+7..."/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="email">Почта</label>
+        <input class="form-input" type="email" id="job-email" placeholder="mail@example.com"/>
+      </div>
+      <button type="button" class="btn primary wide" id="job-submit-btn" data-i18n="submit_app">Отправить анкету</button>
+    </div>
+<div id="screen-support-chat" class="screen">
+      <div class="section-title" data-i18n="support">Поддержка</div>
+      <div class="hint" data-i18n="manager_eta" style="margin:-6px 0 8px">*менеджер напишет вам в течение 96ч</div>
       <div id="support-chat-messages" class="chat-messages"></div>
       <div class="chat-footer">
         <div class="chat-input-row">
@@ -571,7 +641,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       </div>
     </div>
 <div id="screen-panel" class="screen">
-      <div class="panel"><h1 data-i18n="panel">Панель</h1><div class="hint" id="panel-role">—</div></div>
+      <div class="section-title" data-i18n="panel">Панель</div><div class="hint" id="panel-role">—</div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
@@ -638,7 +708,7 @@ const LANGS=[
 function baseI18n(o){return o}
 const I18N={
 ru:baseI18n({back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
-language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
+language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
 recipient:"Реквизиты",recipient_name:"Получатель",credit_amount:"К зачислению",fee:"Комиссия",total_to_pay:"Итого к оплате",
@@ -651,7 +721,7 @@ staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",
 panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
-language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
+language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
 recipient:"Details",recipient_name:"Recipient",credit_amount:"To be credited",fee:"Fee",total_to_pay:"Total to pay",
@@ -979,6 +1049,69 @@ async function pollEventsOnce(){
   _eventBusy=false;
 }
 
+
+function setCollabTab(tab){
+  const ads=document.getElementById("collab-seg-ads");
+  const work=document.getElementById("collab-seg-work");
+  const pa=document.getElementById("collab-ads-panel");
+  const pw=document.getElementById("collab-work-panel");
+  if(ads)ads.classList.toggle("active",tab==="ads");
+  if(work)work.classList.toggle("active",tab==="work");
+  if(pa)pa.style.display=tab==="ads"?"":"none";
+  if(pw)pw.style.display=tab==="work"?"":"none";
+  if(tab==="work")renderHireInfo();
+}
+function renderHireInfo(){
+  const box=document.getElementById("hire-info-block");
+  if(!box)return;
+  box.innerHTML=
+    "<b>"+t("role_mod")+"</b><br><br>"+
+    "• "+t("salary")+": <b>25$ / 12 "+t("hours")+"</b><br>"+
+    "• "+t("hire_shifts_req")+": <b>3 "+t("hire_shifts_week")+"</b><br><br>"+
+    "<b>"+t("internship")+"</b><br><br>"+
+    "• "+t("period")+": <b>1 "+t("month")+"</b><br>"+
+    "• "+t("intern_shift")+": <b>6 "+t("hours")+"</b><br>"+
+    "• "+t("intern_pay")+": <b>10$</b><br><br>"+
+    "<b>"+t("hire_duties")+"</b><br><br>"+
+    "• "+t("duty_mod_listings")+"<br>"+
+    "• "+t("duty_mod_complaints");
+}
+let _jobEmp="";
+function selectEmployment(el){
+  document.querySelectorAll("#job-employment-list .method-item").forEach(x=>x.classList.remove("active"));
+  el.classList.add("active");
+  _jobEmp=el.getAttribute("data-emp")||"";
+}
+function openJobForm(){
+  show("job-form");
+  const un=document.getElementById("job-username");
+  if(un&&tgUser&&tgUser.username&&!un.value)un.value="@"+tgUser.username;
+}
+async function submitJobApplication(){
+  const fio=(document.getElementById("job-fio")||{}).value||"";
+  const age=(document.getElementById("job-age")||{}).value||"";
+  const username=(document.getElementById("job-username")||{}).value||"";
+  const phone=(document.getElementById("job-phone")||{}).value||"";
+  const email=(document.getElementById("job-email")||{}).value||"";
+  if(!fio.trim()||!age||!_jobEmp||!phone.trim()){
+    alert(t("job_form_required"));
+    return;
+  }
+  const text=["[JOB APPLICATION]",fio,"age:"+age,"emp:"+_jobEmp,username,phone,email].join("\n");
+  try{
+    if(USER_ID){
+      await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
+      alert(t("job_form_sent"));
+      show("collaborate");
+      setCollabTab("work");
+    }else{
+      openTgLink(SUPPORT_MANAGER_URL);
+    }
+  }catch(e){
+    alert(String(e.message||e));
+  }
+}
+
 function wireSupport(){
   const open = (url, tg)=>{ if(tg) openTgLink(url); else openExternal(url); };
   on("sup-manager","onclick",()=>open(SUPPORT_MANAGER_URL,true));
@@ -987,10 +1120,18 @@ function wireSupport(){
   on("sup-faq","onclick",()=>open(SUPPORT_FAQ_LINK,false));
   on("sup-privacy","onclick",()=>open(PRIVACY_POLICY_URL,false));
   on("sup-terms","onclick",()=>open(TERMS_URL,false));
-  on("sup-hire","onclick",()=>open(SUPPORT_MANAGER_URL,true));
+  on("sup-hire","onclick",()=>{show("collaborate");setCollabTab("ads");});
   on("sup-other","onclick",()=>{ try{ (window.Telegram&&Telegram.WebApp&&Telegram.WebApp.showAlert)?Telegram.WebApp.showAlert(t("support_other_info_empty")):alert(t("support_other_info_empty")); }catch(e){alert(t("support_other_info_empty"));} });
   on("sup-chat","onclick",()=>{show("support-chat");loadSupportChat();});
   on("support-chat-send","onclick",sendSupportMessage);
+  on("collab-seg-ads","onclick",()=>setCollabTab("ads"));
+  on("collab-seg-work","onclick",()=>setCollabTab("work"));
+  on("collab-ads-mgr","onclick",()=>openTgLink(SUPPORT_MANAGER_URL));
+  on("collab-work-mgr","onclick",()=>openTgLink(SUPPORT_MANAGER_URL));
+  on("collab-job-form","onclick",openJobForm);
+  on("job-submit-btn","onclick",submitJobApplication);
+  document.querySelectorAll("#job-employment-list .method-item").forEach(el=>{el.onclick=()=>selectEmployment(el)});
+
   const inp=document.getElementById("support-chat-input");
   if(inp)inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();sendSupportMessage();}});
 }
