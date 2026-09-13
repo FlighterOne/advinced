@@ -1376,31 +1376,38 @@ on("btn-web-logout","onclick",webLogout);
 (function(){const b=document.getElementById("btn-web-logout");if(b)b.style.display=isTelegramMiniApp()?"none":"";})();
 
 (async function bootstrapAuth(){
-  __isMiniApp=isTelegramMiniApp();
-  if(__isMiniApp){
-    USER_ID=tgUser?tgUser.id:null;
-    setAvatar();
-    if(USER_ID){await loadMe(true);startEventLoop()}
-    return;
-  }
-  // Сайт (браузер): сессия или экран входа
-  const sess=loadWebSession();
-  if(sess&&sess.token){
-    __webSessionToken=sess.token;
-    try{
-      const s=await apiGet("/api/auth/session",8000);
-      USER_ID=s.user_id;
-      if(s.lang)state.lang=s.lang;
-      if(s.theme&&s.theme!=="auto")state.theme=s.theme;
-      applyTheme(state.theme,false);applyI18n();
-      setAvatar();
-      await loadMe(true);
-      startEventLoop();
+  try{
+    __isMiniApp=isTelegramMiniApp();
+    if(__isMiniApp){
+      USER_ID=tgUser?tgUser.id:null;
+      try{setAvatar()}catch(e){}
+      if(USER_ID){
+        try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
+        try{startEventLoop()}catch(e){}
+      }
       return;
-    }catch(e){clearWebSession()}
+    }
+    const sess=loadWebSession();
+    if(sess&&sess.token){
+      __webSessionToken=sess.token;
+      try{
+        const s=await apiGet("/api/auth/session",6000);
+        USER_ID=s.user_id;
+        if(s.lang)state.lang=s.lang;
+        if(s.theme&&s.theme!=="auto")state.theme=s.theme;
+        applyTheme(state.theme,false);applyI18n();
+        try{setAvatar()}catch(e){}
+        try{await loadMe(true)}catch(e){}
+        try{startEventLoop()}catch(e){}
+        return;
+      }catch(e){clearWebSession()}
+    }
+    try{setAvatar()}catch(e){}
+    showLoginOverlay();
+  }catch(e){
+    console.warn("bootstrap",e);
+    try{if(!isTelegramMiniApp())showLoginOverlay()}catch(e2){}
   }
-  setAvatar();
-  showLoginOverlay();
 })();
 
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
