@@ -35,8 +35,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
 .content{flex:1;display:flex;flex-direction:column;padding:12px 16px 20px;min-height:0}
-.screen{display:none;flex:1;flex-direction:column;min-height:0}
-.screen.active{display:flex}
+.screen{display:none;flex:1;flex-direction:column;min-height:0;justify-content:flex-start;align-items:stretch}
+.screen.active{display:block}
+#screen-main.active{display:flex;flex-direction:column}
 .spacer{flex:1;min-height:8px}
 
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -119,7 +120,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .back-top{display:none;height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);line-height:28px;margin-top:2px}
 .back-top.show{display:inline-flex;align-items:center}
 .back-top:active{opacity:.8}
-.content{padding-top:10px}
+.content{padding-top:8px}
 .method-btn{display:flex!important;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;text-align:left}
 .method-btn .m-name{font-weight:600}
 .method-btn .m-fee{font-size:11px;font-weight:600;color:var(--hint);white-space:nowrap}
@@ -142,11 +143,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 
 .topbar{align-items:center;padding-top:0;padding-bottom:0;height:var(--header-h);min-height:var(--header-h)}
-.menu-back-bar{display:none;justify-content:flex-start;margin:0 0 12px;min-height:34px;pointer-events:none}
-.menu-back-bar.show{display:flex}
+.menu-back-bar{display:none!important;justify-content:flex-start;margin:0 0 8px;min-height:0;height:0;overflow:hidden;pointer-events:none}
+.menu-back-bar.show{display:flex!important;min-height:32px;height:auto;overflow:visible}
 .menu-back-btn{pointer-events:auto;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
 .menu-back-btn:active{opacity:.8}
-.content.has-back{padding-top:6px}
+.content.has-back{padding-top:4px}
 
 
 .main-menu{grid-template-columns:1fr 1fr}
@@ -253,7 +254,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-input-row .form-input{flex:1}
 
 
-.section-title{font-size:20px;font-weight:700;margin:0 0 14px;color:var(--text);line-height:1.25;padding-right:4px}
+.section-title{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text);line-height:1.25;padding:0;letter-spacing:-0.01em}
 .support-tile{text-align:center;align-items:center}
 .support-tile-title{text-align:center}
 .support-tile-sub{text-align:center}
@@ -951,19 +952,32 @@ function show(id,push){
     if(id==="main"){bar.classList.remove("show");bar.style.display="none";if(content)content.classList.remove("has-back")}
     else{bar.classList.add("show");bar.style.display="flex";if(content)content.classList.add("has-back")}
   }
+
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
 function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
 
-async function apiGet(path){
-  const url=API_BASE.replace(/\/$/,"")+path;
-  const r=await fetch(url,{method:"GET",headers:{"Accept":"application/json"},mode:"cors",cache:"no-store"});
+function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
+async function apiFetch(path,opts,timeoutMs){
+  const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+  const ms=timeoutMs==null?10000:timeoutMs;
+  const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
+  try{
+    const r=await fetch(_apiUrl(path),Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{signal:ctrl?ctrl.signal:undefined}));
+    if(timer)clearTimeout(timer);
+    return r;
+  }catch(e){
+    if(timer)clearTimeout(timer);
+    throw e;
+  }
+}
+async function apiGet(path,timeoutMs){
+  const r=await apiFetch(path,{method:"GET",headers:{"Accept":"application/json"}},timeoutMs);
   if(!r.ok)throw new Error("HTTP "+r.status);
   return r.json();
 }
-async function apiPost(path,body){
-  const url=API_BASE.replace(/\/$/,"")+path;
-  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},mode:"cors",cache:"no-store",body:JSON.stringify(body||{})});
+async function apiPost(path,body,timeoutMs){
+  const r=await apiFetch(path,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body||{})},timeoutMs);
   let data=null;
   try{data=await r.json()}catch(e){}
   if(!r.ok){const msg=(data&&(data.message||data.error))||("HTTP "+r.status);throw new Error(msg)}
@@ -1026,174 +1040,56 @@ async function pollEventsOnce(){
   if(!USER_ID||_eventBusy)return;
   _eventBusy=true;
   try{
-    const data=await apiGet("/api/miniapp/events?user_id="+encodeURIComponent(USER_ID)+"&after="+encodeURIComponent(_eventAfter));
+    const data=await apiGet("/api/miniapp/events?user_id="+encodeURIComponent(USER_ID)+"&after="+encodeURIComponent(_eventAfter)+"&wait=0",6000);
     const events=data.events||[];
     for(const ev of events){
       if(ev.id&&ev.id>_eventAfter)_eventAfter=ev.id;
       if(ev.type==="balance"&&ev.data){
         if(ev.data.balance!=null)applyBalanceUI(ev.data.balance);
-        else loadMe();
-      }else if(ev.type==="support"){const sc=document.getElementById("screen-support-chat");if(sc&&sc.classList.contains("active"))loadSupportChat();}
-      else if(ev.type==="project"){
+      }else if(ev.type==="support"){
+        const sc=document.getElementById("screen-support-chat");
+        if(sc&&sc.classList.contains("active"))loadSupportChat();
+      }else if(ev.type==="project"){
         const scr=document.getElementById("screen-projects");
         if(scr&&scr.classList.contains("active"))loadProjects();
-        const pscr=document.getElementById("screen-project");
-        if(pscr&&pscr.classList.contains("active")){
-          /* keep open card; soft refresh list only */
-        }
       }
     }
-  }catch(e){
-    // сеть/таймаут — тихо
-  }
+  }catch(e){}
   _eventBusy=false;
 }
-
-
-function setCollabTab(tab){
-  const ads=document.getElementById("collab-seg-ads");
-  const work=document.getElementById("collab-seg-work");
-  const pa=document.getElementById("collab-ads-panel");
-  const pw=document.getElementById("collab-work-panel");
-  if(ads)ads.classList.toggle("active",tab==="ads");
-  if(work)work.classList.toggle("active",tab==="work");
-  if(pa)pa.style.display=tab==="ads"?"":"none";
-  if(pw)pw.style.display=tab==="work"?"":"none";
-  if(tab==="work")renderHireInfo();
-}
-function renderHireInfo(){
-  const box=document.getElementById("hire-info-block");
-  if(!box)return;
-  box.innerHTML=
-    "<b>"+t("role_mod")+"</b><br><br>"+
-    "• "+t("salary")+": <b>25$ / 12 "+t("hours")+"</b><br>"+
-    "• "+t("hire_shifts_req")+": <b>3 "+t("hire_shifts_week")+"</b><br><br>"+
-    "<b>"+t("internship")+"</b><br><br>"+
-    "• "+t("period")+": <b>1 "+t("month")+"</b><br>"+
-    "• "+t("intern_shift")+": <b>6 "+t("hours")+"</b><br>"+
-    "• "+t("intern_pay")+": <b>10$</b><br><br>"+
-    "<b>"+t("hire_duties")+"</b><br><br>"+
-    "• "+t("duty_mod_listings")+"<br>"+
-    "• "+t("duty_mod_complaints");
-}
-let _jobEmp="";
-function selectEmployment(el){
-  document.querySelectorAll("#job-employment-list .method-item").forEach(x=>x.classList.remove("active"));
-  el.classList.add("active");
-  _jobEmp=el.getAttribute("data-emp")||"";
-}
-function openJobForm(){
-  show("job-form");
-  const un=document.getElementById("job-username");
-  if(un&&tgUser&&tgUser.username&&!un.value)un.value="@"+tgUser.username;
-}
-async function submitJobApplication(){
-  const fio=(document.getElementById("job-fio")||{}).value||"";
-  const age=(document.getElementById("job-age")||{}).value||"";
-  const username=(document.getElementById("job-username")||{}).value||"";
-  const phone=(document.getElementById("job-phone")||{}).value||"";
-  const email=(document.getElementById("job-email")||{}).value||"";
-  if(!fio.trim()||!age||!_jobEmp||!phone.trim()){
-    alert(t("job_form_required"));
-    return;
-  }
-  const text=["[JOB APPLICATION]",fio,"age:"+age,"emp:"+_jobEmp,username,phone,email].join("\n");
-  try{
-    if(USER_ID){
-      await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
-      alert(t("job_form_sent"));
-      show("collaborate");
-      setCollabTab("work");
-    }else{
-      openTgLink(SUPPORT_MANAGER_URL);
-    }
-  }catch(e){
-    alert(String(e.message||e));
-  }
-}
-
-function wireSupport(){
-  const open = (url, tg)=>{ if(tg) openTgLink(url); else openExternal(url); };
-  on("sup-manager","onclick",()=>open(SUPPORT_MANAGER_URL,true));
-  on("sup-bot","onclick",()=>open(SUPPORT_BOT_URL,true));
-  on("sup-mail","onclick",()=>open("https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(SUPPORT_EMAIL_ADDR),false));
-  on("sup-faq","onclick",()=>open(SUPPORT_FAQ_LINK,false));
-  on("sup-privacy","onclick",()=>open(PRIVACY_POLICY_URL,false));
-  on("sup-terms","onclick",()=>open(TERMS_URL,false));
-  on("sup-hire","onclick",()=>{show("collaborate");setCollabTab("ads");});
-  on("sup-other","onclick",()=>{ try{ (window.Telegram&&Telegram.WebApp&&Telegram.WebApp.showAlert)?Telegram.WebApp.showAlert(t("support_other_info_empty")):alert(t("support_other_info_empty")); }catch(e){alert(t("support_other_info_empty"));} });
-  on("sup-chat","onclick",()=>{show("support-chat");loadSupportChat();});
-  on("support-chat-send","onclick",sendSupportMessage);
-  on("collab-seg-ads","onclick",()=>setCollabTab("ads"));
-  on("collab-seg-work","onclick",()=>setCollabTab("work"));
-  on("collab-ads-mgr","onclick",()=>openTgLink(SUPPORT_MANAGER_URL));
-  on("collab-work-mgr","onclick",()=>openTgLink(SUPPORT_MANAGER_URL));
-  on("collab-job-form","onclick",openJobForm);
-  on("job-submit-btn","onclick",submitJobApplication);
-  document.querySelectorAll("#job-employment-list .method-item").forEach(el=>{el.onclick=()=>selectEmployment(el)});
-
-  const inp=document.getElementById("support-chat-input");
-  if(inp)inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();sendSupportMessage();}});
-}
-async function loadSupportChat(){
-  const box=document.getElementById("support-chat-messages");
-  if(!box)return;
-  if(!USER_ID){box.innerHTML='<div class="empty">Telegram</div>';return}
-  box.innerHTML='<div class="empty">…</div>';
-  try{
-    const data=await apiGet("/api/support/messages?user_id="+encodeURIComponent(USER_ID));
-    const msgs=data.messages||[];
-    if(!msgs.length){box.innerHTML='<div class="empty">'+t("support_chat_empty")+"</div>";return}
-    box.innerHTML=msgs.map(m=>{
-      const me=m.sender==="user";
-      return '<div class="chat-bubble '+(me?"me":"staff")+'">'+
-        String(m.text||"").replace(/</g,"&lt;")+
-        '<span class="meta">'+(m.created_at||"")+"</span></div>";
-    }).join("");
-    box.scrollTop=box.scrollHeight;
-  }catch(e){box.innerHTML='<div class="empty">'+String(e.message||e)+"</div>"}
-}
-async function sendSupportMessage(){
-  const input=document.getElementById("support-chat-input");
-  const text=(input&&input.value||"").trim();
-  if(!text||!USER_ID)return;
-  const btn=document.getElementById("support-chat-send");
-  if(btn)btn.disabled=true;
-  try{
-    await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
-    if(input)input.value="";
-    await loadSupportChat();
-  }catch(e){
-    try{ (window.Telegram&&Telegram.WebApp&&Telegram.WebApp.showAlert)?Telegram.WebApp.showAlert(String(e.message||e)):alert(String(e.message||e)); }catch(_e){alert(String(e.message||e));}
-  }
-  if(btn)btn.disabled=false;
-}
-
 function startEventLoop(){
   if(_eventTimer)return;
-  // long-poll: сразу и цикл
   const loop=async()=>{
     await pollEventsOnce();
-    _eventTimer=setTimeout(loop,2500);
+    _eventTimer=setTimeout(loop,5000);
   };
-  loop();
+  setTimeout(loop,1500);
 }
 
-async function loadMe(){
-  if(!USER_ID){document.getElementById("top-bal").textContent="0.00 ₽";return}
-  try{
-    const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID));
-    state.me=me;
-    applyBalanceUI(me.balance);
-    const bal=fmt(me.balance);
-    const big=document.getElementById("bal-big");
-    if(big)big.innerHTML=bal+"<span>₽</span>";
-    if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
-    if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
-    const role=Number(me.role||0);
-    document.getElementById("p-role").textContent=roleName(role);
-    document.getElementById("btn-panel").style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
-  }catch(e){console.warn(e)}
+let _meCacheAt=0,_meInflight=null;
+async function loadMe(force){
+  if(!USER_ID){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
+  const now=Date.now();
+  if(!force&&state.me&&(now-_meCacheAt)<2500)return state.me;
+  if(_meInflight)return _meInflight;
+  _meInflight=(async()=>{
+    try{
+      const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),8000);
+      state.me=me;_meCacheAt=Date.now();
+      applyBalanceUI(me.balance);
+      const bal=fmt(me.balance);
+      const big=document.getElementById("bal-big");
+      if(big)big.innerHTML=bal+"<span>₽</span>";
+      if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
+      if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
+      const role=Number(me.role||0);
+      const pr=document.getElementById("p-role");if(pr)pr.textContent=roleName(role);
+      const bp=document.getElementById("btn-panel");if(bp)bp.style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
+      return me;
+    }catch(e){console.warn(e);return null}
+    finally{_meInflight=null}
+  })();
+  return _meInflight;
 }
 const TX_TYPES=["deposit","withdraw","purchase","monetization","salary","admin"];
 function txTypeLabel(type){
@@ -1474,15 +1370,7 @@ on("wc-pay","onclick",async()=>{
 
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=document.getElementById("panel-body");if(pb)pb.style.display="block"});
 
-setInterval(async()=>{
-  if(!USER_ID)return;
-  try{
-    const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID));
-    if(me.lang&&me.lang!==state.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
-    if(me.theme&&me.theme!==state.theme)applyTheme(me.theme,false);
-    document.getElementById("top-bal").textContent=fmt(me.balance);
-  }catch(e){}
-},15000);
+setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
