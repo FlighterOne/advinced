@@ -854,14 +854,63 @@ function calcWd(){
   document.getElementById("wd-continue").disabled=!ok;
 }
 
+
+let _eventAfter=0;
+let _eventTimer=null;
+let _eventBusy=false;
+function applyBalanceUI(bal){
+  try{
+    state.balance=Number(bal)||0;
+    const chip=document.getElementById("top-bal");
+    if(chip)chip.textContent=fmt(state.balance)+" ₽";
+    const b=document.getElementById("bal-amount");
+    if(b)b.textContent=fmt(state.balance)+" ₽";
+  }catch(e){}
+}
+async function pollEventsOnce(){
+  if(!USER_ID||_eventBusy)return;
+  _eventBusy=true;
+  try{
+    const data=await apiGet("/api/miniapp/events?user_id="+encodeURIComponent(USER_ID)+"&after="+encodeURIComponent(_eventAfter));
+    const events=data.events||[];
+    for(const ev of events){
+      if(ev.id&&ev.id>_eventAfter)_eventAfter=ev.id;
+      if(ev.type==="balance"&&ev.data){
+        if(ev.data.balance!=null)applyBalanceUI(ev.data.balance);
+        else loadMe();
+      }else if(ev.type==="project"){
+        const scr=document.getElementById("screen-projects");
+        if(scr&&scr.classList.contains("active"))loadProjects();
+        const pscr=document.getElementById("screen-project");
+        if(pscr&&pscr.classList.contains("active")){
+          /* keep open card; soft refresh list only */
+        }
+      }
+    }
+  }catch(e){
+    // сеть/таймаут — тихо
+  }
+  _eventBusy=false;
+}
+function startEventLoop(){
+  if(_eventTimer)return;
+  // long-poll: сразу и цикл
+  const loop=async()=>{
+    await pollEventsOnce();
+    _eventTimer=setTimeout(loop,400);
+  };
+  loop();
+}
+
 async function loadMe(){
-  if(!USER_ID){document.getElementById("top-bal").textContent="0.00";return}
+  if(!USER_ID){document.getElementById("top-bal").textContent="0.00 ₽";return}
   try{
     const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID));
     state.me=me;
+    applyBalanceUI(me.balance);
     const bal=fmt(me.balance);
-    document.getElementById("top-bal").textContent=bal;
-    document.getElementById("bal-big").innerHTML=bal+"<span>₽</span>";
+    const big=document.getElementById("bal-big");
+    if(big)big.innerHTML=bal+"<span>₽</span>";
     if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
     if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
     const role=Number(me.role||0);
@@ -1035,7 +1084,7 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();startEventLoop();
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
 const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
