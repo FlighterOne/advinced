@@ -71,6 +71,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .badge-orig{margin-left:auto;font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;border:1px solid var(--brand-line);color:var(--brand);background:var(--brand-soft)}
 
 .list{display:grid;gap:8px;margin:8px 0}
+.proj-scroll{max-height:none;overflow:visible}
+.btn-stack{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.btn-stack .btn-row{margin-top:0}
 .item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);cursor:pointer}
 .item .name{font-size:15px;font-weight:600}
 .item .sub{margin-top:4px;font-size:12px;color:var(--hint);font-weight:500}
@@ -125,6 +128,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .profile-card .row:last-child{border-bottom:none}
 .profile-card .k{font-size:13px;font-weight:600;color:var(--hint)}
 .profile-card .v{font-size:14px;font-weight:700;color:var(--text)}
+.profile-card .row.single{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.role-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1px solid var(--brand-line);color:var(--brand);background:var(--brand-soft);white-space:nowrap}
 .tx-detail-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
 .tx-detail-overlay.open{display:flex}
 .tx-detail-card{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 12px 12px;padding:18px 16px;box-shadow:var(--shadow);max-height:80vh;overflow:auto}
@@ -325,8 +330,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="profile-name" id="p-name">—</div>
           <a class="profile-uname" id="p-uname" href="#" target="_blank" rel="noopener">—</a>
           <div class="profile-card" aria-disabled="true">
-            <div class="row"><span class="k">ID</span><span class="v" id="p-id">—</span></div>
-            <div class="row"><span class="k" data-i18n="role">Роль</span><span class="v" id="p-role">—</span></div>
+            <div class="row single">
+              <span class="k">ID <span class="v" id="p-id">—</span></span>
+              <span class="role-badge" id="p-role">—</span>
+            </div>
           </div>
         </div>
       </div>
@@ -448,15 +455,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-projects" class="screen">
       <div class="panel"><h1 data-i18n="projects">Проекты</h1><div class="hint" id="proj-meta">—</div></div>
-      <div class="list" id="proj-list"></div>
-      <div class="btn-row">
-        <button class="btn" id="proj-prev" data-i18n="prev">Назад</button>
-        <button class="btn" id="proj-next" data-i18n="next">Вперёд</button>
-      </div>
+      <div class="list proj-scroll" id="proj-list"></div>
     </div>
 
     <div id="screen-project" class="screen">
-      <div class="panel"><h1 id="pd-title">—</h1><div class="muted" id="pd-body">—</div></div>
+      <div class="panel">
+        <h1 id="pd-title">—</h1>
+        <div class="muted" id="pd-body">—</div>
+      </div>
+      <div class="btn-stack" id="pd-actions"></div>
     </div>
 
     <div id="screen-help" class="screen">
@@ -524,7 +531,7 @@ const LANGS=[
 function baseI18n(o){return o}
 const I18N={
 ru:baseI18n({back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
-language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
+language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
 recipient:"Реквизиты",recipient_name:"Получатель",credit_amount:"К зачислению",fee:"Комиссия",total_to_pay:"Итого к оплате",
@@ -537,7 +544,7 @@ staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",
 panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
-language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
+language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
 recipient:"Details",recipient_name:"Recipient",credit_amount:"To be credited",fee:"Fee",total_to_pay:"Total to pay",
@@ -548,7 +555,7 @@ help_body:"Mini App is synced with the bot.",support_manager:"Manager",support_b
 staff:"Staff",mod_sell:"Sell",mod_buy:"Buy",mod_tx:"Transactions",analytics:"Analytics",panel_hint:"Manage in the bot.",prev:"Prev",next:"Next",
 roles:{user:"User",partner:"Partner",corp:"Corporate",intern:"Intern",mod:"Moderator",admin:"Admin",owner:"Owner"}}),
 uk:baseI18n({back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
-language:"Мова",theme:"Тема",theme_light:"Світла",theme_dark:"Темна",theme_auto:"Як у Telegram",original:"Оригінал",my_transactions:"Мої транзакції",no_transactions:"Немає транзакцій",transaction:"Транзакція",close:"Закрити",tx_type:"Тип",date_time:"Дата і час",operation_id:"Id операції",tx_deposit:"Поповнення",tx_withdraw:"Вивід",tx_purchase:"Покупка",tx_monetization:"Монетизація",tx_salary:"Зарплата",tx_admin:"Зміна балансу адміном",
+language:"Мова",theme:"Тема",theme_light:"Світла",theme_dark:"Темна",theme_auto:"Як у Telegram",original:"Оригінал",status:"Статус",no_projects:"Немає проєктів",btn_start:"Запустити",btn_stop:"Зупинити",my_transactions:"Мої транзакції",no_transactions:"Немає транзакцій",transaction:"Транзакція",close:"Закрити",tx_type:"Тип",date_time:"Дата і час",operation_id:"Id операції",tx_deposit:"Поповнення",tx_withdraw:"Вивід",tx_purchase:"Покупка",tx_monetization:"Монетизація",tx_salary:"Зарплата",tx_admin:"Зміна балансу адміном",
 role:"Роль",deposit:"Поповнення",withdraw:"Вивід",my_requests:"Мої заявки",no_requests:"Немає заявок",
 amount_rub:"Сума (₽)",method:"Спосіб оплати",comment:"Коментар",continue:"Продовжити",pay:"Оплатити",confirm:"Підтвердити",
 recipient:"Реквізити",recipient_name:"Отримувач",credit_amount:"До зарахування",fee:"Комісія",total_to_pay:"Разом до сплати",
@@ -559,7 +566,7 @@ help_body:"Mini App синхронізовано з ботом.",support_manager
 staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",analytics:"Аналітика",panel_hint:"Керування в боті.",prev:"Назад",next:"Вперед",
 roles:{user:"Користувач",partner:"Партнер",corp:"Корпоративний",intern:"Стажер",mod:"Модератор",admin:"Адмін",owner:"Власник"}}),
 de:baseI18n({back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
-language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
+language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",status:"Status",no_projects:"Keine Projekte",btn_start:"Starten",btn_stop:"Stoppen",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
 role:"Rolle",deposit:"Einzahlung",withdraw:"Auszahlung",my_requests:"Meine Anfragen",no_requests:"Keine Anfragen",
 amount_rub:"Betrag (₽)",method:"Zahlungsmethode",comment:"Kommentar",continue:"Weiter",pay:"Bezahlen",confirm:"Bestätigen",
 recipient:"Daten",recipient_name:"Empfänger",credit_amount:"Gutschrift",fee:"Gebühr",total_to_pay:"Gesamt zu zahlen",
@@ -570,7 +577,7 @@ help_body:"Mini App ist mit dem Bot synchronisiert.",support_manager:"Manager",s
 staff:"Personal",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",analytics:"Analyse",panel_hint:"Verwaltung im Bot.",prev:"Zurück",next:"Weiter",
 roles:{user:"Benutzer",partner:"Partner",corp:"Unternehmen",intern:"Praktikant",mod:"Moderator",admin:"Admin",owner:"Inhaber"}}),
 fr:baseI18n({back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
-language:"Langue",theme:"Thème",theme_light:"Clair",theme_dark:"Sombre",theme_auto:"Comme Telegram",original:"Original",my_transactions:"Mes transactions",no_transactions:"Aucune transaction",transaction:"Transaction",close:"Fermer",tx_type:"Type",date_time:"Date et heure",operation_id:"ID opération",tx_deposit:"Dépôt",tx_withdraw:"Retrait",tx_purchase:"Achat",tx_monetization:"Monétisation",tx_salary:"Salaire",tx_admin:"Modification admin",
+language:"Langue",theme:"Thème",theme_light:"Clair",theme_dark:"Sombre",theme_auto:"Comme Telegram",original:"Original",status:"Statut",no_projects:"Aucun projet",btn_start:"Démarrer",btn_stop:"Arrêter",my_transactions:"Mes transactions",no_transactions:"Aucune transaction",transaction:"Transaction",close:"Fermer",tx_type:"Type",date_time:"Date et heure",operation_id:"ID opération",tx_deposit:"Dépôt",tx_withdraw:"Retrait",tx_purchase:"Achat",tx_monetization:"Monétisation",tx_salary:"Salaire",tx_admin:"Modification admin",
 role:"Rôle",deposit:"Dépôt",withdraw:"Retrait",my_requests:"Mes demandes",no_requests:"Aucune demande",
 amount_rub:"Montant (₽)",method:"Mode de paiement",comment:"Commentaire",continue:"Continuer",pay:"Payer",confirm:"Confirmer",
 recipient:"Coordonnées",recipient_name:"Destinataire",credit_amount:"À créditer",fee:"Frais",total_to_pay:"Total à payer",
@@ -581,7 +588,7 @@ help_body:"Mini App synchronisée avec le bot.",support_manager:"Manager",suppor
 staff:"Personnel",mod_sell:"Vente",mod_buy:"Achat",mod_tx:"Transactions",analytics:"Analytique",panel_hint:"Gestion dans le bot.",prev:"Préc.",next:"Suiv.",
 roles:{user:"Utilisateur",partner:"Partenaire",corp:"Entreprise",intern:"Stagiaire",mod:"Modérateur",admin:"Admin",owner:"Propriétaire"}}),
 es:baseI18n({back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
-language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Oscuro",theme_auto:"Como en Telegram",original:"Original",my_transactions:"Mis transacciones",no_transactions:"Sin transacciones",transaction:"Transacción",close:"Cerrar",tx_type:"Tipo",date_time:"Fecha y hora",operation_id:"ID de operación",tx_deposit:"Depósito",tx_withdraw:"Retiro",tx_purchase:"Compra",tx_monetization:"Monetización",tx_salary:"Salario",tx_admin:"Cambio de saldo admin",
+language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Oscuro",theme_auto:"Como en Telegram",original:"Original",status:"Estado",no_projects:"Sin proyectos",btn_start:"Iniciar",btn_stop:"Detener",my_transactions:"Mis transacciones",no_transactions:"Sin transacciones",transaction:"Transacción",close:"Cerrar",tx_type:"Tipo",date_time:"Fecha y hora",operation_id:"ID de operación",tx_deposit:"Depósito",tx_withdraw:"Retiro",tx_purchase:"Compra",tx_monetization:"Monetización",tx_salary:"Salario",tx_admin:"Cambio de saldo admin",
 role:"Rol",deposit:"Depósito",withdraw:"Retiro",my_requests:"Mis solicitudes",no_requests:"Sin solicitudes",
 amount_rub:"Importe (₽)",method:"Método de pago",comment:"Comentario",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
 recipient:"Datos",recipient_name:"Beneficiario",credit_amount:"A acreditar",fee:"Comisión",total_to_pay:"Total a pagar",
@@ -592,7 +599,7 @@ help_body:"Mini App sincronizado con el bot.",support_manager:"Manager",support_
 staff:"Personal",mod_sell:"Venta",mod_buy:"Compra",mod_tx:"Transacciones",analytics:"Analítica",panel_hint:"Gestión en el bot.",prev:"Atrás",next:"Adelante",
 roles:{user:"Usuario",partner:"Socio",corp:"Corporativo",intern:"Interno",mod:"Moderador",admin:"Admin",owner:"Propietario"}}),
 it:baseI18n({back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
-language:"Lingua",theme:"Tema",theme_light:"Chiaro",theme_dark:"Scuro",theme_auto:"Come Telegram",original:"Originale",my_transactions:"Le mie transazioni",no_transactions:"Nessuna transazione",transaction:"Transazione",close:"Chiudi",tx_type:"Tipo",date_time:"Data e ora",operation_id:"ID operazione",tx_deposit:"Deposito",tx_withdraw:"Prelievo",tx_purchase:"Acquisto",tx_monetization:"Monetizzazione",tx_salary:"Stipendio",tx_admin:"Modifica saldo admin",
+language:"Lingua",theme:"Tema",theme_light:"Chiaro",theme_dark:"Scuro",theme_auto:"Come Telegram",original:"Originale",status:"Stato",no_projects:"Nessun progetto",btn_start:"Avvia",btn_stop:"Ferma",my_transactions:"Le mie transazioni",no_transactions:"Nessuna transazione",transaction:"Transazione",close:"Chiudi",tx_type:"Tipo",date_time:"Data e ora",operation_id:"ID operazione",tx_deposit:"Deposito",tx_withdraw:"Prelievo",tx_purchase:"Acquisto",tx_monetization:"Monetizzazione",tx_salary:"Stipendio",tx_admin:"Modifica saldo admin",
 role:"Ruolo",deposit:"Deposito",withdraw:"Prelievo",my_requests:"Le mie richieste",no_requests:"Nessuna richiesta",
 amount_rub:"Importo (₽)",method:"Metodo di pagamento",comment:"Commento",continue:"Continua",pay:"Paga",confirm:"Conferma",
 recipient:"Dettagli",recipient_name:"Destinatario",credit_amount:"Da accreditare",fee:"Commissione",total_to_pay:"Totale da pagare",
@@ -603,7 +610,7 @@ help_body:"Mini App sincronizzata con il bot.",support_manager:"Manager",support
 staff:"Personale",mod_sell:"Vendita",mod_buy:"Acquisto",mod_tx:"Transazioni",analytics:"Analitica",panel_hint:"Gestione nel bot.",prev:"Indietro",next:"Avanti",
 roles:{user:"Utente",partner:"Partner",corp:"Aziendale",intern:"Stagista",mod:"Moderatore",admin:"Admin",owner:"Proprietario"}}),
 pt:baseI18n({back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
-language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",my_transactions:"As minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Levantamento",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
+language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",status:"Estado",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"As minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Levantamento",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
 role:"Função",deposit:"Depósito",withdraw:"Levantamento",my_requests:"Os meus pedidos",no_requests:"Sem pedidos",
 amount_rub:"Montante (₽)",method:"Método de pagamento",comment:"Comentário",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
 recipient:"Dados",recipient_name:"Destinatário",credit_amount:"A creditar",fee:"Comissão",total_to_pay:"Total a pagar",
@@ -614,7 +621,7 @@ help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_b
 staff:"Pessoal",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",panel_hint:"Gestão no bot.",prev:"Anterior",next:"Seguinte",
 roles:{user:"Utilizador",partner:"Parceiro",corp:"Empresarial",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"}}),
 "pt-BR":baseI18n({back:"Voltar",balance:"Saldo",settings:"Configurações",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
-language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",my_transactions:"Minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Saque",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
+language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",status:"Status",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"Minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Saque",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
 role:"Função",deposit:"Depósito",withdraw:"Saque",my_requests:"Meus pedidos",no_requests:"Sem pedidos",
 amount_rub:"Valor (₽)",method:"Método de pagamento",comment:"Comentário",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
 recipient:"Dados",recipient_name:"Destinatário",credit_amount:"A creditar",fee:"Taxa",total_to_pay:"Total a pagar",
@@ -625,7 +632,7 @@ help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_b
 staff:"Equipe",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",panel_hint:"Gestão no bot.",prev:"Anterior",next:"Próximo",
 roles:{user:"Usuário",partner:"Parceiro",corp:"Corporativo",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"}}),
 tr:baseI18n({back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
-language:"Dil",theme:"Tema",theme_light:"Açık",theme_dark:"Koyu",theme_auto:"Telegram gibi",original:"Orijinal",my_transactions:"İşlemlerim",no_transactions:"İşlem yok",transaction:"İşlem",close:"Kapat",tx_type:"Tür",date_time:"Tarih ve saat",operation_id:"İşlem kimliği",tx_deposit:"Yatırma",tx_withdraw:"Çekme",tx_purchase:"Satın alma",tx_monetization:"Monetizasyon",tx_salary:"Maaş",tx_admin:"Admin bakiye değişikliği",
+language:"Dil",theme:"Tema",theme_light:"Açık",theme_dark:"Koyu",theme_auto:"Telegram gibi",original:"Orijinal",status:"Durum",no_projects:"Proje yok",btn_start:"Başlat",btn_stop:"Durdur",my_transactions:"İşlemlerim",no_transactions:"İşlem yok",transaction:"İşlem",close:"Kapat",tx_type:"Tür",date_time:"Tarih ve saat",operation_id:"İşlem kimliği",tx_deposit:"Yatırma",tx_withdraw:"Çekme",tx_purchase:"Satın alma",tx_monetization:"Monetizasyon",tx_salary:"Maaş",tx_admin:"Admin bakiye değişikliği",
 role:"Rol",deposit:"Yatırma",withdraw:"Çekme",my_requests:"Taleplerim",no_requests:"Talep yok",
 amount_rub:"Tutar (₽)",method:"Ödeme yöntemi",comment:"Yorum",continue:"Devam",pay:"Öde",confirm:"Onayla",
 recipient:"Bilgiler",recipient_name:"Alıcı",credit_amount:"Yatırılacak",fee:"Komisyon",total_to_pay:"Ödenecek toplam",
@@ -636,7 +643,7 @@ help_body:"Mini App bot ile senkron.",support_manager:"Yönetici",support_bot:"B
 staff:"Personel",mod_sell:"Satış",mod_buy:"Alış",mod_tx:"İşlemler",analytics:"Analitik",panel_hint:"Yönetim botta.",prev:"Geri",next:"İleri",
 roles:{user:"Kullanıcı",partner:"Partner",corp:"Kurumsal",intern:"Stajyer",mod:"Moderatör",admin:"Admin",owner:"Sahip"}}),
 id:baseI18n({back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
-language:"Bahasa",theme:"Tema",theme_light:"Terang",theme_dark:"Gelap",theme_auto:"Seperti Telegram",original:"Asli",my_transactions:"Transaksi saya",no_transactions:"Tidak ada transaksi",transaction:"Transaksi",close:"Tutup",tx_type:"Jenis",date_time:"Tanggal dan waktu",operation_id:"ID operasi",tx_deposit:"Deposit",tx_withdraw:"Penarikan",tx_purchase:"Pembelian",tx_monetization:"Monetisasi",tx_salary:"Gaji",tx_admin:"Perubahan saldo admin",
+language:"Bahasa",theme:"Tema",theme_light:"Terang",theme_dark:"Gelap",theme_auto:"Seperti Telegram",original:"Asli",status:"Status",no_projects:"Tidak ada proyek",btn_start:"Mulai",btn_stop:"Stop",my_transactions:"Transaksi saya",no_transactions:"Tidak ada transaksi",transaction:"Transaksi",close:"Tutup",tx_type:"Jenis",date_time:"Tanggal dan waktu",operation_id:"ID operasi",tx_deposit:"Deposit",tx_withdraw:"Penarikan",tx_purchase:"Pembelian",tx_monetization:"Monetisasi",tx_salary:"Gaji",tx_admin:"Perubahan saldo admin",
 role:"Peran",deposit:"Deposit",withdraw:"Penarikan",my_requests:"Permintaan saya",no_requests:"Tidak ada",
 amount_rub:"Jumlah (₽)",method:"Metode pembayaran",comment:"Komentar",continue:"Lanjut",pay:"Bayar",confirm:"Konfirmasi",
 recipient:"Detail",recipient_name:"Penerima",credit_amount:"Akan dikreditkan",fee:"Biaya",total_to_pay:"Total bayar",
@@ -647,7 +654,7 @@ help_body:"Mini App tersinkron dengan bot.",support_manager:"Manajer",support_bo
 staff:"Staf",mod_sell:"Jual",mod_buy:"Beli",mod_tx:"Transaksi",analytics:"Analitik",panel_hint:"Kelola di bot.",prev:"Sebelumnya",next:"Berikutnya",
 roles:{user:"Pengguna",partner:"Mitra",corp:"Korporat",intern:"Magang",mod:"Moderator",admin:"Admin",owner:"Pemilik"}}),
 ar:baseI18n({back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
-language:"اللغة",theme:"المظهر",theme_light:"فاتح",theme_dark:"داكن",theme_auto:"مثل تيليجرام",original:"أصلي",my_transactions:"معاملاتي",no_transactions:"لا معاملات",transaction:"معاملة",close:"إغلاق",tx_type:"النوع",date_time:"التاريخ والوقت",operation_id:"معرّف العملية",tx_deposit:"إيداع",tx_withdraw:"سحب",tx_purchase:"شراء",tx_monetization:"تحقيق الدخل",tx_salary:"راتب",tx_admin:"تعديل الرصيد من المشرف",
+language:"اللغة",theme:"المظهر",theme_light:"فاتح",theme_dark:"داكن",theme_auto:"مثل تيليجرام",original:"أصلي",status:"الحالة",no_projects:"لا مشاريع",btn_start:"تشغيل",btn_stop:"إيقاف",my_transactions:"معاملاتي",no_transactions:"لا معاملات",transaction:"معاملة",close:"إغلاق",tx_type:"النوع",date_time:"التاريخ والوقت",operation_id:"معرّف العملية",tx_deposit:"إيداع",tx_withdraw:"سحب",tx_purchase:"شراء",tx_monetization:"تحقيق الدخل",tx_salary:"راتب",tx_admin:"تعديل الرصيد من المشرف",
 role:"الدور",deposit:"إيداع",withdraw:"سحب",my_requests:"طلباتي",no_requests:"لا طلبات",
 amount_rub:"المبلغ (₽)",method:"طريقة الدفع",comment:"تعليق",continue:"متابعة",pay:"ادفع",confirm:"تأكيد",
 recipient:"البيانات",recipient_name:"المستلم",credit_amount:"للإضافة",fee:"العمولة",total_to_pay:"الإجمالي للدفع",
@@ -658,7 +665,7 @@ help_body:"التطبيق متزامن مع البوت.",support_manager:"الم
 staff:"الموظفون",mod_sell:"بيع",mod_buy:"شراء",mod_tx:"المعاملات",analytics:"تحليلات",panel_hint:"الإدارة في البوت.",prev:"السابق",next:"التالي",
 roles:{user:"مستخدم",partner:"شريك",corp:"شركات",intern:"متدرب",mod:"مشرف",admin:"مسؤول",owner:"مالك"}}),
 zh:baseI18n({back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
-language:"语言",theme:"主题",theme_light:"浅色",theme_dark:"深色",theme_auto:"跟随 Telegram",original:"原版",my_transactions:"我的交易",no_transactions:"暂无交易",transaction:"交易",close:"关闭",tx_type:"类型",date_time:"日期和时间",operation_id:"操作编号",tx_deposit:"充值",tx_withdraw:"提现",tx_purchase:"购买",tx_monetization:"变现",tx_salary:"工资",tx_admin:"管理员调整余额",
+language:"语言",theme:"主题",theme_light:"浅色",theme_dark:"深色",theme_auto:"跟随 Telegram",original:"原版",status:"状态",no_projects:"暂无项目",btn_start:"启动",btn_stop:"停止",my_transactions:"我的交易",no_transactions:"暂无交易",transaction:"交易",close:"关闭",tx_type:"类型",date_time:"日期和时间",operation_id:"操作编号",tx_deposit:"充值",tx_withdraw:"提现",tx_purchase:"购买",tx_monetization:"变现",tx_salary:"工资",tx_admin:"管理员调整余额",
 role:"角色",deposit:"充值",withdraw:"提现",my_requests:"我的申请",no_requests:"暂无申请",
 amount_rub:"金额 (₽)",method:"支付方式",comment:"备注",continue:"继续",pay:"支付",confirm:"确认",
 recipient:"收款信息",recipient_name:"收款人",credit_amount:"到账金额",fee:"手续费",total_to_pay:"应付总额",
@@ -669,7 +676,7 @@ help_body:"小程序已与机器人同步。",support_manager:"经理",support_b
 staff:"员工",mod_sell:"出售",mod_buy:"购买",mod_tx:"交易",analytics:"分析",panel_hint:"请在机器人中管理。",prev:"上一页",next:"下一页",
 roles:{user:"用户",partner:"合作伙伴",corp:"企业",intern:"实习",mod:"版主",admin:"管理员",owner:"所有者"}}),
 ja:baseI18n({back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
-language:"言語",theme:"テーマ",theme_light:"ライト",theme_dark:"ダーク",theme_auto:"Telegramと同じ",original:"オリジナル",my_transactions:"取引履歴",no_transactions:"取引なし",transaction:"取引",close:"閉じる",tx_type:"種類",date_time:"日時",operation_id:"操作ID",tx_deposit:"入金",tx_withdraw:"出金",tx_purchase:"購入",tx_monetization:"収益化",tx_salary:"給与",tx_admin:"管理者による残高変更",
+language:"言語",theme:"テーマ",theme_light:"ライト",theme_dark:"ダーク",theme_auto:"Telegramと同じ",original:"オリジナル",status:"ステータス",no_projects:"プロジェクトなし",btn_start:"開始",btn_stop:"停止",my_transactions:"取引履歴",no_transactions:"取引なし",transaction:"取引",close:"閉じる",tx_type:"種類",date_time:"日時",operation_id:"操作ID",tx_deposit:"入金",tx_withdraw:"出金",tx_purchase:"購入",tx_monetization:"収益化",tx_salary:"給与",tx_admin:"管理者による残高変更",
 role:"ロール",deposit:"入金",withdraw:"出金",my_requests:"申請一覧",no_requests:"申請なし",
 amount_rub:"金額 (₽)",method:"支払い方法",comment:"コメント",continue:"続行",pay:"支払う",confirm:"確認",
 recipient:"詳細",recipient_name:"受取人",credit_amount:"入金額",fee:"手数料",total_to_pay:"お支払い合計",
@@ -680,7 +687,7 @@ help_body:"Mini Appはボットと同期しています。",support_manager:"マ
 staff:"スタッフ",mod_sell:"販売",mod_buy:"購入",mod_tx:"取引",analytics:"分析",panel_hint:"管理はボットで。",prev:"前へ",next:"次へ",
 roles:{user:"ユーザー",partner:"パートナー",corp:"法人",intern:"インターン",mod:"モデレーター",admin:"管理者",owner:"オーナー"}}),
 ko:baseI18n({back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
-language:"언어",theme:"테마",theme_light:"라이트",theme_dark:"다크",theme_auto:"텔레그램과 동일",original:"원본",my_transactions:"내 거래",no_transactions:"거래 없음",transaction:"거래",close:"닫기",tx_type:"유형",date_time:"날짜 및 시간",operation_id:"작업 ID",tx_deposit:"입금",tx_withdraw:"출금",tx_purchase:"구매",tx_monetization:"수익화",tx_salary:"급여",tx_admin:"관리자 잔액 변경",
+language:"언어",theme:"테마",theme_light:"라이트",theme_dark:"다크",theme_auto:"텔레그램과 동일",original:"원본",status:"상태",no_projects:"프로젝트 없음",btn_start:"시작",btn_stop:"중지",my_transactions:"내 거래",no_transactions:"거래 없음",transaction:"거래",close:"닫기",tx_type:"유형",date_time:"날짜 및 시간",operation_id:"작업 ID",tx_deposit:"입금",tx_withdraw:"출금",tx_purchase:"구매",tx_monetization:"수익화",tx_salary:"급여",tx_admin:"관리자 잔액 변경",
 role:"역할",deposit:"입금",withdraw:"출금",my_requests:"내 요청",no_requests:"요청 없음",
 amount_rub:"금액 (₽)",method:"결제 수단",comment:"메모",continue:"계속",pay:"결제",confirm:"확인",
 recipient:"정보",recipient_name:"수령인",credit_amount:"입금 금액",fee:"수수료",total_to_pay:"결제 합계",
@@ -876,26 +883,74 @@ async function loadRequests(){
     });
   }catch(e){box.innerHTML='<div class="empty">—</div>'}
 }
-async function loadProjects(page){
+async function loadProjects(){
   const list=document.getElementById("proj-list");const meta=document.getElementById("proj-meta");
   if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';return}
   list.innerHTML='<div class="empty">…</div>';
   try{
-    const data=await apiGet("/api/miniapp/projects?user_id="+encodeURIComponent(USER_ID)+"&page="+page);
-    state.projPage=data.page||1;meta.textContent=(data.total||0)+" · "+state.projPage+"/"+(data.pages||1);
+    // page=1&page_size=100 — одна лента без пагинации
+    const data=await apiGet("/api/miniapp/projects?user_id="+encodeURIComponent(USER_ID)+"&page=1&page_size=100");
     const items=data.projects||[];
-    if(!items.length){list.innerHTML='<div class="empty">—</div>';return}
-    list.innerHTML=items.map(p=>'<div class="item" data-pid="'+p.id+'"><div class="name">'+(p.icon||"")+" "+(p.name||("#"+p.id))+'</div><div class="sub">'+(p.role||"")+" · "+(p.status||"")+"</div></div>").join("");
+    meta.textContent=(data.total!=null?data.total:items.length)+" · "+t("projects");
+    if(!items.length){list.innerHTML='<div class="empty">'+t("no_projects")+"</div>";return}
+    list.innerHTML=items.map(p=>{
+      const role=p.role==="advertiser"?t("tx_purchase"):(p.role==="partner"?t("role"):t("tx_monetization"));
+      const st=p.status||"";
+      return '<div class="item" data-pid="'+p.id+'"><div class="name">'+(p.icon||"")+" "+(p.name||("#"+p.id))+'</div><div class="sub">'+role+(st?(" · "+st):"")+"</div></div>";
+    }).join("");
     list.querySelectorAll("[data-pid]").forEach(el=>el.onclick=()=>openProject(el.getAttribute("data-pid")));
-  }catch(e){list.innerHTML='<div class="empty">err</div>'}
+  }catch(e){list.innerHTML='<div class="empty">err</div>';meta.textContent=String(e.message||e)}
 }
 async function openProject(pid){
-  show("project");document.getElementById("pd-title").textContent="#"+pid;document.getElementById("pd-body").textContent="…";
+  show("project");
+  document.getElementById("pd-title").textContent="#"+pid;
+  document.getElementById("pd-body").textContent="…";
+  const act=document.getElementById("pd-actions");
+  if(act)act.innerHTML="";
   try{
     const data=await apiGet("/api/miniapp/project/"+pid+"?user_id="+encodeURIComponent(USER_ID||0));
     const p=data.project||{};
+    const role=(p.role||"monetize");
     document.getElementById("pd-title").textContent=p.name||("#"+p.id);
-    document.getElementById("pd-body").innerHTML="Status: <b>"+(p.status||"—")+"</b><br/>"+(p.role||"")+"<br/>"+(p.current_subs||0)+"/"+(p.target_subs||0);
+    let body="";
+    body+="<b>"+t("status")+":</b> "+(p.status||"—")+"<br/>";
+    body+="<b>"+t("role")+":</b> "+(role==="advertiser"?t("tx_purchase"):(role==="partner"?"Partner":t("tx_monetization")))+"<br/>";
+    if(role==="advertiser"){
+      body+="<b>"+t("tx_type")+":</b> "+(p.current_subs||0)+" / "+(p.target_subs||0)+"<br/>";
+      body+="<b>"+t("fee")+":</b> "+fmt(p.price_per_sub||0)+" ₽";
+    }else{
+      body+="<b>Snippet:</b> "+(p.snippet_status||"none")+"<br/>";
+      body+="<b>"+t("tx_monetization")+":</b> "+(p.current_subs||0);
+    }
+    document.getElementById("pd-body").innerHTML=body;
+    // кнопки как в боте
+    let btns="";
+    if(role==="monetize"){
+      btns+='<div class="btn-row"><button class="btn" data-pa="settings">'+t("settings")+'</button><button class="btn" data-pa="snippet">Snippet</button></div>';
+    }else{
+      btns+='<div class="btn-row"><button class="btn" data-pa="settings">'+t("settings")+'</button><button class="btn" data-pa="admin">Admin</button></div>';
+    }
+    const enabled=Number(p.enabled||0)===1 && (p.status||"")==="active";
+    btns+='<button class="btn primary wide" data-pa="'+(enabled?"stop":"start")+'">'+(enabled?t("btn_stop")||"Stop":t("btn_start")||"Start")+"</button>";
+    btns+='<button class="btn wide" data-pa="balance">'+t("balance")+"</button>";
+    btns+='<div class="btn-row"><button class="btn" data-pa="analytics">'+t("analytics")+'</button><button class="btn" data-pa="delete">'+t("close")+'</button></div>';
+    if(act){
+      act.innerHTML=btns;
+      act.querySelectorAll("[data-pa]").forEach(b=>{
+        b.onclick=()=>{
+          const a=b.getAttribute("data-pa");
+          // управление проектом выполняется в боте — показываем подсказку
+          if(a==="settings"||a==="snippet"||a==="admin"||a==="start"||a==="stop"||a==="balance"||a==="analytics"||a==="delete"){
+            const tip=document.createElement("div");
+            tip.className="hint";
+            tip.style.marginTop="8px";
+            tip.textContent=t("panel_hint");
+            act.appendChild(tip);
+            setTimeout(()=>{try{tip.remove()}catch(e){}},2500);
+          }
+        };
+      });
+    }
   }catch(e){document.getElementById("pd-body").textContent=String(e.message||e)}
 }
 async function loadPanel(){
@@ -928,7 +983,7 @@ document.querySelectorAll("[data-nav]").forEach(btn=>{
     const nav=btn.getAttribute("data-nav");
     if(nav==="balance"){show("balance");loadMe();loadRequests()}
     else if(nav==="settings"){show("settings");loadMe()}
-    else if(nav==="projects"){show("projects");loadProjects(1)}
+    else if(nav==="projects"){show("projects");loadProjects()}
     else if(nav==="help")show("help");
     else if(nav==="support")show("support");
     else if(nav==="panel"){show("panel");loadPanel()}
@@ -1018,8 +1073,6 @@ on("wc-pay","onclick",async()=>{
   }catch(e){if(st)st.textContent=String(e.message||e)}
 });
 
-on("proj-prev","onclick",()=>{if(state.projPage>1)loadProjects(state.projPage-1)});
-on("proj-next","onclick",()=>loadProjects(state.projPage+1));
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=document.getElementById("panel-body");if(pb)pb.style.display="block"});
 
 setInterval(async()=>{
