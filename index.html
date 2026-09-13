@@ -800,8 +800,20 @@ function show(id,push){
 }
 function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
 
-async function apiGet(path){const r=await fetch(API_BASE.replace(/\/$/,"")+path,{headers:{"Accept":"application/json"}});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
-async function apiPost(path,body){const r=await fetch(API_BASE.replace(/\/$/,"")+path,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body||{})});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
+async function apiGet(path){
+  const url=API_BASE.replace(/\/$/,"")+path;
+  const r=await fetch(url,{method:"GET",headers:{"Accept":"application/json"},mode:"cors",cache:"no-store"});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+async function apiPost(path,body){
+  const url=API_BASE.replace(/\/$/,"")+path;
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},mode:"cors",cache:"no-store",body:JSON.stringify(body||{})});
+  let data=null;
+  try{data=await r.json()}catch(e){}
+  if(!r.ok){const msg=(data&&(data.message||data.error))||("HTTP "+r.status);throw new Error(msg)}
+  return data||{};
+}
 
 function setAvatar(){
   const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").charAt(0).toUpperCase();
@@ -921,12 +933,12 @@ async function loadProjects(){
       const en=Number(p.enabled||0)===1;
       let right="";
       if(st==="pending"||st==="moderation"){
-        right='<span class="mod-label">'+t("on_moderation")+"</span>";
+        right='<span class="mod-label">'+t("on_moderation")+'</span>';
       }else{
         right='<button type="button" class="toggle'+(en?" on":"")+'" data-toggle="'+p.id+'" aria-label="toggle"></button>';
       }
       const name=(p.name||("#"+p.id)).replace(/</g,"");
-      return '<div class="item proj-item" data-pid="'+p.id+'"><div class="left"><div class="name">'+name+'</div><div class="sub">'+roleLabel+"</div></div><div class="right">"+right+"</div></div>";
+      return '<div class="item proj-item" data-pid="'+p.id+'"><div class="left"><div class="name">'+name+'</div><div class="sub">'+roleLabel+'</div></div><div class="right">'+right+'</div></div>';
     }).join("");
     list.querySelectorAll("[data-pid]").forEach(el=>{
       el.querySelector(".left").onclick=()=>openProject(el.getAttribute("data-pid"));
