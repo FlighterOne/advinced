@@ -4,6 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Advinced Management</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+<link rel="icon" href="favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+<meta name="theme-color" content="#006AD2"/>
+<meta property="og:title" content="Advinced Management"/>
+<meta property="og:description" content="Площадка покупки и монетизации трафика"/>
+<meta property="og:image" content="apple-touch-icon.png"/>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root,[data-theme="light"]{
@@ -1099,17 +1108,31 @@ async function apiPost(path,body,timeoutMs){
 }
 
 function setAvatar(){
-  const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").charAt(0).toUpperCase();
-  document.getElementById("av-fb").textContent=letter;document.getElementById("p-av-fb").textContent=letter;
-  const photo=tgUser&&tgUser.photo_url;const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
-  if(photo){img.src=photo;img.style.display="block";document.getElementById("av-fb").style.display="none";pimg.src=photo;pimg.style.display="block";document.getElementById("p-av-fb").style.display="none"}
-  const name=tgUser?[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ")||("ID "+tgUser.id):"Guest";
-  document.getElementById("p-name").textContent=name;
-  const un=document.getElementById("p-uname");
-  if(tgUser&&tgUser.username){un.textContent="@"+tgUser.username;un.href="https://t.me/"+tgUser.username}
-  else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
-  document.getElementById("p-id").textContent=USER_ID||"—";
+  const sess=typeof loadWebSession==="function"?loadWebSession():null;
+  const name=(tgUser&&(tgUser.first_name||tgUser.username))||(sess&&(sess.first_name||sess.username))||(state.me&&(state.me.first_name||state.me.username))||"A";
+  const letter=String(name).charAt(0).toUpperCase()||"A";
+  const fb=document.getElementById("av-fb");const pfb=document.getElementById("p-av-fb");
+  if(fb){fb.textContent=letter;fb.style.display=""}
+  if(pfb){pfb.textContent=letter;pfb.style.display=""}
+  const photo=(tgUser&&tgUser.photo_url)||(sess&&sess.photo_url)||"";
+  const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
+  if(photo&&img&&pimg){
+    img.src=photo;img.style.display="block";if(fb)fb.style.display="none";
+    pimg.src=photo;pimg.style.display="block";if(pfb)pfb.style.display="none";
+  }else{
+    if(img)img.style.display="none";
+    if(pimg)pimg.style.display="none";
+  }
+  const un=document.getElementById("p-name");
+  if(un){
+    const uname=(tgUser&&tgUser.username)||(sess&&sess.username)||(state.me&&state.me.username)||"";
+    if(uname){un.textContent="@"+String(uname).replace(/^@/,"");un.href="https://t.me/"+String(uname).replace(/^@/,"");}
+    else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
+  }
+  const pid=document.getElementById("p-id");
+  if(pid)pid.textContent=USER_ID||"—";
 }
+
 
 function calcDep(){
   const amount=Math.max(0,parseFloat(document.getElementById("dep-amount").value||"0")||0);
@@ -1255,7 +1278,7 @@ async function loadRequests(){
 }
 async function loadProjects(){
   const list=document.getElementById("proj-list");const meta=document.getElementById("proj-meta");
-  if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';return}
+  if(!USER_ID){list.innerHTML='<div class="empty">'+t("login_title")+"</div>";showLoginOverlay();return}
   list.innerHTML='<div class="empty">…</div>';
   try{
     // page=1&page_size=100 — одна лента без пагинации
@@ -1378,35 +1401,44 @@ on("btn-web-logout","onclick",webLogout);
 (async function bootstrapAuth(){
   try{
     __isMiniApp=isTelegramMiniApp();
+    console.log("[auth] miniapp=",__isMiniApp,"tgUser=",tgUser&&tgUser.id);
     if(__isMiniApp){
       USER_ID=tgUser?tgUser.id:null;
       try{setAvatar()}catch(e){}
       if(USER_ID){
         try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
         try{startEventLoop()}catch(e){}
+      }else{
+        // WebApp есть, но user не пришёл — пробуем сайт-вход
+        showLoginOverlay();
       }
       return;
     }
+    // Браузер / сайт
     const sess=loadWebSession();
     if(sess&&sess.token){
       __webSessionToken=sess.token;
       try{
         const s=await apiGet("/api/auth/session",6000);
+        if(!s||!s.user_id)throw new Error("no session");
         USER_ID=s.user_id;
         if(s.lang)state.lang=s.lang;
         if(s.theme&&s.theme!=="auto")state.theme=s.theme;
         applyTheme(state.theme,false);applyI18n();
         try{setAvatar()}catch(e){}
-        try{await loadMe(true)}catch(e){}
+        try{await loadMe(true)}catch(e){console.warn(e)}
         try{startEventLoop()}catch(e){}
         return;
-      }catch(e){clearWebSession()}
+      }catch(e){
+        console.warn("session fail",e);
+        clearWebSession();
+      }
     }
     try{setAvatar()}catch(e){}
     showLoginOverlay();
   }catch(e){
     console.warn("bootstrap",e);
-    try{if(!isTelegramMiniApp())showLoginOverlay()}catch(e2){}
+    try{showLoginOverlay()}catch(e2){}
   }
 })();
 
