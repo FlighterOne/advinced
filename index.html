@@ -912,6 +912,14 @@ function getTgUser(){
   try{
     const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:tg;
     if(wa&&wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return wa.initDataUnsafe.user;
+    const raw=wa&&wa.initData?String(wa.initData):"";
+    if(raw){
+      const m=raw.match(/(?:^|&)user=([^&]+)/);
+      if(m){
+        const u=JSON.parse(decodeURIComponent(m[1]));
+        if(u&&u.id)return u;
+      }
+    }
   }catch(e){}
   return null;
 }
@@ -1095,24 +1103,42 @@ async function apiFetch(path,opts,timeoutMs){
     const headers=Object.assign({"Accept":"application/json"},(opts&&opts.headers)||{});
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok&&!headers.Authorization)headers.Authorization="Bearer "+tok;
-    const r=await fetch(_apiUrl(path),Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{headers:headers,signal:ctrl?ctrl.signal:undefined}));
+    try{
+      const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:tg;
+      const initData=wa&&wa.initData?String(wa.initData):"";
+      if(initData&&!headers["X-Telegram-Init-Data"])headers["X-Telegram-Init-Data"]=initData;
+    }catch(_){}
+    const r=await fetch(_apiUrl(path),Object.assign(
+      {mode:"cors",cache:"no-store",credentials:"omit"},
+      opts||{},
+      {headers:headers,signal:ctrl?ctrl.signal:undefined}
+    ));
     if(timer)clearTimeout(timer);
     return r;
   }catch(e){
     if(timer)clearTimeout(timer);
+    if(e&&e.name==="AbortError")throw new Error("API timeout");
     throw e;
   }
 }
 async function apiGet(path,timeoutMs){
   const r=await apiFetch(path,{method:"GET",headers:{"Accept":"application/json"}},timeoutMs);
-  if(!r.ok)throw new Error("HTTP "+r.status);
-  return r.json();
+  let data=null;
+  try{data=await r.json()}catch(e){}
+  if(!r.ok){
+    const msg=(data&&(data.message||data.error||data.detail))||("HTTP "+r.status);
+    throw new Error(msg);
+  }
+  return data||{};
 }
 async function apiPost(path,body,timeoutMs){
   const r=await apiFetch(path,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body||{})},timeoutMs);
   let data=null;
   try{data=await r.json()}catch(e){}
-  if(!r.ok){const msg=(data&&(data.message||data.error))||("HTTP "+r.status);throw new Error(msg)}
+  if(!r.ok){
+    const msg=(data&&(data.message||data.error||data.detail))||("HTTP "+r.status);
+    throw new Error(msg);
+  }
   return data||{};
 }
 
