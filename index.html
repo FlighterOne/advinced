@@ -277,9 +277,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-page .chat-messages{min-height:40vh;max-height:55vh;background:transparent;border:none;padding:8px 0 12px}
 .chat-footer{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;background:var(--bg)}
 
+
+.login-overlay{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
+.login-overlay.show{display:flex!important;pointer-events:auto}
+.login-card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px 24px 22px;text-align:center;color:var(--text);box-shadow:var(--shadow)}
+.login-card .logo-dot{width:48px;height:48px;margin:0 auto 14px;border-radius:14px;background:linear-gradient(135deg,#006AD2,#3B8FE8);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;letter-spacing:-.03em}
+[data-theme="dark"] .login-card .logo-dot{background:linear-gradient(135deg,#fff,#E8EEF7);color:#006AD2}
+.login-card h2{font-size:20px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em}
+.login-card .sub{font-size:14px;line-height:1.5;color:var(--text2);margin:0 0 18px}
+.login-widget-wrap{display:flex;justify-content:center;min-height:52px;margin:8px 0 12px;align-items:center}
+.login-card .muted{font-size:12px;color:var(--hint);margin-top:10px;line-height:1.4}
+.login-card a{color:var(--brand);font-weight:600;text-decoration:none}
+
 </style>
 </head>
 <body>
+
+<div id="login-overlay" class="login-overlay" aria-hidden="true">
+  <div class="login-card">
+    <div class="logo-dot">A</div>
+    <h2>Sign in</h2>
+    <p class="sub">Sign in with Telegram to use Advinced Management on the web. In the Telegram Mini App, access is automatic.</p>
+    <div class="login-widget-wrap" id="login-widget-wrap"><span class="hint">Loading…</span></div>
+    <p class="muted">By continuing you agree to our <a href="https://clossr.site/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+  </div>
+</div>
+
 <div class="app">
   <div class="topbar">
     <div class="topbar-left">
@@ -879,8 +902,113 @@ roles:{user:"사용자",partner:"파트너",corp:"기업",intern:"인턴",mod:"�
 
 const tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
-const tgUser=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.user:null;
-const USER_ID=tgUser?tgUser.id:null;
+function getTgUser(){
+  try{
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:tg;
+    if(wa&&wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return wa.initDataUnsafe.user;
+  }catch(e){}
+  return null;
+}
+let tgUser=getTgUser();
+const WEB_SESSION_KEY="advinced_web_session";
+let __webSessionToken=null;
+let __isMiniApp=false;
+let USER_ID=tgUser?tgUser.id:null;
+
+function isTelegramMiniApp(){
+  try{
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    if(!wa)return false;
+    if(wa.initData&&String(wa.initData).length>10)return true;
+    if(wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return true;
+  }catch(e){}
+  return false;
+}
+function loadWebSession(){
+  try{const raw=localStorage.getItem(WEB_SESSION_KEY);if(!raw)return null;return JSON.parse(raw)}catch(e){return null}
+}
+function saveWebSession(obj){
+  try{localStorage.setItem(WEB_SESSION_KEY,JSON.stringify(obj||{}))}catch(e){}
+  __webSessionToken=obj&&obj.token?obj.token:null;
+}
+function clearWebSession(){
+  try{localStorage.removeItem(WEB_SESSION_KEY)}catch(e){}
+  __webSessionToken=null;
+}
+function getAuthToken(){
+  if(__webSessionToken)return __webSessionToken;
+  const s=loadWebSession();
+  return s&&s.token?s.token:null;
+}
+function hideLoginOverlay(){
+  const ov=document.getElementById("login-overlay");
+  if(ov){ov.classList.remove("show");ov.setAttribute("aria-hidden","true")}
+}
+function showLoginOverlay(){
+  // only website / browser — never block real Mini App
+  if(isTelegramMiniApp()){hideLoginOverlay();return}
+  const ov=document.getElementById("login-overlay");
+  if(ov){ov.classList.add("show");ov.setAttribute("aria-hidden","false")}
+  loadTelegramLoginWidget();
+}
+async function loadTelegramLoginWidget(){
+  const wrap=document.getElementById("login-widget-wrap");
+  if(!wrap)return;
+  wrap.innerHTML="<span class=\"hint\">Loading…</span>";
+  try{
+    const cfg=await apiGet("/api/auth/config",8000);
+    const bot=(cfg.bot_username||"").replace(/^@/,"");
+    if(!bot){wrap.innerHTML="<span class=\"hint\">Bot unavailable</span>";return}
+    wrap.innerHTML="";
+    const s=document.createElement("script");
+    s.async=true;
+    s.src="https://telegram.org/js/telegram-widget.js?22";
+    s.setAttribute("data-telegram-login",bot);
+    s.setAttribute("data-size","large");
+    s.setAttribute("data-radius","12");
+    s.setAttribute("data-onauth","onTelegramAuth(user)");
+    s.setAttribute("data-request-access","write");
+    wrap.appendChild(s);
+  }catch(e){
+    wrap.innerHTML="<span class=\"hint\">API connection error</span>";
+  }
+}
+window.onTelegramAuth=async function(user){
+  try{
+    const res=await apiPost("/api/auth/telegram",user,12000);
+    if(!res||!res.ok||!res.session_token)throw new Error((res&&(res.error||res.message))||"auth_failed");
+    saveWebSession({
+      token:res.session_token,
+      user_id:res.user_id,
+      expires_at:res.expires_at,
+      photo_url:res.photo_url||user.photo_url||"",
+      username:res.username||user.username||"",
+      first_name:res.first_name||user.first_name||""
+    });
+    USER_ID=res.user_id;
+    if(res.lang)state.lang=res.lang;
+    if(res.theme&&res.theme!=="auto")state.theme=res.theme;
+    applyTheme(state.theme,false);
+    applyI18n();
+    hideLoginOverlay();
+    try{setAvatar()}catch(e){}
+    await loadMe(true);
+    startEventLoop();
+  }catch(e){
+    alert(String(e.message||e));
+  }
+};
+function webLogout(){
+  const token=getAuthToken();
+  if(token){apiPost("/api/auth/logout",{},5000).catch(function(){})}
+  clearWebSession();
+  USER_ID=null;
+  if(isTelegramMiniApp()){
+    try{if(tg&&tg.close)tg.close()}catch(e){}
+    return;
+  }
+  showLoginOverlay();
+}
 
 
 const SLIDE_COUNT=5;
@@ -963,7 +1091,26 @@ async function apiFetch(path,opts,timeoutMs){
   const ms=timeoutMs==null?10000:timeoutMs;
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
-    const r=await fetch(_apiUrl(path),Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{signal:ctrl?ctrl.signal:undefined}));
+    const headers=Object.assign({"Accept":"application/json"},(opts&&opts.headers)||{});
+    let initData="";
+    try{
+      const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+      if(wa&&wa.initData)initData=String(wa.initData);
+    }catch(e){}
+    if(initData)headers["X-Telegram-Init-Data"]=initData;
+    const tok=typeof getAuthToken==="function"?getAuthToken():null;
+    if(tok){
+      if(!headers.Authorization)headers.Authorization="Bearer "+tok;
+      headers["X-Session-Token"]=tok;
+    }
+    let url=_apiUrl(path);
+    // Telegram WebView may strip custom headers — mirror in query
+    if(initData&&url.indexOf("initData=")<0){
+      url+=(url.indexOf("?")>=0?"&":"?")+"initData="+encodeURIComponent(initData);
+    }else if(tok&&url.indexOf("session_token")<0&&url.indexOf("session=")<0){
+      url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
+    }
+    const r=await fetch(url,Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{headers:headers,signal:ctrl?ctrl.signal:undefined}));
     if(timer)clearTimeout(timer);
     return r;
   }catch(e){
@@ -985,18 +1132,22 @@ async function apiPost(path,body,timeoutMs){
 }
 
 function setAvatar(){
-  const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").toString().charAt(0).toUpperCase();
-  const avfb=document.getElementById("av-fb");if(avfb)avfb.textContent=letter;
-  const pavfb=document.getElementById("p-av-fb");if(pavfb)pavfb.textContent=letter;
-  const photo=tgUser&&tgUser.photo_url;
+  const sess=typeof loadWebSession==="function"?loadWebSession():null;
+  const nameSrc=(tgUser&&(tgUser.first_name||tgUser.username))||(sess&&(sess.first_name||sess.username))||"A";
+  const letter=String(nameSrc).charAt(0).toUpperCase()||"A";
+  const avfb=document.getElementById("av-fb");if(avfb){avfb.textContent=letter;avfb.style.display=""}
+  const pavfb=document.getElementById("p-av-fb");if(pavfb){pavfb.textContent=letter;pavfb.style.display=""}
+  const photo=(tgUser&&tgUser.photo_url)||(sess&&sess.photo_url)||"";
   const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
   if(photo&&img){img.src=photo;img.style.display="block";if(avfb)avfb.style.display="none"}
   if(photo&&pimg){pimg.src=photo;pimg.style.display="block";if(pavfb)pavfb.style.display="none"}
-  const name=tgUser?[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ")||("ID "+tgUser.id):"Guest";
-  const pn=document.getElementById("p-name");if(pn)pn.textContent=name;
+  if(!photo){if(img)img.style.display="none";if(pimg)pimg.style.display="none"}
+  const full=tgUser?[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ")||(tgUser.username?("@"+tgUser.username):("ID "+tgUser.id)):(sess&&sess.first_name)||"Guest";
+  const pn=document.getElementById("p-name");if(pn)pn.textContent=full;
   const un=document.getElementById("p-uname");
   if(un){
-    if(tgUser&&tgUser.username){un.textContent="@"+tgUser.username;un.href="https://t.me/"+tgUser.username}
+    const uname=(tgUser&&tgUser.username)||(sess&&sess.username)||"";
+    if(uname){un.textContent="@"+String(uname).replace(/^@/,"");un.href="https://t.me/"+String(uname).replace(/^@/,"")}
     else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
   }
   const pid=document.getElementById("p-id");if(pid)pid.textContent=USER_ID||"—";
@@ -1073,14 +1224,17 @@ function startEventLoop(){
 
 let _meCacheAt=0,_meInflight=null;
 async function loadMe(force){
-  if(!USER_ID){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
+  const _wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+  const _hasInit=!!(_wa&&_wa.initData&&String(_wa.initData).length>10);
+  const _hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
+  if(!USER_ID&&!_hasInit&&!_hasSess){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
   const now=Date.now();
   if(!force&&state.me&&(now-_meCacheAt)<2500)return state.me;
   if(_meInflight)return _meInflight;
   _meInflight=(async()=>{
     try{
-      const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),8000);
-      state.me=me;_meCacheAt=Date.now();
+      const me=await apiGet("/api/miniapp/me"+(USER_ID?("?user_id="+encodeURIComponent(USER_ID)):""),8000);
+      state.me=me;_meCacheAt=Date.now();if(me&&me.user_id)USER_ID=me.user_id;
       applyBalanceUI(me.balance);
       const bal=fmt(me.balance);
       const big=document.getElementById("bal-big");
@@ -1327,11 +1481,58 @@ const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=function(e){e.p
 
 try{applyTheme(state.theme,false)}catch(e){console.warn(e)}
 try{applyI18n()}catch(e){console.warn(e)}
-try{setAvatar()}catch(e){console.warn(e)}
 try{renderCarousel()}catch(e){console.warn(e)}
-try{loadMe()}catch(e){console.warn(e)}
-try{startEventLoop()}catch(e){console.warn(e)}
 try{wireSupport()}catch(e){console.warn(e)}
+
+(async function bootstrapAuth(){
+  try{
+    hideLoginOverlay();
+    tgUser=getTgUser();
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    const hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
+    const hasUser=!!(tgUser&&tgUser.id);
+    // Mini App (Telegram): same as before — data from bot via initData / user id
+    if(hasInit||hasUser){
+      __isMiniApp=true;
+      USER_ID=tgUser&&tgUser.id?tgUser.id:null;
+      if(!USER_ID&&hasInit){
+        for(let i=0;i<10&&!USER_ID;i++){
+          await new Promise(r=>setTimeout(r,150));
+          tgUser=getTgUser();
+          if(tgUser&&tgUser.id)USER_ID=tgUser.id;
+        }
+      }
+      try{setAvatar()}catch(e){}
+      try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
+      try{startEventLoop()}catch(e){}
+      return;
+    }
+    // Website (browser): session or Telegram Login
+    __isMiniApp=false;
+    const sess=loadWebSession();
+    if(sess&&sess.token){
+      __webSessionToken=sess.token;
+      try{
+        const s=await apiGet("/api/auth/session",6000);
+        if(s&&s.user_id){
+          USER_ID=s.user_id;
+          if(s.lang)state.lang=s.lang;
+          if(s.theme&&s.theme!=="auto")state.theme=s.theme;
+          applyTheme(state.theme,false);applyI18n();
+          try{setAvatar()}catch(e){}
+          try{await loadMe(true)}catch(e){}
+          try{startEventLoop()}catch(e){}
+          return;
+        }
+      }catch(e){clearWebSession()}
+    }
+    try{setAvatar()}catch(e){}
+    showLoginOverlay();
+  }catch(e){
+    console.warn("bootstrap",e);
+    try{if(!isTelegramMiniApp())showLoginOverlay()}catch(e2){}
+  }
+})();
 
 on("btn-deposit","onclick",()=>{show("deposit");calcDep()});
 on("btn-withdraw","onclick",()=>{show("withdraw");calcWd()});
@@ -1420,7 +1621,12 @@ document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=doc
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
+(function(){
+  const b=document.getElementById("btn-web-logout");
+  if(b){b.onclick=webLogout;b.style.display=isTelegramMiniApp()?"none":""}
+})();
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
+
 </script>
 </body>
 </html>
