@@ -985,16 +985,21 @@ async function apiPost(path,body,timeoutMs){
 }
 
 function setAvatar(){
-  const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").charAt(0).toUpperCase();
-  document.getElementById("av-fb").textContent=letter;document.getElementById("p-av-fb").textContent=letter;
-  const photo=tgUser&&tgUser.photo_url;const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
-  if(photo){img.src=photo;img.style.display="block";document.getElementById("av-fb").style.display="none";pimg.src=photo;pimg.style.display="block";document.getElementById("p-av-fb").style.display="none"}
+  const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").toString().charAt(0).toUpperCase();
+  const avfb=document.getElementById("av-fb");if(avfb)avfb.textContent=letter;
+  const pavfb=document.getElementById("p-av-fb");if(pavfb)pavfb.textContent=letter;
+  const photo=tgUser&&tgUser.photo_url;
+  const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
+  if(photo&&img){img.src=photo;img.style.display="block";if(avfb)avfb.style.display="none"}
+  if(photo&&pimg){pimg.src=photo;pimg.style.display="block";if(pavfb)pavfb.style.display="none"}
   const name=tgUser?[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ")||("ID "+tgUser.id):"Guest";
-  document.getElementById("p-name").textContent=name;
+  const pn=document.getElementById("p-name");if(pn)pn.textContent=name;
   const un=document.getElementById("p-uname");
-  if(tgUser&&tgUser.username){un.textContent="@"+tgUser.username;un.href="https://t.me/"+tgUser.username}
-  else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
-  document.getElementById("p-id").textContent=USER_ID||"—";
+  if(un){
+    if(tgUser&&tgUser.username){un.textContent="@"+tgUser.username;un.href="https://t.me/"+tgUser.username}
+    else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
+  }
+  const pid=document.getElementById("p-id");if(pid)pid.textContent=USER_ID||"—";
 }
 
 function calcDep(){
@@ -1254,16 +1259,60 @@ async function loadPanel(){
   catch(e){document.getElementById("panel-role").textContent="—"}
 }
 
+
+function wireSupport(){
+  function openUrl(u){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}}
+  const map={
+    "sup-manager":"https://t.me/mediamanagering",
+    "sup-bot":"https://t.me/clossrsuppbot",
+    "sup-mail":"mailto:clossr.support@gmail.com",
+    "sup-faq":"https://clossr.site/#about",
+    "sup-privacy":"https://clossr.site/privacy.html",
+    "sup-terms":"https://clossr.site/terms.html"
+  };
+  Object.keys(map).forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.onclick=function(){openUrl(map[id])};
+  });
+  const chat=document.getElementById("sup-chat");
+  if(chat)chat.onclick=function(){show("support-chat");try{loadSupportChat()}catch(e){}};
+}
+
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();startEventLoop();wireSupport();
-const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
-const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
+function on(id,ev,fn){const el=document.getElementById(id);if(el)el[ev]=fn;return el}
 
+function navigate(nav){
+  if(!nav)return;
+  if(nav==="balance"){show("balance");loadMe();loadRequests()}
+  else if(nav==="settings"){show("settings");loadMe()}
+  else if(nav==="projects"){show("projects");loadProjects()}
+  else if(nav==="help")show("help");
+  else if(nav==="support")show("support");
+  else if(nav==="panel"){show("panel");try{loadPanel()}catch(e){}}
+  else show(nav);
+}
 
-function on(id, ev, fn){const el=document.getElementById(id);if(el)el[ev]=fn;return el}
+// делегирование кликов — работает даже если кнопки перерисуются
+document.body.addEventListener("click",function(ev){
+  const t=ev.target;
+  if(!t||!t.closest)return;
+  const navBtn=t.closest("[data-nav]");
+  if(navBtn){
+    ev.preventDefault();
+    navigate(navBtn.getAttribute("data-nav"));
+    return;
+  }
+  const themeBtn=t.closest("[data-theme-set]");
+  if(themeBtn){
+    ev.preventDefault();
+    setTheme(themeBtn.getAttribute("data-theme-set"));
+    return;
+  }
+},false);
+
 on("btn-gear","onclick",()=>{show("settings");loadMe()});
 on("btn-flag","onclick",()=>{show("lang");renderLangList()});
 on("btn-top-bal","onclick",()=>{show("balance");loadMe();loadRequests()});
@@ -1272,18 +1321,17 @@ on("btn-menu-back","onclick",goBack);
 (function(){const c=document.getElementById("tx-close");const o=document.getElementById("tx-overlay");if(c&&o){c.onclick=()=>o.classList.remove("open");o.onclick=(e)=>{if(e.target===o)o.classList.remove("open")}}})();
 on("tile-lang","onclick",()=>{show("lang");renderLangList()});
 on("tile-theme","onclick",()=>show("theme"));
-document.querySelectorAll("[data-theme-set]").forEach(b=>b.onclick=()=>setTheme(b.getAttribute("data-theme-set")));
-document.querySelectorAll("[data-nav]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    const nav=btn.getAttribute("data-nav");
-    if(nav==="balance"){show("balance");loadMe();loadRequests()}
-    else if(nav==="settings"){show("settings");loadMe()}
-    else if(nav==="projects"){show("projects");loadProjects()}
-    else if(nav==="help")show("help");
-    else if(nav==="support")show("support");
-    else if(nav==="panel"){show("panel");loadPanel()}
-  });
-});
+
+const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=function(e){e.preventDefault();carPrev()};
+const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=function(e){e.preventDefault();carNext()};
+
+try{applyTheme(state.theme,false)}catch(e){console.warn(e)}
+try{applyI18n()}catch(e){console.warn(e)}
+try{setAvatar()}catch(e){console.warn(e)}
+try{renderCarousel()}catch(e){console.warn(e)}
+try{loadMe()}catch(e){console.warn(e)}
+try{startEventLoop()}catch(e){console.warn(e)}
+try{wireSupport()}catch(e){console.warn(e)}
 
 on("btn-deposit","onclick",()=>{show("deposit");calcDep()});
 on("btn-withdraw","onclick",()=>{show("withdraw");calcWd()});
