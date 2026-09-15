@@ -4,15 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Advinced Management</title>
-
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
-<link rel="icon" href="favicon.ico"/>
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
-<meta name="theme-color" content="#006AD2"/>
-<meta property="og:title" content="Advinced Management"/>
-<meta property="og:description" content="Площадка покупки и монетизации трафика"/>
-<meta property="og:image" content="apple-touch-icon.png"/>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root,[data-theme="light"]{
@@ -286,28 +277,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-page .chat-messages{min-height:40vh;max-height:55vh;background:transparent;border:none;padding:8px 0 12px}
 .chat-footer{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;background:var(--bg)}
 
-
-.login-overlay{position:fixed;inset:0;z-index:99998;background:rgba(15,23,42,.72);display:none!important;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;backdrop-filter:blur(6px);pointer-events:none}
-.login-overlay.show{display:flex!important;pointer-events:auto}
-.login-card{max-width:400px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 22px;text-align:center;color:var(--text);box-shadow:var(--shadow)}
-.login-card h2{font-size:20px;margin:0 0 8px;font-weight:700}
-.login-card .sub{font-size:14px;line-height:1.5;color:var(--text2);margin:0 0 18px}
-.login-widget-wrap{display:flex;justify-content:center;min-height:48px;margin:12px 0}
-.login-card .muted{font-size:12px;color:var(--hint);margin-top:12px}
-
 </style>
 </head>
 <body>
-
-<div id="login-overlay" class="login-overlay">
-  <div class="login-card">
-    <h2 data-i18n="login_title">Вход</h2>
-    <p class="sub" data-i18n="login_sub">Войдите через Telegram, чтобы пользоваться сайтом Advinced Management</p>
-    <div class="login-widget-wrap" id="login-widget-wrap"></div>
-    <p class="muted" data-i18n="login_hint">В миниаппе Telegram вход выполняется автоматически</p>
-  </div>
-</div>
-
 <div class="app">
   <div class="topbar">
     <div class="topbar-left">
@@ -430,7 +402,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="avatar-lg" id="p-av"><span id="p-av-fb">A</span><img id="p-av-img" style="display:none" alt=""/></div>
           <div class="profile-name" id="p-name">—</div>
           <a class="profile-uname" id="p-uname" href="#" target="_blank" rel="noopener">—</a>
-          <button type="button" class="btn wide" id="btn-web-logout" style="display:none;margin-bottom:10px" data-i18n="logout">Выйти</button>
           <div class="profile-card" aria-disabled="true">
             <div class="row single">
               <span class="k">ID <span class="v" id="p-id">—</span></span>
@@ -738,7 +709,7 @@ const LANGS=[
 function baseI18n(o){return o}
 const I18N={
 ru:baseI18n({back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
-language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",login_title:"Вход",login_sub:"Войдите через Telegram, чтобы пользоваться сайтом Advinced Management",login_hint:"В миниаппе Telegram вход выполняется автоматически",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
+language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
 recipient:"Реквизиты",recipient_name:"Получатель",credit_amount:"К зачислению",fee:"Комиссия",total_to_pay:"Итого к оплате",
@@ -751,7 +722,7 @@ staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",
 panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
-language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",login_title:"Sign in",login_sub:"Sign in with Telegram to use Advinced Management website",login_hint:"In Telegram Mini App sign-in is automatic",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
+language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
 recipient:"Details",recipient_name:"Recipient",credit_amount:"To be credited",fee:"Fee",total_to_pay:"Total to pay",
@@ -907,109 +878,9 @@ roles:{user:"사용자",partner:"파트너",corp:"기업",intern:"인턴",mod:"�
 };
 
 const tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
-if(tg){try{tg.ready();tg.expand();if(tg.disableVerticalSwipes)try{tg.disableVerticalSwipes()}catch(e){}}catch(e){}}
-function getTgUser(){
-  try{
-    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:tg;
-    if(wa&&wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return wa.initDataUnsafe.user;
-  }catch(e){}
-  return null;
-}
-let tgUser=getTgUser();
-const WEB_SESSION_KEY="advinced_web_session";
-let __webSessionToken=null;
-let __isMiniApp=false;
-let USER_ID=null;
-
-function isTelegramMiniApp(){
-  try{
-    const id=(tg&&tg.initData)||(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData)||"";
-    if(id&&String(id).length>10)return true;
-    if(tgUser&&tgUser.id)return true;
-    if(tg&&tg.platform&&tg.platform!=="unknown")return true;
-  }catch(e){}
-  return false;
-}
-function loadWebSession(){
-  try{const raw=localStorage.getItem(WEB_SESSION_KEY);if(!raw)return null;return JSON.parse(raw)}catch(e){return null}
-}
-function saveWebSession(obj){
-  try{localStorage.setItem(WEB_SESSION_KEY,JSON.stringify(obj||{}))}catch(e){}
-  __webSessionToken=obj&&obj.token?obj.token:null;
-}
-function clearWebSession(){
-  try{localStorage.removeItem(WEB_SESSION_KEY)}catch(e){}
-  __webSessionToken=null;
-}
-function getAuthToken(){
-  if(__webSessionToken)return __webSessionToken;
-  const s=loadWebSession();
-  return s&&s.token?s.token:null;
-}
-function hideLoginOverlay(){
-  const ov=document.getElementById("login-overlay");
-  if(ov){ov.classList.remove("show");ov.style.display="none";ov.style.pointerEvents="none"}
-}
-function showLoginOverlay(){
-  if(isTelegramMiniApp()||(typeof getTgUser==="function"&&getTgUser()&&getTgUser().id)){hideLoginOverlay();return}
-  const ov=document.getElementById("login-overlay");
-  if(ov){ov.classList.add("show");ov.style.display="flex";ov.style.pointerEvents="auto"}
-  loadTelegramLoginWidget();
-}
-
-async function loadTelegramLoginWidget(){
-  const wrap=document.getElementById("login-widget-wrap");
-  if(!wrap)return;
-  wrap.innerHTML="<div class='hint'>…</div>";
-  try{
-    const cfg=await apiGet("/api/auth/config",8000);
-    const bot=(cfg.bot_username||"").replace(/^@/,"");
-    if(!bot){wrap.innerHTML="<p class='hint'>Bot username unavailable</p>";return}
-    wrap.innerHTML="";
-    const s=document.createElement("script");
-    s.async=true;
-    s.src="https://telegram.org/js/telegram-widget.js?22";
-    s.setAttribute("data-telegram-login",bot);
-    s.setAttribute("data-size","large");
-    s.setAttribute("data-radius","12");
-    s.setAttribute("data-onauth","onTelegramAuth(user)");
-    s.setAttribute("data-request-access","write");
-    wrap.appendChild(s);
-  }catch(e){
-    wrap.innerHTML="<p class='hint'>API connection error</p>";
-  }
-}
-window.onTelegramAuth=async function(user){
-  try{
-    const res=await apiPost("/api/auth/telegram",user,12000);
-    if(!res||!res.ok||!res.session_token)throw new Error(res&&res.error||"auth_failed");
-    saveWebSession({token:res.session_token,user_id:res.user_id,expires_at:res.expires_at});
-    USER_ID=res.user_id;
-    if(res.lang)state.lang=res.lang;
-    if(res.theme)state.theme=res.theme==="auto"?"light":res.theme;
-    applyTheme(state.theme,false);
-    applyI18n();
-    hideLoginOverlay();
-    setAvatar();
-    loadMe(true);
-    startEventLoop();
-  }catch(e){
-    alert(String(e.message||e));
-  }
-};
-function webLogout(){
-  const token=getAuthToken();
-  if(token){
-    apiPost("/api/auth/logout",{},5000).catch(()=>{});
-  }
-  clearWebSession();
-  USER_ID=null;
-  if(isTelegramMiniApp()){
-    try{if(tg&&tg.close)tg.close()}catch(e){}
-    return;
-  }
-  showLoginOverlay();
-}
+if(tg){try{tg.ready();tg.expand()}catch(e){}}
+const tgUser=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.user:null;
+const USER_ID=tgUser?tgUser.id:null;
 
 
 const SLIDE_COUNT=5;
@@ -1092,27 +963,7 @@ async function apiFetch(path,opts,timeoutMs){
   const ms=timeoutMs==null?10000:timeoutMs;
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
-    const headers=Object.assign({"Accept":"application/json"},(opts&&opts.headers)||{});
-    // как в exchange: не делим трафик — просто передаём то, что есть
-    let initData="";
-    try{
-      const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-      if(wa&&wa.initData)initData=String(wa.initData);
-    }catch(e){}
-    if(initData)headers["X-Telegram-Init-Data"]=initData;
-    const tok=typeof getAuthToken==="function"?getAuthToken():null;
-    if(tok){
-      if(!headers.Authorization)headers.Authorization="Bearer "+tok;
-      headers["X-Session-Token"]=tok;
-    }
-    let url=_apiUrl(path);
-    // дубль initData/session в query — Telegram WebView иногда режет заголовки
-    if(initData&&url.indexOf("initData=")<0){
-      url+=(url.indexOf("?")>=0?"&":"?")+"initData="+encodeURIComponent(initData);
-    }else if(tok&&url.indexOf("session")<0&&url.indexOf("session_token")<0){
-      url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
-    }
-    const r=await fetch(url,Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{headers:headers,signal:ctrl?ctrl.signal:undefined}));
+    const r=await fetch(_apiUrl(path),Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{signal:ctrl?ctrl.signal:undefined}));
     if(timer)clearTimeout(timer);
     return r;
   }catch(e){
@@ -1120,7 +971,6 @@ async function apiFetch(path,opts,timeoutMs){
     throw e;
   }
 }
-
 async function apiGet(path,timeoutMs){
   const r=await apiFetch(path,{method:"GET",headers:{"Accept":"application/json"}},timeoutMs);
   if(!r.ok)throw new Error("HTTP "+r.status);
@@ -1135,31 +985,17 @@ async function apiPost(path,body,timeoutMs){
 }
 
 function setAvatar(){
-  const sess=typeof loadWebSession==="function"?loadWebSession():null;
-  const name=(tgUser&&(tgUser.first_name||tgUser.username))||(sess&&(sess.first_name||sess.username))||(state.me&&(state.me.first_name||state.me.username))||"A";
-  const letter=String(name).charAt(0).toUpperCase()||"A";
-  const fb=document.getElementById("av-fb");const pfb=document.getElementById("p-av-fb");
-  if(fb){fb.textContent=letter;fb.style.display=""}
-  if(pfb){pfb.textContent=letter;pfb.style.display=""}
-  const photo=(tgUser&&tgUser.photo_url)||(sess&&sess.photo_url)||"";
-  const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
-  if(photo&&img&&pimg){
-    img.src=photo;img.style.display="block";if(fb)fb.style.display="none";
-    pimg.src=photo;pimg.style.display="block";if(pfb)pfb.style.display="none";
-  }else{
-    if(img)img.style.display="none";
-    if(pimg)pimg.style.display="none";
-  }
-  const un=document.getElementById("p-name");
-  if(un){
-    const uname=(tgUser&&tgUser.username)||(sess&&sess.username)||(state.me&&state.me.username)||"";
-    if(uname){un.textContent="@"+String(uname).replace(/^@/,"");un.href="https://t.me/"+String(uname).replace(/^@/,"");}
-    else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
-  }
-  const pid=document.getElementById("p-id");
-  if(pid)pid.textContent=USER_ID||"—";
+  const letter=((tgUser&&(tgUser.first_name||tgUser.username))||"A").charAt(0).toUpperCase();
+  document.getElementById("av-fb").textContent=letter;document.getElementById("p-av-fb").textContent=letter;
+  const photo=tgUser&&tgUser.photo_url;const img=document.getElementById("av-img");const pimg=document.getElementById("p-av-img");
+  if(photo){img.src=photo;img.style.display="block";document.getElementById("av-fb").style.display="none";pimg.src=photo;pimg.style.display="block";document.getElementById("p-av-fb").style.display="none"}
+  const name=tgUser?[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ")||("ID "+tgUser.id):"Guest";
+  document.getElementById("p-name").textContent=name;
+  const un=document.getElementById("p-uname");
+  if(tgUser&&tgUser.username){un.textContent="@"+tgUser.username;un.href="https://t.me/"+tgUser.username}
+  else{un.textContent=USER_ID?("ID "+USER_ID):"—";un.removeAttribute("href")}
+  document.getElementById("p-id").textContent=USER_ID||"—";
 }
-
 
 function calcDep(){
   const amount=Math.max(0,parseFloat(document.getElementById("dep-amount").value||"0")||0);
@@ -1232,17 +1068,14 @@ function startEventLoop(){
 
 let _meCacheAt=0,_meInflight=null;
 async function loadMe(force){
-  const _wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-  const _hasInit=!!(_wa&&_wa.initData&&String(_wa.initData).length>10);
-  const _hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
-  if(!USER_ID&&!_hasInit&&!_hasSess){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
+  if(!USER_ID){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
   const now=Date.now();
   if(!force&&state.me&&(now-_meCacheAt)<2500)return state.me;
   if(_meInflight)return _meInflight;
   _meInflight=(async()=>{
     try{
-      const me=await apiGet("/api/miniapp/me"+(USER_ID?("?user_id="+encodeURIComponent(USER_ID)):""),8000);
-      state.me=me;_meCacheAt=Date.now();if(me&&me.user_id)USER_ID=me.user_id;
+      const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),8000);
+      state.me=me;_meCacheAt=Date.now();
       applyBalanceUI(me.balance);
       const bal=fmt(me.balance);
       const big=document.getElementById("bal-big");
@@ -1308,7 +1141,7 @@ async function loadRequests(){
 }
 async function loadProjects(){
   const list=document.getElementById("proj-list");const meta=document.getElementById("proj-meta");
-  if(!USER_ID){list.innerHTML='<div class="empty">'+t("login_title")+"</div>";showLoginOverlay();return}
+  if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';return}
   list.innerHTML='<div class="empty">…</div>';
   try{
     // page=1&page_size=100 — одна лента без пагинации
@@ -1424,62 +1257,7 @@ async function loadPanel(){
 // init
 try{const s=localStorage.getItem("advinced_lang");if(s&&LANGS.some(l=>l.code===s))state.lang=s}catch(e){}
 try{const s=localStorage.getItem("advinced_theme");if(s==="dark"||s==="light"||s==="auto")state.theme=s;else state.theme="light"}catch(e){}
-applyTheme(state.theme,false);applyI18n();renderCarousel();wireSupport();
-on("btn-web-logout","onclick",webLogout);
-(function(){const b=document.getElementById("btn-web-logout");if(b)b.style.display=isTelegramMiniApp()?"none":"";})();
-
-(async function bootstrapAuth(){
-  try{
-    hideLoginOverlay();
-    tgUser=typeof getTgUser==="function"?getTgUser():null;
-    var wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-    var hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
-    var hasUser=!!(tgUser&&tgUser.id);
-    // Миниапп Telegram: есть initData или user — грузим данные как раньше
-    if(hasInit||hasUser){
-      __isMiniApp=true;
-      USER_ID=tgUser&&tgUser.id?tgUser.id:null;
-      if(!USER_ID&&hasInit){
-        // подождать user из WebApp
-        for(var i=0;i<10&&!USER_ID;i++){
-          await new Promise(function(r){setTimeout(r,150)});
-          tgUser=getTgUser();
-          if(tgUser&&tgUser.id)USER_ID=tgUser.id;
-        }
-      }
-      try{setAvatar()}catch(e){}
-      try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
-      try{startEventLoop()}catch(e){}
-      return;
-    }
-    // Сайт (браузер): сессия или экран входа через Telegram Login
-    __isMiniApp=false;
-    var sess=loadWebSession();
-    if(sess&&sess.token){
-      __webSessionToken=sess.token;
-      try{
-        var s=await apiGet("/api/auth/session",6000);
-        if(s&&s.user_id){
-          USER_ID=s.user_id;
-          if(s.lang)state.lang=s.lang;
-          if(s.theme&&s.theme!=="auto")state.theme=s.theme;
-          applyTheme(state.theme,false);applyI18n();
-          try{setAvatar()}catch(e){}
-          try{await loadMe(true)}catch(e){}
-          try{startEventLoop()}catch(e){}
-          return;
-        }
-      }catch(e){clearWebSession()}
-    }
-    try{setAvatar()}catch(e){}
-    showLoginOverlay();
-  }catch(e){
-    console.warn("bootstrap",e);
-    try{if(!isTelegramMiniApp())showLoginOverlay()}catch(e2){}
-  }
-})();
-
-
+applyTheme(state.theme,false);applyI18n();setAvatar();loadMe();renderCarousel();startEventLoop();wireSupport();
 const _cp=document.getElementById("car-prev");if(_cp)_cp.onclick=carPrev;
 const _cn=document.getElementById("car-next");if(_cn)_cn.onclick=carNext;
 
@@ -1495,23 +1273,6 @@ on("btn-menu-back","onclick",goBack);
 on("tile-lang","onclick",()=>{show("lang");renderLangList()});
 on("tile-theme","onclick",()=>show("theme"));
 document.querySelectorAll("[data-theme-set]").forEach(b=>b.onclick=()=>setTheme(b.getAttribute("data-theme-set")));
-
-document.body.addEventListener("click",function(ev){
-  const btn=ev.target&&ev.target.closest?ev.target.closest("[data-nav]"):null;
-  if(!btn)return;
-  const nav=btn.getAttribute("data-nav");
-  if(!nav)return;
-  ev.preventDefault();
-  if(nav==="balance"){show("balance");loadMe();loadRequests()}
-  else if(nav==="settings"){show("settings");loadMe()}
-  else if(nav==="projects"){show("projects");loadProjects()}
-  else if(nav==="support"){show("support")}
-  else if(nav==="help"){show("help")}
-  else if(nav==="panel"){show("panel");try{loadPanel()}catch(e){}}
-  else show(nav);
-},true);
-
-// legacy nav bind
 document.querySelectorAll("[data-nav]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const nav=btn.getAttribute("data-nav");
@@ -1611,10 +1372,7 @@ document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=doc
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
-on("btn-web-logout","onclick",webLogout);
-try{const b=document.getElementById("btn-web-logout");if(b)b.style.display=isTelegramMiniApp()?"none":""}catch(e){}
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
-
 </script>
 </body>
 </html>
