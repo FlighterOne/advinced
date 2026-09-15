@@ -1089,7 +1089,7 @@ function goBack(){if(state.history.length>1)state.history.pop();show(state.histo
 function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
 async function apiFetch(path,opts,timeoutMs){
   const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
-  const ms=timeoutMs==null?10000:timeoutMs;
+  const ms=timeoutMs==null?12000:timeoutMs;
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
     const headers=Object.assign({"Accept":"application/json"},(opts&&opts.headers)||{});
@@ -1098,6 +1098,7 @@ async function apiFetch(path,opts,timeoutMs){
       const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
       if(wa&&wa.initData)initData=String(wa.initData);
     }catch(e){}
+    // только заголовок — initData в query ломает длинные GET
     if(initData)headers["X-Telegram-Init-Data"]=initData;
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok){
@@ -1105,10 +1106,8 @@ async function apiFetch(path,opts,timeoutMs){
       headers["X-Session-Token"]=tok;
     }
     let url=_apiUrl(path);
-    // Telegram WebView may strip custom headers — mirror in query
-    if(initData&&url.indexOf("initData=")<0){
-      url+=(url.indexOf("?")>=0?"&":"?")+"initData="+encodeURIComponent(initData);
-    }else if(tok&&url.indexOf("session_token")<0&&url.indexOf("session=")<0){
+    // session_token в query — короткий fallback (WebView иногда режет Authorization)
+    if(tok&&url.indexOf("session_token")<0&&url.indexOf("session=")<0){
       url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
     }
     const r=await fetch(url,Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{headers:headers,signal:ctrl?ctrl.signal:undefined}));
@@ -1121,8 +1120,13 @@ async function apiFetch(path,opts,timeoutMs){
 }
 async function apiGet(path,timeoutMs){
   const r=await apiFetch(path,{method:"GET",headers:{"Accept":"application/json"}},timeoutMs);
-  if(!r.ok)throw new Error("HTTP "+r.status);
-  return r.json();
+  let data=null;
+  try{data=await r.json()}catch(e){}
+  if(!r.ok){
+    const msg=(data&&(data.message||data.error))||("HTTP "+r.status);
+    throw new Error(msg);
+  }
+  return data||{};
 }
 async function apiPost(path,body,timeoutMs){
   const r=await apiFetch(path,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body||{})},timeoutMs);
@@ -1232,25 +1236,53 @@ async function loadMe(force){
   const _wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
   const _hasInit=!!(_wa&&_wa.initData&&String(_wa.initData).length>10);
   const _hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
-  if(!USER_ID&&!_hasInit&&!_hasSess){const el=document.getElementById("top-bal");if(el)el.textContent="0.00 ₽";return null}
+  if(!USER_ID){
+    tgUser=typeof getTgUser==="function"?getTgUser():tgUser;
+    if(tgUser&&tgUser.id)USER_ID=tgUser.id;
+  }
+  if(!USER_ID&&!_hasInit&&!_hasSess){
+    const el=document.getElementById("top-bal");
+    if(el)el.textContent="0.00";
+    return null;
+  }
   const now=Date.now();
   if(!force&&state.me&&(now-_meCacheAt)<2500)return state.me;
   if(_meInflight)return _meInflight;
   _meInflight=(async()=>{
     try{
-      const me=await apiGet("/api/miniapp/me"+(USER_ID?("?user_id="+encodeURIComponent(USER_ID)):""),8000);
-      state.me=me;_meCacheAt=Date.now();
-      if(me&&me.user_id)USER_ID=me.user_id;
-      const balRaw=(me&&me.balance!=null)?me.balance:0;
-      applyBalanceUI(balRaw);
+      let path="/api/miniapp/me";
+      if(USER_ID)path+="?user_id="+encodeURIComponent(USER_ID);
+      const me=await apiGet(path,12000);
+      if(!me||me.ok===false)throw new Error((me&&(me.error||me.message))||"me_failed");
+      state.me=me;
+      _meCacheAt=Date.now();
+      if(me.user_id)USER_ID=me.user_id;
+      applyBalanceUI(me.balance!=null?me.balance:0);
       if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
       if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
       const role=Number(me.role||0);
-      const pr=document.getElementById("p-role");if(pr)pr.textContent=roleName(role);
-      const bp=document.getElementById("btn-panel");if(bp)bp.style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
+      const pr=document.getElementById("p-role");
+      if(pr)pr.textContent=roleName(role);
+      const bp=document.getElementById("btn-panel");
+      if(bp)bp.style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
       return me;
-    }catch(e){console.warn(e);return null}
-    finally{_meInflight=null}
+    }catch(e){
+      console.warn("loadMe",e);
+      try{
+        if(USER_ID){
+          const me2=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),12000);
+          if(me2&&me2.ok!==false){
+            state.me=me2;
+            _meCacheAt=Date.now();
+            applyBalanceUI(me2.balance!=null?me2.balance:0);
+            return me2;
+          }
+        }
+      }catch(e2){console.warn("loadMe retry",e2)}
+      return null;
+    }finally{
+      _meInflight=null;
+    }
   })();
   return _meInflight;
 }
