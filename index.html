@@ -51,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .btn-stack{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 
-.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0}
 .tile{aspect-ratio:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;box-shadow:var(--shadow);gap:6px}
 .tile:active{opacity:.85}
 .tile .t-title{font-size:15px;font-weight:700;color:var(--text)}
@@ -436,8 +436,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-balance" class="screen">
+      <div class="section-title" data-i18n="balance">Баланс</div>
       <div class="panel">
-        <h2 data-i18n="balance">Баланс</h2>
         <div class="balance-big" id="bal-big">—<span>₽</span></div>
       </div>
       <div class="btn-row">
@@ -566,7 +566,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-support" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
-      <div class="support-grid">
+      <div class="support-grid" style="margin-top:0">
         <button type="button" class="support-tile" id="sup-chat">
           <div class="support-tile-title" data-i18n="support_ticket">Написать обращение</div>
           <div class="support-tile-sub" data-i18n="support_chat_manager">Чат с менеджером</div>
@@ -665,7 +665,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       </div>
     </div>
 <div id="screen-panel" class="screen">
-      <div class="section-title" data-i18n="panel">Панель</div><div class="hint" id="panel-role">—</div>
+      <div class="section-title" data-i18n="panel">Панель</div>
+      <div class="hint" id="panel-role" style="margin:-4px 0 12px">—</div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
@@ -1185,12 +1186,16 @@ let _eventTimer=null;
 let _eventBusy=false;
 function applyBalanceUI(bal){
   try{
-    state.balance=Number(bal)||0;
+    const n=Number(bal);
+    state.balance=(isFinite(n)?n:0);
+    const num=fmt(state.balance);
     const chip=document.getElementById("top-bal");
-    if(chip)chip.textContent=fmt(state.balance)+" ₽";
+    if(chip)chip.textContent=num;
     const b=document.getElementById("bal-amount");
-    if(b)b.textContent=fmt(state.balance)+" ₽";
-  }catch(e){}
+    if(b)b.textContent=num+" ₽";
+    const big=document.getElementById("bal-big");
+    if(big)big.innerHTML=num+"<span>₽</span>";
+  }catch(e){console.warn("applyBalanceUI",e)}
 }
 async function pollEventsOnce(){
   if(!USER_ID||_eventBusy)return;
@@ -1234,11 +1239,10 @@ async function loadMe(force){
   _meInflight=(async()=>{
     try{
       const me=await apiGet("/api/miniapp/me"+(USER_ID?("?user_id="+encodeURIComponent(USER_ID)):""),8000);
-      state.me=me;_meCacheAt=Date.now();if(me&&me.user_id)USER_ID=me.user_id;
-      applyBalanceUI(me.balance);
-      const bal=fmt(me.balance);
-      const big=document.getElementById("bal-big");
-      if(big)big.innerHTML=bal+"<span>₽</span>";
+      state.me=me;_meCacheAt=Date.now();
+      if(me&&me.user_id)USER_ID=me.user_id;
+      const balRaw=(me&&me.balance!=null)?me.balance:0;
+      applyBalanceUI(balRaw);
       if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
       if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
       const role=Number(me.role||0);
@@ -1392,7 +1396,7 @@ async function openProject(pid){
             return;
           }
           if(a==="balance"){
-            show("balance");loadMe();loadRequests();
+            show("balance");loadMe(true);loadRequests();
             return;
           }
           if(a==="delete"){
@@ -1440,7 +1444,7 @@ function on(id,ev,fn){const el=document.getElementById(id);if(el)el[ev]=fn;retur
 
 function navigate(nav){
   if(!nav)return;
-  if(nav==="balance"){show("balance");loadMe();loadRequests()}
+  if(nav==="balance"){show("balance");loadMe(true);loadRequests()}
   else if(nav==="settings"){show("settings");loadMe()}
   else if(nav==="projects"){show("projects");loadProjects()}
   else if(nav==="help")show("help");
@@ -1469,7 +1473,7 @@ document.body.addEventListener("click",function(ev){
 
 on("btn-gear","onclick",()=>{show("settings");loadMe()});
 on("btn-flag","onclick",()=>{show("lang");renderLangList()});
-on("btn-top-bal","onclick",()=>{show("balance");loadMe();loadRequests()});
+on("btn-top-bal","onclick",()=>{show("balance");loadMe(true);loadRequests()});
 on("btn-avatar","onclick",()=>{show("profile");loadMe()});
 on("btn-menu-back","onclick",goBack);
 (function(){const c=document.getElementById("tx-close");const o=document.getElementById("tx-overlay");if(c&&o){c.onclick=()=>o.classList.remove("open");o.onclick=(e)=>{if(e.target===o)o.classList.remove("open")}}})();
