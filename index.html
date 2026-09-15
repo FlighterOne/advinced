@@ -51,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .btn-stack{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 
-.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0}
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tile{aspect-ratio:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;box-shadow:var(--shadow);gap:6px}
 .tile:active{opacity:.85}
 .tile .t-title{font-size:15px;font-weight:700;color:var(--text)}
@@ -228,7 +228,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle:disabled{opacity:.5;cursor:default}
 
 
-.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0}
 .support-tile{
   text-align:center;border:1px solid var(--line);background:var(--surface);
   border-radius:14px;padding:14px 12px;cursor:pointer;box-shadow:var(--shadow);
@@ -281,9 +281,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .login-overlay{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
 .login-overlay.show{display:flex!important;pointer-events:auto}
 .login-card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px 24px 22px;text-align:center;color:var(--text);box-shadow:var(--shadow)}
-.login-card .logo-dot{width:48px;height:48px;margin:0 auto 14px;border-radius:14px;background:linear-gradient(135deg,#006AD2,#3B8FE8);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;letter-spacing:-.03em}
+.login-card .logo-dot{width:48px;height:48px;margin:0 auto 14px;border-radius:14px;background:linear-gradient(135deg,#006AD2,#3B8FE8);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
 [data-theme="dark"] .login-card .logo-dot{background:linear-gradient(135deg,#fff,#E8EEF7);color:#006AD2}
-.login-card h2{font-size:20px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em}
+.login-card h2{font-size:20px;font-weight:700;margin:0 0 8px}
 .login-card .sub{font-size:14px;line-height:1.5;color:var(--text2);margin:0 0 18px}
 .login-widget-wrap{display:flex;justify-content:center;min-height:52px;margin:8px 0 12px;align-items:center}
 .login-card .muted{font-size:12px;color:var(--hint);margin-top:10px;line-height:1.4}
@@ -421,7 +421,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-profile" class="screen">
       <div class="panel">
-        <div class="profile-wrap">
+        <button type="button" class="btn wide" id="btn-web-logout" style="display:none;margin-bottom:12px">Log out</button>
+      <div class="profile-wrap">
           <div class="avatar-lg" id="p-av"><span id="p-av-fb">A</span><img id="p-av-img" style="display:none" alt=""/></div>
           <div class="profile-name" id="p-name">—</div>
           <a class="profile-uname" id="p-uname" href="#" target="_blank" rel="noopener">—</a>
@@ -566,7 +567,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-support" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
-      <div class="support-grid" style="margin-top:0">
+      <div class="support-grid">
         <button type="button" class="support-tile" id="sup-chat">
           <div class="support-tile-title" data-i18n="support_ticket">Написать обращение</div>
           <div class="support-tile-sub" data-i18n="support_chat_manager">Чат с менеджером</div>
@@ -946,7 +947,6 @@ function hideLoginOverlay(){
   if(ov){ov.classList.remove("show");ov.setAttribute("aria-hidden","true")}
 }
 function showLoginOverlay(){
-  // only website / browser — never block real Mini App
   if(isTelegramMiniApp()){hideLoginOverlay();return}
   const ov=document.getElementById("login-overlay");
   if(ov){ov.classList.add("show");ov.setAttribute("aria-hidden","false")}
@@ -1098,7 +1098,6 @@ async function apiFetch(path,opts,timeoutMs){
       const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
       if(wa&&wa.initData)initData=String(wa.initData);
     }catch(e){}
-    // только заголовок — initData в query ломает длинные GET
     if(initData)headers["X-Telegram-Init-Data"]=initData;
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok){
@@ -1106,7 +1105,6 @@ async function apiFetch(path,opts,timeoutMs){
       headers["X-Session-Token"]=tok;
     }
     let url=_apiUrl(path);
-    // session_token в query — короткий fallback (WebView иногда режет Authorization)
     if(tok&&url.indexOf("session_token")<0&&url.indexOf("session=")<0){
       url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
     }
@@ -1199,7 +1197,7 @@ function applyBalanceUI(bal){
     if(b)b.textContent=num+" ₽";
     const big=document.getElementById("bal-big");
     if(big)big.innerHTML=num+"<span>₽</span>";
-  }catch(e){console.warn("applyBalanceUI",e)}
+  }catch(e){}
 }
 async function pollEventsOnce(){
   if(!USER_ID||_eventBusy)return;
@@ -1233,14 +1231,12 @@ function startEventLoop(){
 
 let _meCacheAt=0,_meInflight=null;
 async function loadMe(force){
-  const _wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-  const _hasInit=!!(_wa&&_wa.initData&&String(_wa.initData).length>10);
-  const _hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
   if(!USER_ID){
     tgUser=typeof getTgUser==="function"?getTgUser():tgUser;
     if(tgUser&&tgUser.id)USER_ID=tgUser.id;
   }
-  if(!USER_ID&&!_hasInit&&!_hasSess){
+  const hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
+  if(!USER_ID&&!hasSess){
     const el=document.getElementById("top-bal");
     if(el)el.textContent="0.00";
     return null;
@@ -1268,17 +1264,6 @@ async function loadMe(force){
       return me;
     }catch(e){
       console.warn("loadMe",e);
-      try{
-        if(USER_ID){
-          const me2=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),12000);
-          if(me2&&me2.ok!==false){
-            state.me=me2;
-            _meCacheAt=Date.now();
-            applyBalanceUI(me2.balance!=null?me2.balance:0);
-            return me2;
-          }
-        }
-      }catch(e2){console.warn("loadMe retry",e2)}
       return null;
     }finally{
       _meInflight=null;
@@ -1428,7 +1413,7 @@ async function openProject(pid){
             return;
           }
           if(a==="balance"){
-            show("balance");loadMe(true);loadRequests();
+            show("balance");loadMe();loadRequests();
             return;
           }
           if(a==="delete"){
@@ -1519,6 +1504,10 @@ try{applyTheme(state.theme,false)}catch(e){console.warn(e)}
 try{applyI18n()}catch(e){console.warn(e)}
 try{renderCarousel()}catch(e){console.warn(e)}
 try{wireSupport()}catch(e){console.warn(e)}
+(function(){
+  const b=document.getElementById("btn-web-logout");
+  if(b)b.onclick=webLogout;
+})();
 
 (async function bootstrapAuth(){
   try{
@@ -1527,7 +1516,7 @@ try{wireSupport()}catch(e){console.warn(e)}
     const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
     const hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
     const hasUser=!!(tgUser&&tgUser.id);
-    // Mini App (Telegram): same as before — data from bot via initData / user id
+    // Mini App — как раньше: данные сразу
     if(hasInit||hasUser){
       __isMiniApp=true;
       USER_ID=tgUser&&tgUser.id?tgUser.id:null;
@@ -1541,9 +1530,11 @@ try{wireSupport()}catch(e){console.warn(e)}
       try{setAvatar()}catch(e){}
       try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
       try{startEventLoop()}catch(e){}
+      const lb=document.getElementById("btn-web-logout");
+      if(lb)lb.style.display="none";
       return;
     }
-    // Website (browser): session or Telegram Login
+    // Сайт — сессия или Sign in
     __isMiniApp=false;
     const sess=loadWebSession();
     if(sess&&sess.token){
@@ -1558,6 +1549,8 @@ try{wireSupport()}catch(e){console.warn(e)}
           try{setAvatar()}catch(e){}
           try{await loadMe(true)}catch(e){}
           try{startEventLoop()}catch(e){}
+          const lb=document.getElementById("btn-web-logout");
+          if(lb)lb.style.display="";
           return;
         }
       }catch(e){clearWebSession()}
@@ -1657,12 +1650,7 @@ document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=doc
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
-(function(){
-  const b=document.getElementById("btn-web-logout");
-  if(b){b.onclick=webLogout;b.style.display=isTelegramMiniApp()?"none":""}
-})();
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
-
 </script>
 </body>
 </html>
