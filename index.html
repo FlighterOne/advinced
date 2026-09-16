@@ -1003,6 +1003,7 @@ window.onTelegramAuth=async function(user){
     }
     // полный профиль из API
     try{await loadMe(true)}catch(e){console.warn("loadMe after login",e)}
+    try{loadRequests()}catch(e){}
     try{startEventLoop()}catch(e){}
     const lb=document.getElementById("btn-web-logout");
     if(lb)lb.style.display="";
@@ -1100,33 +1101,35 @@ function goBack(){if(state.history.length>1)state.history.pop();show(state.histo
 function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
 async function apiFetch(path,opts,timeoutMs){
   const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
-  const ms=timeoutMs==null?12000:timeoutMs;
+  const ms=timeoutMs==null?10000:timeoutMs;
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
     opts=opts||{};
-    const headers=Object.assign({"Accept":"application/json"}, opts.headers||{});
-    // Mini App initData — только header
+    const headers=Object.assign({},opts.headers||{});
+
+    // Telegram Mini App: передаём подписанные initData серверу.
     try{
       const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
       if(wa&&wa.initData)headers["X-Telegram-Init-Data"]=String(wa.initData);
     }catch(e){}
+
+    // Сайт после Telegram Login: передаём токен сессии, если он есть.
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok){
       headers["Authorization"]="Bearer "+tok;
       headers["X-Session-Token"]=tok;
     }
+
     let url=_apiUrl(path);
-    // session_token в query — надёжный fallback на сайте
-    if(tok&&url.indexOf("session_token=")<0){
-      url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
-    }
-    // user_id всегда, если известен (сайт после логина)
+
+    // Главный совместимый способ для существующего Mini App/API:
+    // user_id остаётся в запросе, как в рабочем index(1).
     if(typeof USER_ID!=="undefined"&&USER_ID&&url.indexOf("user_id=")<0&&url.indexOf("/api/")>=0){
-      // не для auth endpoints
       if(url.indexOf("/api/auth/")<0){
         url+=(url.indexOf("?")>=0?"&":"?")+"user_id="+encodeURIComponent(USER_ID);
       }
     }
+
     const fetchOpts={
       method:opts.method||"GET",
       mode:"cors",
@@ -1136,11 +1139,13 @@ async function apiFetch(path,opts,timeoutMs){
     };
     if(opts.body!=null)fetchOpts.body=opts.body;
     if(ctrl)fetchOpts.signal=ctrl.signal;
+
     const r=await fetch(url,fetchOpts);
     if(timer)clearTimeout(timer);
     return r;
   }catch(e){
     if(timer)clearTimeout(timer);
+    if(e&&e.name==="AbortError")throw new Error("API request timeout");
     throw e;
   }
 }
@@ -1539,56 +1544,82 @@ try{wireSupport()}catch(e){console.warn(e)}
 
 (async function bootstrapAuth(){
   try{
-    hideLoginOverlay();
     tgUser=getTgUser();
-    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-    const hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
-    const hasUser=!!(tgUser&&tgUser.id);
-    // Mini App — как раньше: данные сразу
+
+    // Telegram Mini App — вход автоматический, как в рабочем index(1).
+    let wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    let hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
+    let hasUser=!!(tgUser&&tgUser.id);
+
     if(hasInit||hasUser){
       __isMiniApp=true;
-      USER_ID=tgUser&&tgUser.id?tgUser.id:null;
-      if(!USER_ID&&hasInit){
-        for(let i=0;i<10&&!USER_ID;i++){
+
+      // Иногда Telegram отдаёт initDataUnsafe.user с небольшой задержкой.
+      if(!tgUser||!tgUser.id){
+        for(let i=0;i<12&&!tgUser;i++){
           await new Promise(r=>setTimeout(r,150));
           tgUser=getTgUser();
-          if(tgUser&&tgUser.id)USER_ID=tgUser.id;
         }
       }
+      if(tgUser&&tgUser.id)USER_ID=Number(tgUser.id)||tgUser.id;
+
+      hideLoginOverlay();
       try{setAvatar()}catch(e){}
-      try{await loadMe(true)}catch(e){console.warn("loadMe",e)}
-      try{startEventLoop()}catch(e){}
+
+      // Главное: загрузить данные именно тем же способом, который работает
+      // в index(1): /api/miniapp/me + user_id.
+      if(USER_ID){
+        try{await loadMe(true)}catch(e){console.warn("Mini App loadMe",e)}
+        try{startEventLoop()}catch(e){console.warn("Mini App events",e)}
+      }
+
       const lb=document.getElementById("btn-web-logout");
       if(lb)lb.style.display="none";
       return;
     }
-    // Сайт — сессия или Sign in
+
+    // Обычный сайт — восстановление Telegram-сессии.
     __isMiniApp=false;
     const sess=loadWebSession();
+
     if(sess&&sess.token){
       __webSessionToken=sess.token;
+
       try{
         const s=await apiGet("/api/auth/session",6000);
         if(s&&s.user_id){
           USER_ID=Number(s.user_id)||s.user_id;
           if(s.lang)state.lang=s.lang;
-          if(s.theme&&s.theme!=="auto")state.theme=s.theme;
-          applyTheme(state.theme,false);applyI18n();
+          if(s.theme==="dark"||s.theme==="light"||s.theme==="auto")state.theme=s.theme;
+          applyTheme(state.theme,false);
+          applyI18n();
           try{setAvatar()}catch(e){}
           if(s.balance!=null)applyBalanceUI(s.balance);
-          try{await loadMe(true)}catch(e){}
-          try{startEventLoop()}catch(e){}
+
+          // После авторизации обязательно обновляем данные из БД.
+          try{await loadMe(true)}catch(e){console.warn("web loadMe",e)}
+          try{startEventLoop()}catch(e){console.warn("web events",e)}
+
+          hideLoginOverlay();
           const lb=document.getElementById("btn-web-logout");
           if(lb)lb.style.display="";
           return;
         }
-      }catch(e){clearWebSession()}
+      }catch(e){
+        // Сессия действительно недействительна — тогда просим войти заново.
+        clearWebSession();
+      }
     }
+
+    // Нет валидной сессии — показываем Telegram Login.
     try{setAvatar()}catch(e){}
     showLoginOverlay();
+
   }catch(e){
-    console.warn("bootstrap",e);
-    try{if(!isTelegramMiniApp())showLoginOverlay()}catch(e2){}
+    console.warn("bootstrapAuth",e);
+    try{
+      if(!isTelegramMiniApp())showLoginOverlay();
+    }catch(e2){}
   }
 })();
 
