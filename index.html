@@ -42,6 +42,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);min-height:48px;padding:12px 14px;border-radius:var(--radius);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);width:100%}
+.btn,.tile,.support-tile,.actions,.btn-row,.btn-stack,.tile-grid,.support-grid{min-width:0}
+.btn,.tile,.support-tile{overflow-wrap:anywhere;word-break:break-word}
+.tile .t-title,.support-tile-title,.support-tile-sub{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 .btn:active{transform:scale(.985);filter:brightness(.97)}
 .btn.wide{grid-column:1/-1}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:var(--btn-p)}
@@ -131,6 +134,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .profile-card .v{font-size:14px;font-weight:700;color:var(--text)}
 .profile-card .row.single{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .role-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1px solid var(--brand-line);color:var(--brand);background:var(--brand-soft);white-space:nowrap}
+.panel.role-panel{padding:12px 14px;margin-bottom:12px}
+.role-panel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.role-panel-label{font-size:12px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.04em}
+.role-panel .role-badge{font-size:13px;padding:5px 11px;border-radius:10px;max-width:70%;overflow:hidden;text-overflow:ellipsis}
 .tx-detail-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
 .tx-detail-overlay.open{display:flex}
 .tx-detail-card{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 12px 12px;padding:18px 16px;box-shadow:var(--shadow);max-height:80vh;overflow:auto}
@@ -228,10 +235,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle:disabled{opacity:.5;cursor:default}
 
 
-.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0}
+ .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%}
 .support-tile{
-  text-align:center;border:1px solid var(--line);background:var(--surface);
-  border-radius:14px;padding:14px 12px;cursor:pointer;box-shadow:var(--shadow);
+  appearance:none;width:100%;min-width:0;text-align:center;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);border-radius:16px;padding:16px 12px;cursor:pointer;box-shadow:var(--shadow);
   min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
 }
 .support-tile.no-sub{min-height:64px}
@@ -250,11 +257,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-bubble.staff{align-self:flex-start}
 .chat-bubble .meta{display:block;font-size:10px;color:var(--hint);margin-top:4px}
 .chat-footer{position:sticky;bottom:0;padding-bottom:4px}
-.chat-input-row{display:flex;gap:8px;align-items:center}
-.chat-input-row .form-input{flex:1}
+.chat-input-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%}
+.chat-input-row .form-input{width:100%;min-width:0}
+.chat-input-row .btn{width:auto;min-width:88px;max-width:42vw;padding-left:12px;padding-right:12px}
 
 
 .section-title{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text);line-height:1.25;padding:0;letter-spacing:-0.01em}
+@media (max-width:360px){
+  .content{padding-left:12px;padding-right:12px}
+  .support-grid,.tile-grid{gap:8px}
+  .support-tile,.tile{padding-left:9px;padding-right:9px}
+  .support-tile-title,.tile .t-title{font-size:13px}
+  .chat-input-row .btn{min-width:76px;font-size:13px;padding-left:9px;padding-right:9px}
+}
+
 .support-tile{text-align:center;align-items:center}
 .support-tile-title{text-align:center}
 .support-tile-sub{text-align:center}
@@ -547,7 +563,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-projects" class="screen">
-      <div class="section-title" data-i18n="projects">Проекты</div><div class="hint" id="proj-meta">—</div>
+      <div class="section-title" data-i18n="projects">Проекты</div>
       <div class="list proj-scroll" id="proj-list"></div>
     </div>
 
@@ -667,7 +683,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 <div id="screen-panel" class="screen">
       <div class="section-title" data-i18n="panel">Панель</div>
-      <div class="hint" id="panel-role" style="margin:-4px 0 12px">—</div>
+      <div class="panel role-panel">
+        <div class="role-panel-row">
+          <span class="role-panel-label" data-i18n="role">Роль</span>
+          <span class="role-badge" id="panel-role">—</span>
+        </div>
+      </div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
@@ -1353,14 +1374,13 @@ async function loadRequests(){
   }catch(e){box.innerHTML='<div class="empty">—</div>'}
 }
 async function loadProjects(){
-  const list=document.getElementById("proj-list");const meta=document.getElementById("proj-meta");
+  const list=document.getElementById("proj-list");
   if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';return}
   list.innerHTML='<div class="empty">…</div>';
   try{
     // page=1&page_size=100 — одна лента без пагинации
     const data=await apiGet("/api/miniapp/projects?user_id="+encodeURIComponent(USER_ID)+"&page=1&page_size=100");
     const items=data.projects||[];
-    meta.textContent=(data.total!=null?data.total:items.length)+" · "+t("projects");
     if(!items.length){list.innerHTML='<div class="empty">'+t("no_projects")+"</div>";return}
     list.innerHTML=items.map(p=>{
       const roleLabel=p.role==="advertiser"?t("tx_purchase"):(p.role==="partner"?"Partner":t("tx_monetization"));
