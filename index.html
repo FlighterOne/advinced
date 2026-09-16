@@ -986,15 +986,26 @@ window.onTelegramAuth=async function(user){
       username:res.username||user.username||"",
       first_name:res.first_name||user.first_name||""
     });
-    USER_ID=res.user_id;
+    USER_ID=Number(res.user_id)||res.user_id;
     if(res.lang)state.lang=res.lang;
     if(res.theme&&res.theme!=="auto")state.theme=res.theme;
     applyTheme(state.theme,false);
     applyI18n();
     hideLoginOverlay();
     try{setAvatar()}catch(e){}
-    await loadMe(true);
-    startEventLoop();
+    // сразу баланс из ответа логина (БД), не ждём второй запрос
+    if(res.balance!=null)applyBalanceUI(res.balance);
+    if(res.role!=null){
+      const pr=document.getElementById("p-role");
+      if(pr)pr.textContent=roleName(Number(res.role||0));
+      const bp=document.getElementById("btn-panel");
+      if(bp)bp.style.display=(Number(res.role||0)>=ROLE_INTERN)?"":"none";
+    }
+    // полный профиль из API
+    try{await loadMe(true)}catch(e){console.warn("loadMe after login",e)}
+    try{startEventLoop()}catch(e){}
+    const lb=document.getElementById("btn-web-logout");
+    if(lb)lb.style.display="";
   }catch(e){
     alert(String(e.message||e));
   }
@@ -1092,23 +1103,40 @@ async function apiFetch(path,opts,timeoutMs){
   const ms=timeoutMs==null?12000:timeoutMs;
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
-    const headers=Object.assign({"Accept":"application/json"},(opts&&opts.headers)||{});
-    let initData="";
+    opts=opts||{};
+    const headers=Object.assign({"Accept":"application/json"}, opts.headers||{});
+    // Mini App initData — только header
     try{
       const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-      if(wa&&wa.initData)initData=String(wa.initData);
+      if(wa&&wa.initData)headers["X-Telegram-Init-Data"]=String(wa.initData);
     }catch(e){}
-    if(initData)headers["X-Telegram-Init-Data"]=initData;
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok){
-      if(!headers.Authorization)headers.Authorization="Bearer "+tok;
+      headers["Authorization"]="Bearer "+tok;
       headers["X-Session-Token"]=tok;
     }
     let url=_apiUrl(path);
-    if(tok&&url.indexOf("session_token")<0&&url.indexOf("session=")<0){
+    // session_token в query — надёжный fallback на сайте
+    if(tok&&url.indexOf("session_token=")<0){
       url+=(url.indexOf("?")>=0?"&":"?")+"session_token="+encodeURIComponent(tok);
     }
-    const r=await fetch(url,Object.assign({mode:"cors",cache:"no-store",credentials:"omit"},opts||{},{headers:headers,signal:ctrl?ctrl.signal:undefined}));
+    // user_id всегда, если известен (сайт после логина)
+    if(typeof USER_ID!=="undefined"&&USER_ID&&url.indexOf("user_id=")<0&&url.indexOf("/api/")>=0){
+      // не для auth endpoints
+      if(url.indexOf("/api/auth/")<0){
+        url+=(url.indexOf("?")>=0?"&":"?")+"user_id="+encodeURIComponent(USER_ID);
+      }
+    }
+    const fetchOpts={
+      method:opts.method||"GET",
+      mode:"cors",
+      cache:"no-store",
+      credentials:"omit",
+      headers:headers
+    };
+    if(opts.body!=null)fetchOpts.body=opts.body;
+    if(ctrl)fetchOpts.signal=ctrl.signal;
+    const r=await fetch(url,fetchOpts);
     if(timer)clearTimeout(timer);
     return r;
   }catch(e){
@@ -1542,11 +1570,12 @@ try{wireSupport()}catch(e){console.warn(e)}
       try{
         const s=await apiGet("/api/auth/session",6000);
         if(s&&s.user_id){
-          USER_ID=s.user_id;
+          USER_ID=Number(s.user_id)||s.user_id;
           if(s.lang)state.lang=s.lang;
           if(s.theme&&s.theme!=="auto")state.theme=s.theme;
           applyTheme(state.theme,false);applyI18n();
           try{setAvatar()}catch(e){}
+          if(s.balance!=null)applyBalanceUI(s.balance);
           try{await loadMe(true)}catch(e){}
           try{startEventLoop()}catch(e){}
           const lb=document.getElementById("btn-web-logout");
