@@ -356,6 +356,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .login-card .muted{font-size:12px;color:var(--hint);margin-top:10px;line-height:1.4}
 .login-card a{color:var(--brand);font-weight:600;text-decoration:none}
 
+
+#screen-support-chat.active{display:flex!important;flex-direction:column;min-height:0}
+#screen-support-chat .section-title{flex-shrink:0;margin:0 0 4px}
+#screen-support-chat .hint{flex-shrink:0;margin:0 0 10px}
+#screen-support-chat .chat-messages{flex:1;min-height:160px;max-height:none;overflow-y:auto;margin:0 0 10px}
+#screen-support-chat .chat-footer{flex-shrink:0;margin-top:auto;padding-top:4px}
+.chat-input-row{display:flex;gap:8px;align-items:center}
+.chat-input-row .form-input{flex:1;min-width:0}
+.chat-input-row .btn{width:auto;min-width:100px;flex-shrink:0}
+.chat-bubble.me{align-self:flex-end;background:var(--brand);color:var(--btn-p)}
+.chat-bubble.staff{align-self:flex-start}
+.chat-bubble .meta{display:block;font-size:10px;opacity:.7;margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -654,21 +667,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="tile" id="sup-hire">
           <div class="t-title" data-i18n="support_hire">Сотрудничать</div>
         </button>
-        <button type="button" class="tile" id="sup-faq">
-          <div class="t-title" data-i18n="support_faq">FAQ</div>
-        </button>
-        <button type="button" class="tile" id="sup-privacy">
-          <div class="t-title" data-i18n="support_privacy">Политика конф.</div>
-        </button>
-        <button type="button" class="tile" id="sup-terms">
-          <div class="t-title" data-i18n="support_terms">Соглашение</div>
+        <button type="button" class="tile" id="sup-other">
+          <div class="t-title" data-i18n="support_other_info">Другая информация</div>
         </button>
       </div>
     </div>
 
     <div id="screen-support-chat" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
-      <div class="hint" data-i18n="manager_eta" style="margin:-6px 0 8px">*менеджер напишет вам в течение 96ч</div>
+      <div class="hint" data-i18n="manager_eta">*менеджер напишет вам в течение 96ч</div>
       <div id="support-chat-messages" class="chat-messages"></div>
       <div class="chat-footer">
         <div class="chat-input-row">
@@ -677,17 +684,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         </div>
       </div>
     </div>
+
+    <div id="screen-support-other" class="screen">
+      <div class="section-title" data-i18n="support_other_info">Другая информация</div>
+      <div class="tile-grid">
+        <button type="button" class="tile" id="sup-faq"><div class="t-title" data-i18n="support_faq">FAQ</div></button>
+        <button type="button" class="tile" id="sup-privacy"><div class="t-title" data-i18n="support_privacy">Политика конф.</div></button>
+        <button type="button" class="tile" id="sup-terms" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px"><div class="t-title" data-i18n="support_terms">Пользовательское соглашение</div></button>
+      </div>
+    </div>
+
+    <div id="screen-hire" class="screen">
+      <div class="section-title" data-i18n="support_hire">Сотрудничать</div>
+      <div class="tile-grid">
+        <button type="button" class="tile" id="hire-ads">
+          <div class="t-title" data-i18n="collab_ads">Реклама</div>
+          <div class="t-sub" data-i18n="collab_ads_hint">Партнёрские материалы</div>
+        </button>
+        <button type="button" class="tile" id="hire-work">
+          <div class="t-title" data-i18n="collab_work">Работа</div>
+          <div class="t-sub" data-i18n="application_form">Составить анкету</div>
+        </button>
+      </div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn wide" id="hire-write-mgr" data-i18n="write_manager">Написать менеджеру</button>
+      </div>
+    </div>
+
+    <div id="screen-job-form" class="screen">
+      <div class="section-title" data-i18n="job_form_title">Анкета</div>
+      <div class="form-group"><label class="form-label" data-i18n="fio">ФИО</label><input class="form-input" id="job-fio" type="text"/></div>
+      <div class="form-group"><label class="form-label" data-i18n="age_min16">Возраст (минимум 16)</label><input class="form-input" id="job-age" type="number" min="16"/></div>
+      <div class="form-group"><label class="form-label" data-i18n="employment">Занятость</label>
+        <div class="btn-row">
+          <button type="button" class="btn" data-job-emp="school" data-i18n="school">Школьник</button>
+          <button type="button" class="btn" data-job-emp="student" data-i18n="student">Студент</button>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn" data-job-emp="work" data-i18n="employed">Работаю</button>
+          <button type="button" class="btn" data-job-emp="free" data-i18n="unemployed">Свободен</button>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label" data-i18n="hire_shifts_req">Смены</label><input class="form-input" id="job-shifts" type="text" data-i18n-placeholder="hire_shifts_week" placeholder="в неделю"/></div>
+      <div class="form-group"><label class="form-label" data-i18n="hire_duties">Обязанности</label><textarea class="form-input" id="job-duties" rows="3" style="min-height:80px;resize:vertical"></textarea></div>
+      <button type="button" class="btn primary wide" id="job-send" data-i18n="send">Отправить</button>
+      <div class="hint" id="job-status" style="margin-top:8px"></div>
+    </div>
+
+    
 <div id="screen-panel" class="screen">
       <div class="section-title" data-i18n="panel">Панель</div>
-      <div class="role-inline"><span class="role-panel-label" data-i18n="role">Роль</span><span class="role-badge" id="panel-role">—</span></div>
+      <div class="panel role-panel">
+        <div class="role-panel-row">
+          <span class="role-panel-label" data-i18n="role">Роль</span>
+          <span class="role-badge" id="panel-role">—</span>
+        </div>
+      </div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
         <button type="button" class="tile" data-panel="mod_buy"><div class="t-title" data-i18n="mod_buy">Покупка</div></button>
         <button type="button" class="tile" data-panel="mod_tx"><div class="t-title" data-i18n="mod_tx">Транзакции</div></button>
-        <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
+        <button type="button" class="tile" data-panel="support_chats"><div class="t-title" data-i18n="support_appeals">Обращения</div></button>
+        <button type="button" class="tile" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
       </div>
-      <div class="panel" id="panel-body" style="display:none"><div class="muted" data-i18n="panel_hint">Управление выполняется в боте. Данные синхронизированы по API.</div></div>
+      <div class="panel" id="panel-body" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -746,7 +807,7 @@ const LANGS=[
 function baseI18n(o){return o}
 const I18N={
 ru:baseI18n({back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
-language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
+language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_appeals:"Обращения",school:"Школьник",student:"Студент",employed:"Работаю",unemployed:"Свободен",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
 recipient:"Реквизиты",recipient_name:"Получатель",credit_amount:"К зачислению",fee:"Комиссия",total_to_pay:"Итого к оплате",
@@ -759,7 +820,7 @@ staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",
 panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
-language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
+language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_appeals:"Tickets",school:"School",student:"Student",employed:"Employed",unemployed:"Available",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
 recipient:"Details",recipient_name:"Recipient",credit_amount:"To be credited",fee:"Fee",total_to_pay:"Total to pay",
@@ -1479,6 +1540,74 @@ async function loadPanel(){
 }
 
 
+async function loadSupportChat(){
+  const box=document.getElementById("support-chat-messages");
+  if(!box)return;
+  if(!USER_ID){box.innerHTML='<div class="empty">Telegram</div>';return}
+  box.innerHTML='<div class="empty">…</div>';
+  try{
+    const data=await apiGet("/api/support/messages?user_id="+encodeURIComponent(USER_ID));
+    const items=(data&&data.messages)||[];
+    if(!items.length){box.innerHTML='<div class="empty">'+t("support_chat_empty")+"</div>";return}
+    box.innerHTML=items.map(m=>{
+      const mine=String(m.sender||"")==="user";
+      const txt=String(m.text||m.body||"").replace(/</g,"&lt;");
+      const when=m.created_at||"";
+      return '<div class="chat-bubble '+(mine?"me":"staff")+'">'+txt+'<span class="meta">'+when+"</span></div>";
+    }).join("");
+    box.scrollTop=box.scrollHeight;
+  }catch(e){box.innerHTML='<div class="empty">'+String(e.message||e)+"</div>"}
+}
+async function sendSupportChat(){
+  const input=document.getElementById("support-chat-input");
+  const text=(input&&input.value||"").trim();
+  if(!text||!USER_ID)return;
+  try{
+    await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
+    if(input)input.value="";
+    await loadSupportChat();
+  }catch(e){alert(String(e.message||e))}
+}
+async function loadSupportAppeals(){
+  const body=document.getElementById("panel-body");
+  if(!body)return;
+  body.style.display="block";
+  body.innerHTML='<div class="muted">…</div>';
+  try{
+    const data=await apiGet("/api/admin/support/threads?user_id="+encodeURIComponent(USER_ID||0));
+    const items=(data&&data.threads)||[];
+    if(!items.length){body.innerHTML='<div class="empty">'+t("support_chat_empty")+"</div>";return}
+    body.innerHTML='<div class="list">'+items.map(th=>{
+      const uid=th.user_id||th.id;
+      const prev=(th.last_message_preview||th.preview||"").replace(/</g,"");
+      const unread=Number(th.staff_unread||0);
+      return '<div class="item" data-thread-uid="'+uid+'"><div class="name">#'+uid+(unread?(" · "+unread):"")+'</div><div class="sub">'+prev+"</div></div>";
+    }).join("")+"</div>";
+    body.querySelectorAll("[data-thread-uid]").forEach(el=>{
+      el.onclick=async()=>{
+        const uid=el.getAttribute("data-thread-uid");
+        try{
+          const data=await apiGet("/api/support/messages?user_id="+encodeURIComponent(uid));
+          const items=(data&&data.messages)||[];
+          body.innerHTML='<div class="hint">User #'+uid+'</div><div class="chat-messages" id="admin-chat-box" style="min-height:180px">'+
+            (items.map(m=>{
+              const mine=String(m.sender||"")==="staff";
+              return '<div class="chat-bubble '+(mine?"me":"staff")+'">'+String(m.text||"").replace(/</g,"&lt;")+"</div>";
+            }).join("")||('<div class="empty">'+t("support_chat_empty")+"</div>"))+
+            '</div><div class="chat-input-row" style="margin-top:8px"><input class="form-input" id="admin-chat-input" type="text"/><button type="button" class="btn primary" id="admin-chat-send" data-i18n="send">'+t("send")+'</button></div>';
+          const sendBtn=document.getElementById("admin-chat-send");
+          if(sendBtn)sendBtn.onclick=async()=>{
+            const inp=document.getElementById("admin-chat-input");
+            const text=(inp&&inp.value||"").trim();
+            if(!text)return;
+            await apiPost("/api/admin/support/reply",{user_id:USER_ID,target_user_id:Number(uid),text:text});
+            el.onclick();
+          };
+        }catch(err){body.innerHTML='<div class="empty">'+String(err.message||err)+"</div>"}
+      };
+    });
+  }catch(e){body.innerHTML='<div class="empty">'+String(e.message||e)+"</div>"}
+}
 function wireSupport(){
   function openUrl(u){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}}
   const map={
@@ -1495,6 +1624,41 @@ function wireSupport(){
   });
   const chat=document.getElementById("sup-chat");
   if(chat)chat.onclick=function(){show("support-chat");try{loadSupportChat()}catch(e){}};
+  const send=document.getElementById("support-chat-send");
+  if(send)send.onclick=function(){sendSupportChat()};
+  const inp=document.getElementById("support-chat-input");
+  if(inp)inp.onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();sendSupportChat()}};
+  const other=document.getElementById("sup-other");
+  if(other)other.onclick=function(){show("support-other")};
+  const hire=document.getElementById("sup-hire");
+  if(hire)hire.onclick=function(){show("hire")};
+  const ha=document.getElementById("hire-ads");
+  if(ha)ha.onclick=function(){openUrl("https://t.me/mediamanagering")};
+  const hw=document.getElementById("hire-work");
+  if(hw)hw.onclick=function(){show("job-form")};
+  const hmgr=document.getElementById("hire-write-mgr");
+  if(hmgr)hmgr.onclick=function(){openUrl("https://t.me/mediamanagering")};
+  let jobEmp="";
+  document.querySelectorAll("[data-job-emp]").forEach(b=>{
+    b.onclick=function(){
+      jobEmp=b.getAttribute("data-job-emp")||"";
+      document.querySelectorAll("[data-job-emp]").forEach(x=>x.classList.toggle("selected",x===b));
+    };
+  });
+  const jobSend=document.getElementById("job-send");
+  if(jobSend)jobSend.onclick=async function(){
+    const fio=(document.getElementById("job-fio")&&document.getElementById("job-fio").value||"").trim();
+    const age=(document.getElementById("job-age")&&document.getElementById("job-age").value||"").trim();
+    const shifts=(document.getElementById("job-shifts")&&document.getElementById("job-shifts").value||"").trim();
+    const duties=(document.getElementById("job-duties")&&document.getElementById("job-duties").value||"").trim();
+    const st=document.getElementById("job-status");
+    if(!fio||!age){if(st)st.textContent=t("job_form_required");return}
+    const text=["[JOB APPLICATION]", "FIO: "+fio, "Age: "+age, "Employment: "+jobEmp, "Shifts: "+shifts, "Duties: "+duties].join("\n");
+    try{
+      await apiPost("/api/support/messages",{user_id:USER_ID,text:text});
+      if(st)st.textContent=t("job_form_sent");
+    }catch(e){if(st)st.textContent=String(e.message||e)}
+  };
 }
 
 // init
@@ -1717,7 +1881,14 @@ on("wc-pay","onclick",async()=>{
   }catch(e){if(st)st.textContent=String(e.message||e)}
 });
 
-document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=document.getElementById("panel-body");if(pb)pb.style.display="block"});
+document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{
+  const kind=b.getAttribute("data-panel");
+  const pb=document.getElementById("panel-body");
+  if(!pb)return;
+  pb.style.display="block";
+  if(kind==="support_chats"){loadSupportAppeals();return}
+  pb.innerHTML='<div class="muted">'+t("panel_hint")+"</div>";
+});
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
