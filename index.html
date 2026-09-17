@@ -20,8 +20,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh}
-.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 0 env(safe-area-inset-bottom,0)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;width:100%}
+.app{max-width:480px;width:100%;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 0 env(safe-area-inset-bottom,0);box-sizing:border-box;overflow-x:hidden}
 
 .topbar{position:sticky;top:0;z-index:50;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:var(--bg);border-bottom:1px solid var(--line)}
 .topbar-left,.topbar-right{display:flex;align-items:center;gap:8px}
@@ -34,7 +34,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .avatar{width:36px;height:36px;border-radius:50%;border:2px solid var(--brand-line);background:var(--brand-soft);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--brand);box-shadow:var(--shadow)}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
-.content{flex:1;display:flex;flex-direction:column;padding:12px 16px 20px;min-height:0;width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden}
+.content{flex:1;display:flex;flex-direction:column;padding:10px 16px 20px;min-height:0;width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden}
 .screen{display:none;flex:1;flex-direction:column;min-height:0;justify-content:flex-start;align-items:stretch;width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden}
 .screen.active{display:block}
 #screen-main.active{display:flex;flex-direction:column}
@@ -74,7 +74,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   background:var(--surface);
   border:1px solid var(--line);
   border-radius:16px;
-  padding:14px 10px;
+  padding:12px 8px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -82,7 +82,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   text-align:center;
   cursor:pointer;
   box-shadow:var(--shadow);
-  gap:6px;
+  gap:5px;
   overflow:hidden;
 }
 .tile:active{opacity:.85}
@@ -173,7 +173,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .back-top{display:none;height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);line-height:28px;margin-top:2px}
 .back-top.show{display:inline-flex;align-items:center}
 .back-top:active{opacity:.8}
-.content{padding-top:8px}
 .method-btn{display:flex!important;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;text-align:left}
 .method-btn .m-name{font-weight:600}
 .method-btn .m-fee{font-size:11px;font-weight:600;color:var(--hint);white-space:nowrap}
@@ -185,6 +184,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .profile-card .row.single{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .role-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1px solid var(--brand-line);color:var(--brand);background:var(--brand-soft);white-space:nowrap}
 .panel.role-panel{padding:12px 14px;margin-bottom:12px;max-width:100%;box-sizing:border-box;overflow:hidden}
+.role-inline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-4px 0 12px;width:100%;max-width:100%;box-sizing:border-box;min-width:0}
+.role-inline .role-badge{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .role-panel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
 .role-panel-label{font-size:12px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.04em}
 .role-panel .role-badge{font-size:13px;padding:5px 11px;border-radius:10px;max-width:65%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -200,11 +201,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 
 .topbar{align-items:center;padding-top:0;padding-bottom:0;height:var(--header-h);min-height:var(--header-h)}
-.menu-back-bar{display:none!important;justify-content:flex-start;margin:0 0 8px;min-height:0;height:0;overflow:hidden;pointer-events:none}
-.menu-back-bar.show{display:flex!important;min-height:32px;height:auto;overflow:visible}
-.menu-back-btn{pointer-events:auto;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+.menu-back-bar{display:none;justify-content:flex-start;align-items:center;margin:0 0 8px;padding:0;width:100%;max-width:100%;box-sizing:border-box;min-height:0}
+.menu-back-bar.show{display:flex}
+.menu-back-btn{pointer-events:auto;height:30px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);flex-shrink:0}
 .menu-back-btn:active{opacity:.8}
-.content.has-back{padding-top:4px}
+.content.has-back{padding-top:10px}
 
 
 .main-menu{grid-template-columns:1fr 1fr}
@@ -285,7 +286,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle:disabled{opacity:.5;cursor:default}
 
 
- .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%;box-sizing:border-box}
+.support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%;max-width:100%;box-sizing:border-box}
 .support-tile{
   appearance:none;width:100%;min-width:0;text-align:center;border:1px solid var(--line);background:var(--surface);
   color:var(--text);border-radius:16px;padding:16px 12px;cursor:pointer;box-shadow:var(--shadow);
@@ -312,7 +313,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-input-row .btn{width:auto;min-width:88px;max-width:42vw;padding-left:12px;padding-right:12px}
 
 
-.section-title{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text);line-height:1.25;padding:0;letter-spacing:-0.01em;display:block}
+.section-title{font-size:18px;font-weight:700;margin:0 0 12px;padding:0;color:var(--text);line-height:1.25;letter-spacing:-0.01em;display:block}
 @media (max-width:360px){
   
   .support-grid,
@@ -678,12 +679,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 <div id="screen-panel" class="screen">
       <div class="section-title" data-i18n="panel">Панель</div>
-      <div class="panel role-panel">
-        <div class="role-panel-row">
-          <span class="role-panel-label" data-i18n="role">Роль</span>
-          <span class="role-badge" id="panel-role">—</span>
-        </div>
-      </div>
+      <div class="role-inline"><span class="role-panel-label" data-i18n="role">Роль</span><span class="role-badge" id="panel-role">—</span></div>
       <div class="tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
