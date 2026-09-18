@@ -262,7 +262,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 /* Support chat screen: title top, messages scroll in the middle, ETA + input pinned to the bottom */
 #screen-support-chat.active{display:flex;flex-direction:column;min-height:0}
-#screen-support-chat .section-title{flex-shrink:0}
+
 #screen-support-chat .chat-messages{flex:1 1 auto;min-height:120px;max-height:none;margin:10px 0 12px}
 #screen-support-chat .chat-footer{flex-shrink:0;margin-top:auto;position:static;border-top:1px solid var(--line);padding-top:10px}
 #screen-support-chat .chat-eta{display:block;margin:0 0 8px}
@@ -644,6 +644,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
         
+    
     <div id="screen-collaborate" class="screen">
       <div class="section-title" data-i18n="support_hire">Сотрудничать</div>
       <div class="seg-toggle" id="collab-seg">
@@ -651,11 +652,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" id="collab-seg-work" data-i18n="collab_work">Работа</button>
       </div>
       <div id="collab-ads-panel">
-        <div id="referral-panel" class="info-block" data-i18n="collab_ads_hint">Размещение рекламы и партнёрские материалы — напишите менеджеру.</div>
+        <div class="info-block" data-i18n="collab_ads_hint">Партнёрская программа: создайте реферальный код, делитесь им и получайте процент с пополнений приглашённых. Можно применить чужой промокод к своему аккаунту.</div>
+        <div class="panel">
+          <h2 data-i18n="ref_my_code">Мой реферальный код</h2>
+          <div class="ref-row">
+            <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="MYCODE"/>
+            <button type="button" class="btn primary" id="ref-save-btn" data-i18n="save">Сохранить</button>
+          </div>
+          <div class="ref-stats" id="ref-stats">—</div>
+          <div id="ref-status"></div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="ref_apply_title">Применить промокод</h2>
+          <div class="ref-row">
+            <input class="form-input" type="text" id="promo-code-input" maxlength="24" placeholder="PROMO"/>
+            <button type="button" class="btn" id="promo-apply-btn" data-i18n="apply">Применить</button>
+          </div>
+          <div id="promo-status" class="hint" style="margin-top:8px"></div>
+        </div>
         <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
       </div>
       <div id="collab-work-panel" style="display:none">
-        <div class="info-block" id="hire-info-block"></div>
+        <div class="info-block" id="hire-info-block" data-i18n="collab_work_hint">Открыты позиции: модерация, поддержка пользователей, работа с проектами. Стартовая роль — стажёр. График обсуждается с менеджером. Заполните анкету — заявки рассматриваются в порядке очереди. Минимальный возраст — 16 лет.</div>
         <div class="btn-stack">
           <button type="button" class="btn primary wide" id="collab-job-form" data-i18n="application_form">Составить анкету</button>
           <button type="button" class="btn wide" id="collab-work-mgr" data-i18n="write_manager">Написать менеджеру</button>
@@ -680,7 +698,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="method-item" data-emp="student"><div class="title" data-i18n="student">Студент</div></div>
           <div class="method-item" data-emp="working"><div class="title" data-i18n="working">Работаю</div></div>
           <div class="method-item" data-emp="retired"><div class="title" data-i18n="retired">На пенсии</div></div>
-          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">В поиске</div></div>
+          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">Окончил обучение, в активных поисках работы</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -696,7 +714,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <input class="form-input" type="email" id="job-email" placeholder="mail@example.com"/>
       </div>
       <button type="button" class="btn primary wide" id="job-submit-btn" data-i18n="submit_app">Отправить анкету</button>
+      <div id="job-status"></div>
     </div>
+
 <div id="screen-support-chat" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
       <div id="support-chat-messages" class="chat-messages"></div>
@@ -1757,6 +1777,128 @@ document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{});
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
+
+// Collaborate + referral + job (exchange logic)
+state.jobEmp = state.jobEmp || "";
+function openUrlSafe(u){
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}
+}
+async function loadReferralMe(){
+  const st=document.getElementById("ref-stats");
+  const inp=document.getElementById("ref-code-input");
+  const rs=document.getElementById("ref-status");
+  if(rs)rs.textContent="";
+  if(!USER_ID){if(st)st.textContent="—";return}
+  try{
+    const r=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),8000);
+    if(inp && r.ref_code) inp.value=r.ref_code;
+    const line=(t("ref_stats_line")||"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽")
+      .replace("{level}", String(r.ref_level!=null?r.ref_level:1))
+      .replace("{total}", String((r.stats&&r.stats.refs_total)||0))
+      .replace("{d10}", String((r.stats&&r.stats.refs_10d)||0))
+      .replace("{earn}", String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00"));
+    if(st)st.textContent=line;
+  }catch(e){if(st)st.textContent="—"}
+}
+async function saveRefCode(){
+  const inp=document.getElementById("ref-code-input");
+  const rs=document.getElementById("ref-status");
+  const code=(inp&&inp.value||"").trim().toUpperCase();
+  if(rs)rs.textContent="…";
+  try{
+    const path = (state.me && state.me.ref_code) || (inp && inp.dataset.hasCode==="1") ? "/api/referral/change-code" : "/api/referral/register";
+    // if input already had code from server use change
+    let endpoint="/api/referral/register";
+    try{
+      const cur=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),5000);
+      if(cur && cur.ref_code) endpoint="/api/referral/change-code";
+    }catch(e){}
+    const r=await apiPost(endpoint,{user_id:USER_ID,code:code});
+    if(r.ok||r.ref_code){
+      if(rs)rs.textContent="OK: "+(r.ref_code||code);
+      await loadReferralMe();
+    }else{
+      if(rs)rs.textContent=r.error||r.message||"error";
+    }
+  }catch(e){if(rs)rs.textContent=String(e.message||e)}
+}
+async function applyPromoCode(){
+  const inp=document.getElementById("promo-code-input");
+  const ps=document.getElementById("promo-status");
+  const code=(inp&&inp.value||"").trim().toUpperCase();
+  if(ps)ps.textContent="…";
+  try{
+    const r=await apiPost("/api/referral/apply-code",{user_id:USER_ID,code:code});
+    if(r.ok){if(ps)ps.textContent="OK"}
+    else{if(ps)ps.textContent=r.error||r.message||"error"}
+  }catch(e){if(ps)ps.textContent=String(e.message||e)}
+}
+async function submitJobApplication(){
+  const st=document.getElementById("job-status");
+  const full_name=(document.getElementById("job-fio")&&document.getElementById("job-fio").value||"").trim();
+  const age=parseInt((document.getElementById("job-age")&&document.getElementById("job-age").value)||"0",10)||0;
+  const employment=state.jobEmp||"";
+  const username=(document.getElementById("job-username")&&document.getElementById("job-username").value||"").trim().replace(/^@/,"");
+  const phone=(document.getElementById("job-phone")&&document.getElementById("job-phone").value||"").trim();
+  const email=(document.getElementById("job-email")&&document.getElementById("job-email").value||"").trim();
+  if(!full_name){if(st)st.textContent=t("fio")||"ФИО";return}
+  if(age<16){if(st)st.textContent=t("age_min16")||"16+";return}
+  if(!employment){if(st)st.textContent=t("select_employment")||"employment";return}
+  if(!phone){if(st)st.textContent=t("phone_number")||"phone";return}
+  if(!email||email.indexOf("@")<0){if(st)st.textContent=t("email")||"email";return}
+  if(st)st.textContent="…";
+  try{
+    const r=await apiPost("/api/job-applications",{user_id:USER_ID,full_name:full_name,age:age,employment:employment,username:username,phone:phone,email:email});
+    if(r&&(r.status==="ok"||r.ok||r.id)){
+      if(st)st.textContent=(t("job_sent")||"OK #{id}").replace("{id}",String(r.id||""));
+    }else{
+      if(st)st.textContent=r.error||r.message||t("job_err")||"error";
+    }
+  }catch(e){if(st)st.textContent=String(e.message||e||t("job_err"))}
+}
+function wireCollaborate(){
+  const openMgr=()=>openUrlSafe("https://t.me/mediamanagering");
+  const hire=document.getElementById("sup-hire");
+  if(hire)hire.onclick=function(){show("collaborate");applyI18n();loadReferralMe();};
+  const segAds=document.getElementById("collab-seg-ads");
+  const segWork=document.getElementById("collab-seg-work");
+  const adsPanel=document.getElementById("collab-ads-panel");
+  const workPanel=document.getElementById("collab-work-panel");
+  function setSeg(which){
+    if(segAds)segAds.classList.toggle("active",which==="ads");
+    if(segWork)segWork.classList.toggle("active",which==="work");
+    if(adsPanel)adsPanel.style.display=which==="ads"?"":"none";
+    if(workPanel)workPanel.style.display=which==="work"?"":"none";
+    if(which==="ads")loadReferralMe();
+  }
+  if(segAds)segAds.onclick=()=>setSeg("ads");
+  if(segWork)segWork.onclick=()=>setSeg("work");
+  const adsMgr=document.getElementById("collab-ads-mgr");
+  const workMgr=document.getElementById("collab-work-mgr");
+  if(adsMgr)adsMgr.onclick=openMgr;
+  if(workMgr)workMgr.onclick=openMgr;
+  const save=document.getElementById("ref-save-btn");
+  if(save)save.onclick=saveRefCode;
+  const promo=document.getElementById("promo-apply-btn");
+  if(promo)promo.onclick=applyPromoCode;
+  const jobFormBtn=document.getElementById("collab-job-form");
+  if(jobFormBtn)jobFormBtn.onclick=function(){
+    show("job-form");applyI18n();
+    try{const u=tgUser||getTgUser()||{};const ju=document.getElementById("job-username");if(ju&&!ju.value&&u.username)ju.value="@"+u.username}catch(e){}
+    const st=document.getElementById("job-status");if(st)st.textContent="";
+  };
+  document.querySelectorAll("#job-employment-list .method-item").forEach(function(el){
+    el.onclick=function(){
+      document.querySelectorAll("#job-employment-list .method-item").forEach(x=>x.classList.remove("selected"));
+      el.classList.add("selected");
+      state.jobEmp=el.getAttribute("data-emp")||"";
+    };
+  });
+  const sub=document.getElementById("job-submit-btn");
+  if(sub)sub.onclick=submitJobApplication;
+}
+try{wireCollaborate()}catch(e){console.warn(e)}
+
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
 </body>
@@ -1779,12 +1921,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #screen-settings .section-title,
 #screen-panel .section-title,
 #screen-support .section-title,
-#screen-support-chat .section-title{
-  margin:0 0 12px!important;
-  padding:0!important;
-  text-align:left!important;
-  line-height:1.25!important;
-}
+
 
 /* Grids never overflow sides */
 #screen-settings .tile-grid,
@@ -1890,6 +2027,47 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   #screen-panel .tile .t-title,
   #screen-support .support-tile-title{font-size:12px!important}
 }
+</style>
+
+
+<style id="collab-chat-fix">
+#screen-balance .section-title,
+#screen-support-chat .section-title,
+#screen-collaborate .section-title,
+#screen-job-form .section-title{
+  margin:0 0 12px!important;
+  padding:0!important;
+  text-align:left!important;
+  line-height:1.25!important;
+}
+#screen-support-chat.active{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+#screen-support-chat .chat-messages{
+  flex:1 1 auto!important;
+  min-height:160px!important;
+  overflow-y:auto!important;
+  margin:0 0 8px!important;
+}
+#screen-support-chat .chat-footer{flex-shrink:0;margin-top:auto;width:100%}
+#screen-support-chat .chat-eta{display:block;text-align:left;margin:0 0 8px;font-size:12px}
+
+.seg-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin:0 0 12px}
+.seg-toggle button{
+  appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);
+  min-height:42px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);
+}
+.seg-toggle button.active{background:var(--brand);border-color:var(--brand);color:var(--btn-p)}
+.info-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:1.45;color:var(--text);margin-bottom:12px;box-shadow:var(--shadow)}
+.method-list{display:grid;gap:8px}
+.method-item{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;cursor:pointer;box-shadow:var(--shadow);font-size:14px;font-weight:600}
+.method-item.selected{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.ref-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.ref-row .form-input{flex:1;min-width:0}
+.ref-stats{font-size:13px;color:var(--text2);line-height:1.45;margin-top:8px}
+#job-status,#ref-status{margin-top:10px;font-size:13px;color:var(--hint)}
 </style>
 
 </html>
