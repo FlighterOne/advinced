@@ -238,10 +238,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
  .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%}
 .support-tile{
   appearance:none;width:100%;min-width:0;text-align:center;border:1px solid var(--line);background:var(--surface);
-  color:var(--text);border-radius:16px;padding:16px 12px;cursor:pointer;box-shadow:var(--shadow);
-  min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  color:var(--text);border-radius:16px;padding:12px 9px;cursor:pointer;box-shadow:var(--shadow);
+  aspect-ratio:1;height:auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;overflow:hidden;box-sizing:border-box;
 }
-.support-tile.no-sub{min-height:64px}
+.support-tile.no-sub{aspect-ratio:1;min-height:0}
 .support-tile:active{opacity:.85}
 .support-tile-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
 .support-tile-sub{font-size:11px;color:var(--hint);line-height:1.2;word-break:break-all}
@@ -280,7 +280,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .support-tile{text-align:center;align-items:center}
 .support-tile-title{text-align:center}
 .support-tile-sub{text-align:center}
-.support-tile.no-sub{min-height:64px;justify-content:center}
+.support-tile.no-sub{justify-content:center}
 .seg-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin:0 0 12px}
 .seg-toggle button{
   height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
@@ -310,6 +310,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .login-widget-wrap{display:flex;justify-content:center;min-height:52px;margin:8px 0 12px;align-items:center}
 .login-card .muted{font-size:12px;color:var(--hint);margin-top:10px;line-height:1.4}
 .login-card a{color:var(--brand);font-weight:600;text-decoration:none}
+
+/* Settings / Support / Panel menus: nudge slightly right + up, keep everything else (sizes, gaps) untouched */
+#screen-settings .section-title,
+#screen-support .section-title,
+#screen-panel .section-title{
+  margin-top:-4px;
+  margin-left:10px;
+}
+#screen-settings .tile-grid,
+#screen-panel .tile-grid,
+#screen-panel .role-panel{
+  margin-left:10px;
+}
+#screen-support .support-grid{
+  width:calc(100% - 10px);
+  margin-left:10px;
+}
+#screen-support #sup-other{
+  width:calc(100% - 10px);
+  margin-left:10px;
+}
 
 </style>
 </head>
