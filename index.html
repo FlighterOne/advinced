@@ -1915,7 +1915,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   padding-left:16px!important;
   padding-right:16px!important;
 }
-.content.has-back{padding-top:4px!important}
+.content.has-back{padding-top:2px!important}
 
 /* Title distance to Back — same for settings / panel / support */
 #screen-settings .section-title,
@@ -2068,6 +2068,74 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 .ref-row .form-input{flex:1;min-width:0}
 .ref-stats{font-size:13px;color:var(--text2);line-height:1.45;margin-top:8px}
 #job-status,#ref-status{margin-top:10px;font-size:13px;color:var(--hint)}
+</style>
+
+
+<style id="support-panel-nudge">
+/* Titles closer to Back button */
+#screen-support .section-title,
+#screen-panel .section-title,
+#screen-support-chat .section-title{
+  margin:0 0 8px!important;
+  padding:0!important;
+  line-height:1.2!important;
+  text-align:left!important;
+  transform:translateY(-2px);
+}
+
+/* When back bar is visible, pull content title up a bit more */
+.content.has-back #screen-support .section-title,
+.content.has-back #screen-panel .section-title,
+.content.has-back #screen-support-chat .section-title{
+  margin-top:-2px!important;
+}
+
+/* Slightly smaller square tiles + nudge right */
+#screen-support .support-grid,
+#screen-panel .tile-grid{
+  width:calc(100% - 6px)!important;
+  max-width:100%!important;
+  margin:0 0 0 6px!important; /* shift right a bit */
+  padding:0!important;
+  gap:8px!important;
+  box-sizing:border-box!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+}
+
+#screen-support .support-tile,
+#screen-panel .tile{
+  aspect-ratio:1 / 1!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:10px 8px!important;
+  border-radius:14px!important;
+  box-sizing:border-box!important;
+}
+
+#screen-support .support-tile-title,
+#screen-panel .tile .t-title{
+  font-size:12px!important;
+  line-height:1.15!important;
+}
+
+#screen-support .support-tile-sub{
+  font-size:10px!important;
+  line-height:1.1!important;
+}
+
+/* role panel follows same right nudge */
+#screen-panel .role-panel{
+  width:calc(100% - 6px)!important;
+  margin:0 0 10px 6px!important;
+  box-sizing:border-box!important;
+}
+
+/* wide analytics tile */
+#screen-panel .tile[style*="grid-column"]{
+  grid-column:1 / -1!important;
+  aspect-ratio:auto!important;
+  min-height:64px!important;
+}
 </style>
 
 </html>
