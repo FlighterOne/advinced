@@ -235,7 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle:disabled{opacity:.5;cursor:default}
 
 
- .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%}
+ .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:0;padding:0;width:100%;max-width:100%;box-sizing:border-box}
 .support-tile{
   appearance:none;width:100%;min-width:0;text-align:center;border:1px solid var(--line);background:var(--surface);
   color:var(--text);border-radius:16px;padding:12px 9px;cursor:pointer;box-shadow:var(--shadow);
@@ -1760,5 +1760,136 @@ setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
 </body>
+
+
+<style id="layout-edge-fix">
+/* Screen edges: small equal side padding (same as Settings feel) */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.app{width:100%;max-width:480px;margin:0 auto;box-sizing:border-box}
+.content{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  padding-left:16px!important;
+  padding-right:16px!important;
+}
+.content.has-back{padding-top:4px!important}
+
+/* Title distance to Back — same for settings / panel / support */
+#screen-settings .section-title,
+#screen-panel .section-title,
+#screen-support .section-title,
+#screen-support-chat .section-title{
+  margin:0 0 12px!important;
+  padding:0!important;
+  text-align:left!important;
+  line-height:1.25!important;
+}
+
+/* Grids never overflow sides */
+#screen-settings .tile-grid,
+#screen-panel .tile-grid,
+#screen-support .support-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+
+/* SQUARE buttons — Settings / Panel / Support */
+#screen-settings .tile,
+#screen-panel .tile,
+#screen-support .support-tile{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  aspect-ratio:1 / 1!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:12px 10px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+#screen-settings .tile .t-title,
+#screen-panel .tile .t-title,
+#screen-support .support-tile-title{
+  font-size:13px!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+  white-space:normal!important;
+}
+#screen-support .support-tile-sub{
+  font-size:11px!important;
+  line-height:1.15!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+}
+
+/* Wide panel tile (analytics) stays full width but not square */
+#screen-panel .tile[style*="grid-column"]{
+  grid-column:1 / -1!important;
+  aspect-ratio:auto!important;
+  min-height:72px!important;
+  height:auto!important;
+}
+
+/* Role frame inside panel — stays within content width */
+#screen-panel .role-panel{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  margin:0 0 12px!important;
+  padding:10px 12px!important;
+}
+#screen-panel .role-panel-row{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:100%!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+#screen-panel .role-badge,
+#screen-panel #panel-role{
+  margin-left:auto!important;
+  max-width:70%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+@media (max-width:600px){
+  .content{
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+}
+@media (max-width:360px){
+  #screen-settings .tile-grid,
+  #screen-panel .tile-grid,
+  #screen-support .support-grid{gap:8px!important}
+  #screen-settings .tile,
+  #screen-panel .tile,
+  #screen-support .support-tile{padding:10px 8px!important}
+  #screen-settings .tile .t-title,
+  #screen-panel .tile .t-title,
+  #screen-support .support-tile-title{font-size:12px!important}
+}
+</style>
 
 </html>
