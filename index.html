@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="light" data-build="v20260918d">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
@@ -264,7 +264,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 .section-title{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text);line-height:1.25;padding:0;letter-spacing:-0.01em}
 @media (max-width:360px){
-  /* was conflicting side padding */
+  .content{padding-left:12px;padding-right:12px}
   .support-grid,.tile-grid{gap:8px}
   .support-tile,.tile{padding-left:9px;padding-right:9px}
   .support-tile-title,.tile .t-title{font-size:13px}
@@ -672,9 +672,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 <div id="screen-support-chat" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
+      <div class="hint" data-i18n="manager_eta" style="margin:-6px 0 8px">*менеджер напишет вам в течение 96ч</div>
       <div id="support-chat-messages" class="chat-messages"></div>
       <div class="chat-footer">
-        <div class="hint chat-eta" data-i18n="manager_eta">*менеджер напишет вам в течение 96ч</div>
         <div class="chat-input-row">
           <input class="form-input" type="text" id="support-chat-input" maxlength="4000" data-i18n-placeholder="message_ph" placeholder="Сообщение..."/>
           <button type="button" class="btn primary" id="support-chat-send" data-i18n="send">Отправить</button>
@@ -764,7 +764,8 @@ pay_placeholder:"Оплата будет доступна после подкл�
 terms_prefix:"Продолжая, вы принимаете ",terms_link:"пользовательское соглашение",terms_suffix:" и правила сервиса",
 help_body:"Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.",
 support_manager:"Менеджер",support_bot:"Бот",support_email:"Почта",support_faq:"FAQ",soon:"Скоро",
-staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",prev:"Назад",next:"Вперёд",
+staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",
+prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
@@ -1734,110 +1735,155 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </body>
 
 <style id="final-layout-fix">
-/* FORCE layout — last stylesheet wins */
 html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
-.app{
-  width:100%!important;max-width:480px!important;margin-left:auto!important;margin-right:auto!important;
-  min-width:0!important;box-sizing:border-box!important;
-}
-.content{
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  padding:8px 16px 20px!important;
-  box-sizing:border-box!important;
-}
+.app{width:100%!important;max-width:480px!important;margin:0 auto!important;box-sizing:border-box!important}
+.content{width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:8px 16px 20px!important}
 .content.has-back{padding-top:4px!important}
-.screen{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
 
-.section-title{
-  margin:0 0 12px!important;padding:0!important;line-height:1.25!important;
-  text-align:left!important;transform:none!important;position:static!important;
-}
-
-/* Panel = Settings spacing from back button */
+/* Same title geometry for settings / panel / support */
+#screen-settings .section-title,
 #screen-panel .section-title,
 #screen-support .section-title,
-#screen-settings .section-title,
 #screen-support-chat .section-title{
   margin:0 0 12px!important;
+  padding:0!important;
+  text-align:left!important;
+  line-height:1.25!important;
+  transform:none!important;
+  position:static!important;
 }
 
+/* Role badge glued to right inside white frame */
 #screen-panel .role-panel{
-  padding:10px 12px!important;margin:0 0 12px!important;
-  width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+  display:block!important;
+  padding:10px 12px!important;
+  margin:0 0 12px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
 }
 #screen-panel .role-panel-row{
-  display:flex!important;align-items:center!important;justify-content:space-between!important;
-  width:100%!important;gap:8px!important;min-width:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:100%!important;
+  gap:8px!important;
 }
-#screen-panel .role-panel-label{flex-shrink:0!important}
-#screen-panel .role-badge,
-#screen-panel #panel-role{
-  margin-left:auto!important;margin-right:0!important;
-  max-width:72%!important;text-align:right!important;
-  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+#screen-panel #panel-role,
+#screen-panel .role-badge{
+  margin-left:auto!important;
+  margin-right:0!important;
+  text-align:right!important;
+  max-width:70%!important;
 }
 
+/* Identical grids */
+#screen-settings .tile-grid,
 #screen-panel .tile-grid,
-#screen-support .support-grid,
-#screen-settings .tile-grid{
+#screen-support .support-grid{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  gap:10px!important;margin:0!important;padding:0!important;
-  width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+  gap:10px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
 }
-#screen-panel .tile,
-#screen-support .support-tile,
-#screen-settings .tile{
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  box-sizing:border-box!important;overflow:hidden!important;
-}
+#screen-settings .tile,
 #screen-panel .tile,
 #screen-support .support-tile{
-  aspect-ratio:1/1!important;height:auto!important;min-height:0!important;
-  padding:12px 9px!important;border-radius:16px!important;
-}
-#screen-panel .tile .t-title,
-#screen-support .support-tile-title{
-  font-size:13px!important;line-height:1.18!important;text-align:center!important;
-  width:100%!important;overflow-wrap:anywhere!important;word-break:break-word!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  aspect-ratio:1/1!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:12px 9px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
 }
 #screen-panel .tile[style*="grid-column"]{
-  grid-column:1 / -1!important;aspect-ratio:auto!important;min-height:72px!important;
+  grid-column:1/-1!important;
+  aspect-ratio:auto!important;
+  min-height:72px!important;
 }
 
-/* Support chat: title top, messages middle, eta above input */
+/* Support chat column layout */
 #screen-support-chat.active{
-  display:flex!important;flex-direction:column!important;min-height:0!important;
-}
-#screen-support-chat .section-title{
-  flex-shrink:0!important;text-align:left!important;margin:0 0 10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
 }
 #screen-support-chat .chat-messages{
-  flex:1 1 auto!important;min-height:160px!important;max-height:none!important;
-  overflow-y:auto!important;margin:0 0 8px!important;width:100%!important;
+  flex:1 1 auto!important;
+  min-height:160px!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  margin:0 0 8px!important;
+  width:100%!important;
 }
 #screen-support-chat .chat-footer{
-  flex-shrink:0!important;margin-top:auto!important;padding-top:4px!important;width:100%!important;
+  flex-shrink:0!important;
+  margin-top:auto!important;
+  width:100%!important;
+  padding-top:4px!important;
 }
 #screen-support-chat .chat-eta{
-  display:block!important;text-align:left!important;margin:0 0 8px!important;
-  font-size:12px!important;line-height:1.3!important;
+  display:block!important;
+  text-align:left!important;
+  margin:0 0 8px!important;
+  font-size:12px!important;
 }
 #screen-support-chat .chat-input-row{
-  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
-  gap:8px!important;width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;
+  width:100%!important;
 }
 
 @media (max-width:600px){
   .content{padding-left:12px!important;padding-right:12px!important}
 }
-@media (max-width:360px){
-  #screen-panel .tile-grid,#screen-support .support-grid{gap:8px!important}
-  #screen-panel .tile,#screen-support .support-tile{padding:10px 7px!important}
-  #screen-panel .tile .t-title,#screen-support .support-tile-title{font-size:12px!important}
-}
 </style>
-
+<script>
+/* layout hard-fix after CSS load */
+(function(){
+  try{console.log("advinced build", document.documentElement.getAttribute("data-build"));}catch(e){}
+  var _show = window.show;
+  // patch show after it exists
+  function patchShow(){
+    if(typeof show !== "function") return;
+    if(show.__layoutPatched) return;
+    var orig = show;
+    window.show = function(id, push){
+      document.querySelectorAll(".screen").forEach(function(s){
+        s.classList.remove("active");
+        if(s.id === "screen-support-chat") s.style.display = "none";
+      });
+      var el = document.getElementById("screen-"+id);
+      if(el){
+        el.classList.add("active");
+        if(id === "support-chat"){
+          el.style.display = "flex";
+          el.style.flexDirection = "column";
+        }
+      }
+      // call rest of original behavior via history/back bar
+      try{
+        if(push!==false && state.history[state.history.length-1]!==id) state.history.push(id);
+        var bar=document.getElementById("menu-back-bar");
+        var content=document.querySelector(".content");
+        if(bar){
+          if(id==="main"){bar.classList.remove("show");bar.style.display="none";if(content)content.classList.remove("has-back")}
+          else{bar.classList.add("show");bar.style.display="flex";if(content)content.classList.add("has-back")}
+        }
+        if(typeof tg!=="undefined"&&tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
+      }catch(e){}
+    };
+    window.show.__layoutPatched = true;
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", patchShow);
+  else setTimeout(patchShow, 0);
+})();
+</script>
 </html>
-
-
