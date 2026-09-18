@@ -652,7 +652,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" id="collab-seg-work" data-i18n="collab_work">Работа</button>
       </div>
       <div id="collab-ads-panel">
-        <div class="info-block" data-i18n="collab_ads_hint">Партнёрская программа: создайте реферальный код, делитесь им и получайте процент с пополнений приглашённых. Можно применить чужой промокод к своему аккаунту.</div>
         <div class="panel">
           <h2 data-i18n="ref_my_code">Мой реферальный код</h2>
           <div class="ref-row">
@@ -663,10 +662,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div id="ref-status"></div>
         </div>
         <div class="panel">
-          <h2 data-i18n="ref_apply_title">Применить промокод</h2>
           <div class="ref-row">
             <input class="form-input" type="text" id="promo-code-input" maxlength="24" placeholder="PROMO"/>
-            <button type="button" class="btn" id="promo-apply-btn" data-i18n="apply">Применить</button>
+            <button type="button" class="btn promo-apply-btn" id="promo-apply-btn" data-i18n="apply">Применить</button>
           </div>
           <div id="promo-status" class="hint" style="margin-top:8px"></div>
         </div>
@@ -2063,6 +2061,46 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   min-height:72px!important;
   height:auto!important;
 }
+</style>
+
+
+<style id="collab-promo-fix">
+#collab-ads-panel .ref-row{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#collab-ads-panel .ref-row .form-input{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+}
+#collab-ads-panel .promo-apply-btn,
+#promo-apply-btn{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:110px!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  white-space:nowrap!important;
+}
+#ref-save-btn{
+  flex:0 0 auto!important;
+  width:auto!important;
+  max-width:120px!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  white-space:nowrap!important;
+}
+#collab-ads-panel .info-block[data-i18n="collab_ads_hint"]{display:none!important}
 </style>
 
 </html>
