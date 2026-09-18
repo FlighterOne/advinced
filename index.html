@@ -1303,7 +1303,7 @@ async function loadMe(force){
     try{
       let path="/api/miniapp/me";
       if(USER_ID)path+="?user_id="+encodeURIComponent(USER_ID);
-      const me=await apiGet(path,12000);
+      const me=await apiGet(path,8000);
       if(!me||me.ok===false)throw new Error((me&&(me.error||me.message))||"me_failed");
       state.me=me;
       _meCacheAt=Date.now();
@@ -1931,45 +1931,5 @@ html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!import
   .content{padding-left:12px!important;padding-right:12px!important}
 }
 </style>
-<script>
-/* layout hard-fix after CSS load */
-(function(){
-  try{console.log("advinced build", document.documentElement.getAttribute("data-build"));}catch(e){}
-  var _show = window.show;
-  // patch show after it exists
-  function patchShow(){
-    if(typeof show !== "function") return;
-    if(show.__layoutPatched) return;
-    var orig = show;
-    window.show = function(id, push){
-      document.querySelectorAll(".screen").forEach(function(s){
-        s.classList.remove("active");
-        if(s.id === "screen-support-chat") s.style.display = "none";
-      });
-      var el = document.getElementById("screen-"+id);
-      if(el){
-        el.classList.add("active");
-        if(id === "support-chat"){
-          el.style.display = "flex";
-          el.style.flexDirection = "column";
-        }
-      }
-      // call rest of original behavior via history/back bar
-      try{
-        if(push!==false && state.history[state.history.length-1]!==id) state.history.push(id);
-        var bar=document.getElementById("menu-back-bar");
-        var content=document.querySelector(".content");
-        if(bar){
-          if(id==="main"){bar.classList.remove("show");bar.style.display="none";if(content)content.classList.remove("has-back")}
-          else{bar.classList.add("show");bar.style.display="flex";if(content)content.classList.add("has-back")}
-        }
-        if(typeof tg!=="undefined"&&tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
-      }catch(e){}
-    };
-    window.show.__layoutPatched = true;
-  }
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", patchShow);
-  else setTimeout(patchShow, 0);
-})();
-</script>
+
 </html>
