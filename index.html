@@ -1905,128 +1905,9 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 
 
 <style id="layout-edge-fix">
-/* Screen edges: small equal side padding (same as Settings feel) */
+/* keep base; detailed tile sizing in support-panel-nudge */
 html,body{width:100%;max-width:100%;overflow-x:hidden}
 .app{width:100%;max-width:480px;margin:0 auto;box-sizing:border-box}
-.content{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-  padding-left:16px!important;
-  padding-right:16px!important;
-}
-.content.has-back{padding-top:2px!important}
-
-/* Title distance to Back — same for settings / panel / support */
-#screen-settings .section-title,
-#screen-panel .section-title,
-#screen-support .section-title,
-
-
-/* Grids never overflow sides */
-#screen-settings .tile-grid,
-#screen-panel .tile-grid,
-#screen-support .support-grid{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  gap:10px!important;
-  width:100%!important;
-  max-width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-}
-
-/* SQUARE buttons — Settings / Panel / Support */
-#screen-settings .tile,
-#screen-panel .tile,
-#screen-support .support-tile{
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-  aspect-ratio:1 / 1!important;
-  height:auto!important;
-  min-height:0!important;
-  padding:12px 10px!important;
-  border-radius:16px!important;
-  overflow:hidden!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-}
-
-#screen-settings .tile .t-title,
-#screen-panel .tile .t-title,
-#screen-support .support-tile-title{
-  font-size:13px!important;
-  line-height:1.2!important;
-  text-align:center!important;
-  width:100%!important;
-  max-width:100%!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
-  white-space:normal!important;
-}
-#screen-support .support-tile-sub{
-  font-size:11px!important;
-  line-height:1.15!important;
-  width:100%!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
-}
-
-/* Wide panel tile (analytics) stays full width but not square */
-#screen-panel .tile[style*="grid-column"]{
-  grid-column:1 / -1!important;
-  aspect-ratio:auto!important;
-  min-height:72px!important;
-  height:auto!important;
-}
-
-/* Role frame inside panel — stays within content width */
-#screen-panel .role-panel{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-  margin:0 0 12px!important;
-  padding:10px 12px!important;
-}
-#screen-panel .role-panel-row{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  width:100%!important;
-  gap:8px!important;
-  min-width:0!important;
-}
-#screen-panel .role-badge,
-#screen-panel #panel-role{
-  margin-left:auto!important;
-  max-width:70%!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  white-space:nowrap!important;
-}
-
-@media (max-width:600px){
-  .content{
-    padding-left:12px!important;
-    padding-right:12px!important;
-  }
-}
-@media (max-width:360px){
-  #screen-settings .tile-grid,
-  #screen-panel .tile-grid,
-  #screen-support .support-grid{gap:8px!important}
-  #screen-settings .tile,
-  #screen-panel .tile,
-  #screen-support .support-tile{padding:10px 8px!important}
-  #screen-settings .tile .t-title,
-  #screen-panel .tile .t-title,
-  #screen-support .support-tile-title{font-size:12px!important}
-}
 </style>
 
 
@@ -2072,69 +1953,115 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 
 
 <style id="support-panel-nudge">
-/* Titles closer to Back button */
+/* Exact square tiles + side gaps like Exchange; titles not glued to tiles */
+.content{
+  padding-left:16px!important;
+  padding-right:16px!important;
+  box-sizing:border-box!important;
+}
+.content.has-back{padding-top:2px!important}
+
+.section-title{
+  font-size:20px!important;
+  font-weight:700!important;
+  margin:0 0 14px!important;
+  padding:0!important;
+  line-height:1.25!important;
+  text-align:left!important;
+}
+
+/* Settings: extra gap under title so tiles don't merge with heading */
+#screen-settings .section-title{
+  margin:0 0 18px!important;
+}
+
 #screen-support .section-title,
 #screen-panel .section-title,
-#screen-support-chat .section-title{
-  margin:0 0 8px!important;
-  padding:0!important;
-  line-height:1.2!important;
-  text-align:left!important;
-  transform:translateY(-2px);
+#screen-support-chat .section-title,
+#screen-balance .section-title{
+  margin:0 0 14px!important;
 }
 
-/* When back bar is visible, pull content title up a bit more */
-.content.has-back #screen-support .section-title,
-.content.has-back #screen-panel .section-title,
-.content.has-back #screen-support-chat .section-title{
-  margin-top:-2px!important;
-}
-
-/* Slightly smaller square tiles + nudge right */
+/* Grids: Exchange-like 2 columns, gap 10, full width inside content padding */
+#screen-settings .tile-grid,
+#screen-panel .tile-grid,
 #screen-support .support-grid,
-#screen-panel .tile-grid{
-  width:calc(100% - 6px)!important;
+.tile-grid,
+.support-grid{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  width:100%!important;
   max-width:100%!important;
-  margin:0 0 0 6px!important; /* shift right a bit */
+  margin:0!important;
   padding:0!important;
-  gap:8px!important;
   box-sizing:border-box!important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
 }
 
+/* Square tiles — size/padding as Exchange support-tile */
+#screen-settings .tile,
+#screen-panel .tile,
 #screen-support .support-tile,
-#screen-panel .tile{
+.tile,
+.support-tile{
   aspect-ratio:1 / 1!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
   height:auto!important;
   min-height:0!important;
-  padding:10px 8px!important;
-  border-radius:14px!important;
+  margin:0!important;
+  padding:16px 12px!important;
+  border-radius:16px!important;
   box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  overflow:hidden!important;
 }
 
+#screen-settings .tile .t-title,
+#screen-panel .tile .t-title,
 #screen-support .support-tile-title,
-#screen-panel .tile .t-title{
+.tile .t-title,
+.support-tile-title{
+  font-size:13px!important;
+  font-weight:600!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+}
+
+#screen-settings .tile .t-sub,
+#screen-support .support-tile-sub,
+.tile .t-sub,
+.support-tile-sub{
   font-size:12px!important;
-  line-height:1.15!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
 }
 
-#screen-support .support-tile-sub{
-  font-size:10px!important;
-  line-height:1.1!important;
-}
-
-/* role panel follows same right nudge */
+/* Panel role card full width inside content */
 #screen-panel .role-panel{
-  width:calc(100% - 6px)!important;
-  margin:0 0 10px 6px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0 0 12px!important;
   box-sizing:border-box!important;
 }
 
-/* wide analytics tile */
+/* Wide analytics tile stays full width, not forced square */
 #screen-panel .tile[style*="grid-column"]{
   grid-column:1 / -1!important;
   aspect-ratio:auto!important;
-  min-height:64px!important;
+  min-height:72px!important;
+  height:auto!important;
 }
 </style>
 
