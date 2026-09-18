@@ -624,11 +624,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" id="collab-seg-work" data-i18n="collab_work">Работа</button>
       </div>
       <div id="collab-ads-panel">
-        <div id="referral-panel" class="info-block" data-i18n="collab_ads_hint">Размещение рекламы и партнёрские материалы — напишите менеджеру.</div>
+        <div id="referral-panel" class="info-block" data-i18n="collab_ads_hint">Размещение рекламы, партнёрские интеграции и продвижение проектов — оставьте заявку менеджеру. Обсудим формат, бюджет и сроки.</div>
         <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
       </div>
       <div id="collab-work-panel" style="display:none">
-        <div class="info-block" id="hire-info-block"></div>
+        <div class="info-block" id="hire-info-block" data-i18n="collab_work_hint">Открыты позиции: модерация, поддержка пользователей, работа с проектами. Стартовая роль — стажёр. Заполните анкету — рассмотрим в порядке очереди.</div>
         <div class="btn-stack">
           <button type="button" class="btn primary wide" id="collab-job-form" data-i18n="application_form">Составить анкету</button>
           <button type="button" class="btn wide" id="collab-work-mgr" data-i18n="write_manager">Написать менеджеру</button>
@@ -653,7 +653,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="method-item" data-emp="student"><div class="title" data-i18n="student">Студент</div></div>
           <div class="method-item" data-emp="working"><div class="title" data-i18n="working">Работаю</div></div>
           <div class="method-item" data-emp="retired"><div class="title" data-i18n="retired">На пенсии</div></div>
-          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">В поиске</div></div>
+          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">Окончил обучение, в активных поисках работы</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -669,6 +669,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <input class="form-input" type="email" id="job-email" placeholder="mail@example.com"/>
       </div>
       <button type="button" class="btn primary wide" id="job-submit-btn" data-i18n="submit_app">Отправить анкету</button>
+      <div id="job-status"></div>
     </div>
 <div id="screen-support-chat" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
@@ -1504,6 +1505,8 @@ function wireSupport(){
   });
   const chat=document.getElementById("sup-chat");
   if(chat)chat.onclick=function(){show("support-chat");try{loadSupportChat()}catch(e){}};
+  const hire=document.getElementById("sup-hire");
+  if(hire)hire.onclick=function(){show("collaborate");try{applyI18n()}catch(e){}};
 }
 
 // init
@@ -1729,6 +1732,89 @@ on("wc-pay","onclick",async()=>{
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{});
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
+
+
+// ——— Collaborate / Hire (exchange logic) ———
+state.jobEmp = state.jobEmp || "";
+function openUrlSafe(u){
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}
+}
+function wireCollaborate(){
+  const openMgr=()=>openUrlSafe("https://t.me/mediamanagering");
+  const hire=document.getElementById("sup-hire");
+  if(hire)hire.onclick=function(){show("collaborate");applyI18n();};
+  const segAds=document.getElementById("collab-seg-ads");
+  const segWork=document.getElementById("collab-seg-work");
+  const adsPanel=document.getElementById("collab-ads-panel");
+  const workPanel=document.getElementById("collab-work-panel");
+  function setSeg(which){
+    if(segAds)segAds.classList.toggle("active",which==="ads");
+    if(segWork)segWork.classList.toggle("active",which==="work");
+    if(adsPanel)adsPanel.style.display=which==="ads"?"":"none";
+    if(workPanel)workPanel.style.display=which==="work"?"":"none";
+  }
+  if(segAds)segAds.onclick=()=>setSeg("ads");
+  if(segWork)segWork.onclick=()=>setSeg("work");
+  const adsMgr=document.getElementById("collab-ads-mgr");
+  const workMgr=document.getElementById("collab-work-mgr");
+  if(adsMgr)adsMgr.onclick=openMgr;
+  if(workMgr)workMgr.onclick=openMgr;
+  const jobFormBtn=document.getElementById("collab-job-form");
+  if(jobFormBtn)jobFormBtn.onclick=function(){
+    show("job-form");
+    applyI18n();
+    try{
+      const u=tgUser||getTgUser()||{};
+      const ju=document.getElementById("job-username");
+      if(ju&&!ju.value&&u.username)ju.value="@"+u.username;
+    }catch(e){}
+    const st=document.getElementById("job-status");
+    if(st)st.textContent="";
+  };
+  document.querySelectorAll("#job-employment-list .method-item").forEach(function(el){
+    el.onclick=function(){
+      document.querySelectorAll("#job-employment-list .method-item").forEach(x=>x.classList.remove("selected"));
+      el.classList.add("selected");
+      state.jobEmp=el.getAttribute("data-emp")||"";
+    };
+  });
+  const sub=document.getElementById("job-submit-btn");
+  if(sub)sub.onclick=submitJobApplication;
+}
+async function submitJobApplication(){
+  const st=document.getElementById("job-status");
+  const full_name=(document.getElementById("job-fio")&&document.getElementById("job-fio").value||"").trim();
+  const age=parseInt((document.getElementById("job-age")&&document.getElementById("job-age").value)||"0",10)||0;
+  const employment=state.jobEmp||"";
+  const username=(document.getElementById("job-username")&&document.getElementById("job-username").value||"").trim().replace(/^@/,"");
+  const phone=(document.getElementById("job-phone")&&document.getElementById("job-phone").value||"").trim();
+  const email=(document.getElementById("job-email")&&document.getElementById("job-email").value||"").trim();
+  if(!full_name){if(st)st.textContent=t("fio")||"ФИО";return}
+  if(age<16){if(st)st.textContent=t("age_min16")||"16+";return}
+  if(!employment){if(st)st.textContent=t("select_employment")||"employment";return}
+  if(!phone){if(st)st.textContent=t("phone_number")||"phone";return}
+  if(!email||email.indexOf("@")<0){if(st)st.textContent=t("email")||"email";return}
+  if(st)st.textContent="…";
+  try{
+    const r=await apiPost("/api/job-applications",{
+      user_id:USER_ID,
+      full_name:full_name,
+      age:age,
+      employment:employment,
+      username:username,
+      phone:phone,
+      email:email
+    });
+    if(r&& (r.status==="ok"||r.ok||r.id)){
+      if(st)st.textContent=(t("job_sent")||"OK #{id}").replace("{id}", String(r.id||""));
+    }else{
+      if(st)st.textContent=r.error||r.message||t("job_err")||"error";
+    }
+  }catch(e){
+    if(st)st.textContent=String(e.message||e||t("job_err"));
+  }
+}
+try{wireCollaborate()}catch(e){console.warn("wireCollaborate",e)}
 
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
