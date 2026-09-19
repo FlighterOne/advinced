@@ -1279,6 +1279,7 @@ const ROUTES = {
   settings: "settings",
   lang: "lang",
   language: "lang",
+  languages: "lang",
   theme: "theme",
   profile: "profile",
   support: "support",
@@ -1287,6 +1288,7 @@ const ROUTES = {
   admin: "panel",
   collaborate: "collaborate",
   hire: "collaborate",
+  advanced: "collaborate",
   job: "job-form",
   "job-form": "job-form",
   "support-chat": "support-chat",
@@ -1301,13 +1303,13 @@ const SCREEN_TO_PATH = {
   projects: "/projects",
   project: "/project",
   settings: "/settings",
-  lang: "/lang",
-  theme: "/theme",
+  lang: "/settings/languages",
+  theme: "/settings/theme",
   profile: "/profile",
   support: "/support",
   help: "/help",
   panel: "/panel",
-  collaborate: "/collaborate",
+  collaborate: "/advanced",
   "job-form": "/job",
   "support-chat": "/support/chat",
   deposit: "/deposit",
@@ -1343,16 +1345,14 @@ function getRouteBase(){
 }
 
 function parseLocationRoute(){
-  // Prefer path; support hash #/balance as fallback
   let path = "";
   try{
     if(location.hash && location.hash.indexOf("#/")===0){
-      path = location.hash.slice(1); // /balance
+      path = location.hash.slice(1);
     }else{
       path = location.pathname || "/";
     }
   }catch(e){path="/"}
-  // strip base
   const base = getRouteBase();
   if(base && base!=="/" && path.indexOf(base)===0){
     path = "/" + path.slice(base.length).replace(/^\//,"");
@@ -1360,21 +1360,49 @@ function parseLocationRoute(){
   path = path.replace(/\/index\.html$/i,"");
   if(!path || path==="/") path="/home";
   if(path[0]!=="/") path="/"+path;
-  const segs = path.split("/").filter(Boolean);
-  const head = (segs[0]||"home").toLowerCase();
+  const segs = path.split("/").filter(Boolean).map(function(s){return String(s).toLowerCase()});
+  const head = (segs[0]||"home");
   let screen = ROUTES[head] || "main";
   let projectId = null;
+  let collabSeg = null; // ads | work
+
+  // settings/languages | settings/theme | settings/lang
+  if(head==="settings"){
+    if(segs[1]==="languages"||segs[1]==="language"||segs[1]==="lang"){
+      screen="lang";
+    }else if(segs[1]==="theme"||segs[1]==="themes"){
+      screen="theme";
+    }else{
+      screen="settings";
+    }
+  }
+  // support/chat
+  if(head==="support"){
+    if(segs[1]==="chat"||segs[1]==="ticket"){
+      screen="support-chat";
+    }else{
+      screen="support";
+    }
+  }
+  // advanced = collaborate (ads), optional /advanced/work
+  if(head==="advanced"||head==="collaborate"||head==="hire"){
+    screen="collaborate";
+    if(segs[1]==="work"||segs[1]==="job") collabSeg="work";
+    else collabSeg="ads";
+  }
+  // job form
+  if(head==="job"||head==="job-form"){
+    screen="job-form";
+  }
   if(head==="project" && segs[1]){
-    screen = "project";
-    projectId = segs[1];
+    screen="project";
+    projectId=segs[1];
   }
-  if(head==="support" && segs[1] && (segs[1]==="chat"||segs[1]==="ticket")){
-    screen = "support-chat";
-  }
+  if(head==="admin") screen="panel";
   if(head==="deposit" && segs[1]==="confirm") screen="deposit-confirm";
   if(head==="withdraw" && segs[1]==="confirm") screen="withdraw-confirm";
-  if(head==="admin") screen="panel";
-  return {screen:screen, projectId:projectId, path:path, segs:segs};
+
+  return {screen:screen, projectId:projectId, path:path, segs:segs, collabSeg:collabSeg};
 }
 
 let __routeSyncing = false;
@@ -1457,7 +1485,20 @@ function applyRouteFromLocation(opts){
     }else if(r.screen==="panel"){
       show("panel", false); try{loadPanel()}catch(e){}
     }else if(r.screen==="collaborate"){
-      show("collaborate", false); try{applyI18n();if(typeof loadReferralMe==="function")loadReferralMe()}catch(e){}
+      show("collaborate", false);
+      try{
+        applyI18n();
+        const segAds=document.getElementById("collab-seg-ads");
+        const segWork=document.getElementById("collab-seg-work");
+        const adsPanel=document.getElementById("collab-ads-panel");
+        const workPanel=document.getElementById("collab-work-panel");
+        const which=(r.collabSeg==="work")?"work":"ads";
+        if(segAds)segAds.classList.toggle("active",which==="ads");
+        if(segWork)segWork.classList.toggle("active",which==="work");
+        if(adsPanel)adsPanel.style.display=which==="ads"?"":"none";
+        if(workPanel)workPanel.style.display=which==="work"?"":"none";
+        if(which==="ads" && typeof loadReferralMe==="function")loadReferralMe();
+      }catch(e){}
     }else if(r.screen==="job-form"){
       show("job-form", false);
     }else if(r.screen==="help"){
@@ -2270,6 +2311,10 @@ function wireCollaborate(){
     if(adsPanel)adsPanel.style.display=which==="ads"?"":"none";
     if(workPanel)workPanel.style.display=which==="work"?"":"none";
     if(which==="ads")loadReferralMe();
+    try{
+      if(which==="work") history.replaceState({screen:"collaborate",collabSeg:"work"},"","/advanced/work");
+      else history.replaceState({screen:"collaborate",collabSeg:"ads"},"","/advanced");
+    }catch(e){}
   }
   if(segAds)segAds.onclick=()=>setSeg("ads");
   if(segWork)segWork.onclick=()=>setSeg("work");
