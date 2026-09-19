@@ -1418,6 +1418,13 @@ function applyRouteFromLocation(opts){
       showLoginOverlay();
       return;
     }
+    // есть локальная сессия, но USER_ID ещё не выставлен (гонка) — подхватить
+    if(!USER_ID && hasValidWebSessionLocal()){
+      try{
+        const s=loadWebSession();
+        if(s&&s.user_id){USER_ID=Number(s.user_id)||s.user_id;__webSessionToken=s.token||__webSessionToken}
+      }catch(e){}
+    }
     if(r.screen==="login"){
       show("main", false);
       try{
@@ -2003,35 +2010,66 @@ try{wireSupport()}catch(e){console.warn(e)}
       __isMiniApp=false;
       __webSessionToken=sess.token;
 
+      let sessionOk=false;
+      let sessionUser=null;
       try{
-        const s=await apiGet("/api/auth/session",6000);
-        if(s&&s.user_id){
-          USER_ID=Number(s.user_id)||s.user_id;
-          if(s.lang)state.lang=s.lang;
-          if(s.theme==="dark"||s.theme==="light"||s.theme==="auto")state.theme=s.theme;
-          applyTheme(state.theme,false);
-          applyI18n();
-          try{setAvatar()}catch(e){}
-          if(s.balance!=null)applyBalanceUI(s.balance);
-
-          // После авторизации обязательно обновляем данные из БД.
-          try{await loadMe(true)}catch(e){console.warn("web loadMe",e)}
-          try{startEventLoop()}catch(e){console.warn("web events",e)}
-
-          hideLoginOverlay();
-          const lb=document.getElementById("btn-web-logout");
-          if(lb)lb.style.display="";
-          try{
-            // обновить last_ok для кросс-вкладочной «свежести»
-            const s2=loadWebSession();
-            if(s2){s2.last_ok=new Date().toISOString();saveWebSession(s2)}
-          }catch(e){}
-          try{await goAfterLogin()}catch(e){try{applyRouteFromLocation()}catch(e2){}}
-          return;
+        const r=await apiFetch("/api/auth/session",{method:"GET",headers:{"Accept":"application/json"}},8000);
+        let s=null;
+        try{s=await r.json()}catch(e){}
+        if(r.status===401||r.status===403){
+          clearWebSession();
+        }else if(r.ok && s && s.user_id){
+          sessionOk=true;
+          sessionUser=s;
+        }else if(sess.user_id){
+          sessionOk=true;
+          sessionUser={
+            user_id:sess.user_id,
+            lang:sess.lang,
+            theme:sess.theme,
+            balance:sess.balance,
+            username:sess.username,
+            first_name:sess.first_name
+          };
         }
       }catch(e){
-        // Сессия действительно недействительна — тогда просим войти заново.
-        clearWebSession();
+        if(sess.user_id){
+          sessionOk=true;
+          sessionUser={
+            user_id:sess.user_id,
+            lang:sess.lang,
+            theme:sess.theme,
+            balance:sess.balance,
+            username:sess.username,
+            first_name:sess.first_name
+          };
+        }
+      }
+
+      if(sessionOk && sessionUser && sessionUser.user_id){
+        USER_ID=Number(sessionUser.user_id)||sessionUser.user_id;
+        if(sessionUser.lang)state.lang=sessionUser.lang;
+        if(sessionUser.theme==="dark"||sessionUser.theme==="light"||sessionUser.theme==="auto")state.theme=sessionUser.theme;
+        applyTheme(state.theme,false);
+        applyI18n();
+        try{setAvatar()}catch(e){}
+        if(sessionUser.balance!=null)applyBalanceUI(sessionUser.balance);
+        try{await loadMe(true)}catch(e){console.warn("web loadMe",e)}
+        try{startEventLoop()}catch(e){}
+        hideLoginOverlay();
+        const lb=document.getElementById("btn-web-logout");
+        if(lb)lb.style.display="";
+        try{
+          const s2=loadWebSession()||sess;
+          s2.last_ok=new Date().toISOString();
+          s2.user_id=USER_ID;
+          if(sessionUser.balance!=null)s2.balance=sessionUser.balance;
+          if(sessionUser.lang)s2.lang=sessionUser.lang;
+          if(sessionUser.theme)s2.theme=sessionUser.theme;
+          saveWebSession(s2);
+        }catch(e){}
+        try{await goAfterLogin()}catch(e){try{applyRouteFromLocation()}catch(e2){}}
+        return;
       }
     }
 
