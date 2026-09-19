@@ -426,11 +426,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       </div>
       <div class="spacer"></div>
       <div class="actions main-menu" id="main-actions">
-        <button class="btn primary wide" data-nav="balance" data-i18n="balance">Баланс</button>
-        <button class="btn wide" data-nav="projects" data-i18n="projects">Проекты</button>
-        <button class="btn" data-nav="settings" data-i18n="settings">Настройки</button>
-        <button class="btn" data-nav="support" data-i18n="support">Поддержка</button>
-        <button class="btn ghost wide" data-nav="panel" id="btn-panel" style="display:none" data-i18n="panel">Панель</button>
+        <button type="button" class="btn primary wide" data-nav="balance" data-i18n="balance">Баланс</button>
+        <button type="button" class="btn wide" data-nav="projects" data-i18n="projects">Проекты</button>
+        <button type="button" class="btn" data-nav="settings" data-i18n="settings">Настройки</button>
+        <button type="button" class="btn" id="btn-support" data-nav="support" data-i18n="support">Поддержка</button>
+        <button type="button" class="btn ghost wide" data-nav="panel" id="btn-panel" style="display:none" data-i18n="panel">Панель</button>
       </div>
     </div>
 
@@ -1149,17 +1149,33 @@ async function setLang(code){state.lang=code;try{localStorage.setItem("advinced_
 async function setTheme(theme){applyTheme(theme,true);if(USER_ID){try{await apiPost("/api/miniapp/theme",{user_id:USER_ID,theme})}catch(e){}}}
 
 function show(id,push){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active");
+    // reset inline display from previous forced shows
+    if(s.style && s.style.display==="block") s.style.display="";
+  });
   const el=document.getElementById("screen-"+id);
-  if(el)el.classList.add("active");
+  if(el){
+    el.classList.add("active");
+    el.style.display="block";
+  }else{
+    console.warn("show: screen not found", id);
+  }
   if(push!==false&&state.history[state.history.length-1]!==id)state.history.push(id);
   const bar=document.getElementById("menu-back-bar");
   const content=document.querySelector(".content");
   if(bar){
-    if(id==="main"){bar.classList.remove("show");bar.style.display="none";if(content)content.classList.remove("has-back")}
-    else{bar.classList.add("show");bar.style.display="flex";if(content)content.classList.add("has-back")}
+    if(id==="main"){
+      bar.classList.remove("show");
+      bar.style.display="none";
+      if(content)content.classList.remove("has-back");
+    }else{
+      bar.classList.add("show");
+      bar.style.display="flex";
+      if(content)content.classList.add("has-back");
+    }
   }
-
+  try{applyI18n()}catch(e){}
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
 function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
@@ -1559,14 +1575,18 @@ function on(id,ev,fn){const el=document.getElementById(id);if(el)el[ev]=fn;retur
 
 function navigate(nav){
   if(!nav)return;
-  if(nav==="balance"){show("balance");loadMe(true);loadRequests()}
-  else if(nav==="settings"){show("settings");loadMe()}
-  else if(nav==="projects"){show("projects");loadProjects()}
-  else if(nav==="help")show("help");
-  else if(nav==="support")show("support");
-  else if(nav==="panel"){show("panel");try{loadPanel()}catch(e){}}
-  else show(nav);
+  try{
+    if(nav==="balance"){show("balance");loadMe(true);loadRequests()}
+    else if(nav==="settings"){show("settings");loadMe()}
+    else if(nav==="projects"){show("projects");loadProjects()}
+    else if(nav==="help"){show("help")}
+    else if(nav==="support"){show("support");try{wireSupport()}catch(e){}}
+    else if(nav==="panel"){show("panel");try{loadPanel()}catch(e){}}
+    else if(nav==="collaborate"){show("collaborate");try{applyI18n();loadReferralMe()}catch(e){}}
+    else show(nav);
+  }catch(e){console.warn("navigate",nav,e)}
 }
+
 
 // делегирование кликов — работает даже если кнопки перерисуются
 document.body.addEventListener("click",function(ev){
@@ -1897,6 +1917,31 @@ function wireCollaborate(){
 }
 try{wireCollaborate()}catch(e){console.warn(e)}
 
+
+// Main menu hard bind (support / panel / others)
+function bindMainMenu(){
+  function bindNav(id, nav){
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.onclick=function(e){
+      try{if(e)e.preventDefault()}catch(err){}
+      navigate(nav);
+    };
+  }
+  bindNav("btn-support","support");
+  bindNav("btn-panel","panel");
+  document.querySelectorAll("#main-actions [data-nav]").forEach(function(btn){
+    if(btn.id==="btn-support"||btn.id==="btn-panel")return;
+    const nav=btn.getAttribute("data-nav");
+    if(!nav)return;
+    btn.onclick=function(e){
+      try{if(e)e.preventDefault()}catch(err){}
+      navigate(nav);
+    };
+  });
+}
+try{bindMainMenu()}catch(e){console.warn(e)}
+
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
 </body>
@@ -2125,6 +2170,15 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #screen-collaborate .panel{
   margin-bottom:10px!important;
 }
+</style>
+
+
+<style id="screen-nav-fix">
+.screen{display:none!important}
+.screen.active{display:block!important}
+#screen-main.active{display:flex!important;flex-direction:column!important}
+#screen-support-chat.active{display:flex!important;flex-direction:column!important}
+#main-actions .btn{pointer-events:auto!important;position:relative;z-index:2}
 </style>
 
 </html>
