@@ -1026,14 +1026,30 @@ async function loadTelegramLoginWidget(){
   const wrap=document.getElementById("login-widget-wrap");
   if(!wrap)return;
   wrap.innerHTML="<span class=\"hint\">Loading…</span>";
+  let botName="advincedsbot";
+  let apiOk=false;
+  let apiErr="";
   try{
     const cfg=await apiGet("/api/auth/config",8000);
-    let botName=(cfg&&cfg.bot_username?String(cfg.bot_username):"").replace(/^@/,"").trim();
-    if(!botName||botName==="granvillemanagment_bot"||botName==="granvillemanagement_bot"){
-      botName="advincedsbot";
+    apiOk=true;
+    const fromApi=(cfg&&cfg.bot_username?String(cfg.bot_username):"").replace(/^@/,"").trim();
+    if(fromApi && fromApi!=="granvillemanagment_bot" && fromApi!=="granvillemanagement_bot"){
+      botName=fromApi;
     }
+  }catch(e){
+    apiErr=String(e&&e.message?e.message:e||"API error");
+    apiOk=false;
+  }
+  // Виджет показываем всегда (даже если API временно 503) — иначе вход невозможен.
+  try{
     wrap.innerHTML="";
-    // Telegram Login Widget
+    if(!apiOk){
+      const note=document.createElement("div");
+      note.className="hint";
+      note.style.marginBottom="10px";
+      note.textContent="Server: "+apiErr+" — retry after deploy. Widget may still work.";
+      wrap.appendChild(note);
+    }
     const s=document.createElement("script");
     s.async=true;
     s.src="https://telegram.org/js/telegram-widget.js?22";
@@ -1043,17 +1059,27 @@ async function loadTelegramLoginWidget(){
     s.setAttribute("data-onauth","onTelegramAuth(user)");
     s.setAttribute("data-request-access","write");
     s.onerror=function(){
-      wrap.innerHTML="<span class=\"hint\">Widget load failed. <a href=\"#\" id=\"login-retry\">Retry</a></span>";
+      const err=document.createElement("div");
+      err.className="hint";
+      err.innerHTML="Widget load failed. <a href=\"#\" id=\"login-retry\">Retry</a>";
+      wrap.appendChild(err);
       const r=document.getElementById("login-retry");
       if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
     };
     wrap.appendChild(s);
-  }catch(e){
-    wrap.innerHTML="<span class=\"hint\">API error. <a href=\"#\" id=\"login-retry\">Retry</a></span>";
+    const retry=document.createElement("div");
+    retry.style.marginTop="10px";
+    retry.innerHTML="<a href=\"#\" id=\"login-retry\" class=\"hint\">Retry</a>";
+    wrap.appendChild(retry);
+    const r=document.getElementById("login-retry");
+    if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
+  }catch(e2){
+    wrap.innerHTML="<span class=\"hint\">"+(apiErr||String(e2))+" · <a href=\"#\" id=\"login-retry\">Retry</a></span>";
     const r=document.getElementById("login-retry");
     if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
   }
 }
+
 window.onTelegramAuth=async function(user){
   const wrap=document.getElementById("login-widget-wrap");
   try{
@@ -1185,6 +1211,197 @@ function renderLangList(){
 async function setLang(code){state.lang=code;try{localStorage.setItem("advinced_lang",code)}catch(e){}applyI18n();if(USER_ID){try{await apiPost("/api/miniapp/lang",{user_id:USER_ID,lang:code})}catch(e){}}}
 async function setTheme(theme){applyTheme(theme,true);if(USER_ID){try{await apiPost("/api/miniapp/theme",{user_id:USER_ID,theme})}catch(e){}}}
 
+
+/* ===== Path routing (website deep links) =====
+   /home /balance /projects /project/:id /settings /support /panel /admin ...
+   Mini App: URL тоже синхронизируется, но без обязательного reload.
+*/
+const ROUTES = {
+  home: "main",
+  main: "main",
+  "": "main",
+  balance: "balance",
+  wallet: "balance",
+  projects: "projects",
+  project: "project",
+  settings: "settings",
+  lang: "lang",
+  language: "lang",
+  theme: "theme",
+  profile: "profile",
+  support: "support",
+  help: "help",
+  panel: "panel",
+  admin: "panel",
+  collaborate: "collaborate",
+  hire: "collaborate",
+  job: "job-form",
+  "job-form": "job-form",
+  "support-chat": "support-chat",
+  chat: "support-chat",
+  deposit: "deposit",
+  withdraw: "withdraw"
+};
+const SCREEN_TO_PATH = {
+  main: "/home",
+  balance: "/balance",
+  projects: "/projects",
+  project: "/project",
+  settings: "/settings",
+  lang: "/lang",
+  theme: "/theme",
+  profile: "/profile",
+  support: "/support",
+  help: "/help",
+  panel: "/panel",
+  collaborate: "/collaborate",
+  "job-form": "/job",
+  "support-chat": "/support/chat",
+  deposit: "/deposit",
+  "deposit-confirm": "/deposit/confirm",
+  withdraw: "/withdraw",
+  "withdraw-confirm": "/withdraw/confirm"
+};
+
+function getRouteBase(){
+  // base path for GitHub project pages, e.g. /repo/ — otherwise ""
+  try{
+    const parts = (location.pathname||"/").split("/").filter(Boolean);
+    // if last segment looks like a known route or index.html — base is parent
+    if(!parts.length) return "";
+    const last = parts[parts.length-1].toLowerCase();
+    if(last==="index.html" || last==="index"){
+      return "/" + parts.slice(0,-1).join("/") + (parts.length>1?"/":"");
+    }
+    const known = new Set(Object.keys(ROUTES).concat(["project","support","deposit","withdraw","admin"]));
+    // walk from end: if segment is known route, base is before it
+    for(let i=parts.length-1;i>=0;i--){
+      const seg = parts[i].toLowerCase();
+      if(known.has(seg) || /^\d+$/.test(seg)){
+        // continue to find start of route chain
+        continue;
+      }
+      // static prefix (repo name etc.)
+      return "/" + parts.slice(0,i+1).join("/") + "/";
+    }
+    // entire path is routes
+    return "/";
+  }catch(e){return "/"}
+}
+
+function parseLocationRoute(){
+  // Prefer path; support hash #/balance as fallback
+  let path = "";
+  try{
+    if(location.hash && location.hash.indexOf("#/")===0){
+      path = location.hash.slice(1); // /balance
+    }else{
+      path = location.pathname || "/";
+    }
+  }catch(e){path="/"}
+  // strip base
+  const base = getRouteBase();
+  if(base && base!=="/" && path.indexOf(base)===0){
+    path = "/" + path.slice(base.length).replace(/^\//,"");
+  }
+  path = path.replace(/\/index\.html$/i,"");
+  if(!path || path==="/") path="/home";
+  if(path[0]!=="/") path="/"+path;
+  const segs = path.split("/").filter(Boolean);
+  const head = (segs[0]||"home").toLowerCase();
+  let screen = ROUTES[head] || "main";
+  let projectId = null;
+  if(head==="project" && segs[1]){
+    screen = "project";
+    projectId = segs[1];
+  }
+  if(head==="support" && segs[1] && (segs[1]==="chat"||segs[1]==="ticket")){
+    screen = "support-chat";
+  }
+  if(head==="deposit" && segs[1]==="confirm") screen="deposit-confirm";
+  if(head==="withdraw" && segs[1]==="confirm") screen="withdraw-confirm";
+  if(head==="admin") screen="panel";
+  return {screen:screen, projectId:projectId, path:path, segs:segs};
+}
+
+let __routeSyncing = false;
+function pathForScreen(id, extra){
+  let p = SCREEN_TO_PATH[id] || ("/"+id);
+  if(id==="project" && extra && extra.projectId){
+    p = "/project/"+encodeURIComponent(extra.projectId);
+  }
+  const base = getRouteBase();
+  if(base && base!=="/"){
+    return (base.replace(/\/$/,"") + p).replace(/\/+/g,"/");
+  }
+  return p;
+}
+
+function setLocationRoute(id, opts){
+  opts = opts||{};
+  if(__routeSyncing) return;
+  try{
+    // only for website-like contexts; still ok in miniapp
+    const url = pathForScreen(id, opts);
+    const st = {screen:id, projectId:opts.projectId||null};
+    if(opts.replace){
+      history.replaceState(st, "", url);
+    }else{
+      const cur = location.pathname + location.search + location.hash;
+      if(cur!==url && cur!==url+"/") history.pushState(st, "", url);
+      else history.replaceState(st, "", url);
+    }
+  }catch(e){}
+}
+
+function applyRouteFromLocation(opts){
+  opts = opts||{};
+  const r = parseLocationRoute();
+  __routeSyncing = true;
+  try{
+    if(r.screen==="project" && r.projectId){
+      if(typeof openProject==="function") openProject(r.projectId);
+      else show("project", false);
+    }else if(r.screen==="balance"){
+      show("balance", false); try{loadMe(true);loadRequests()}catch(e){}
+    }else if(r.screen==="projects"){
+      show("projects", false); try{loadProjects()}catch(e){}
+    }else if(r.screen==="settings"){
+      show("settings", false); try{loadMe()}catch(e){}
+    }else if(r.screen==="lang"){
+      show("lang", false); try{renderLangList()}catch(e){}
+    }else if(r.screen==="theme"){
+      show("theme", false);
+    }else if(r.screen==="profile"){
+      show("profile", false); try{loadMe()}catch(e){}
+    }else if(r.screen==="support"){
+      show("support", false); try{wireSupport()}catch(e){}
+    }else if(r.screen==="support-chat"){
+      show("support-chat", false); try{loadSupportChat()}catch(e){}
+    }else if(r.screen==="panel"){
+      show("panel", false); try{loadPanel()}catch(e){}
+    }else if(r.screen==="collaborate"){
+      show("collaborate", false); try{applyI18n();if(typeof loadReferralMe==="function")loadReferralMe()}catch(e){}
+    }else if(r.screen==="job-form"){
+      show("job-form", false);
+    }else if(r.screen==="help"){
+      show("help", false);
+    }else if(r.screen==="deposit"){
+      show("deposit", false); try{calcDep()}catch(e){}
+    }else if(r.screen==="withdraw"){
+      show("withdraw", false); try{calcWd()}catch(e){}
+    }else{
+      show("main", false);
+    }
+  }finally{
+    __routeSyncing = false;
+  }
+}
+
+window.addEventListener("popstate", function(){
+  applyRouteFromLocation({fromPop:true});
+});
+
 function show(id,push){
   document.querySelectorAll(".screen").forEach(s=>{
     s.classList.remove("active");
@@ -1199,6 +1416,11 @@ function show(id,push){
     console.warn("show: screen not found", id);
   }
   if(push!==false&&state.history[state.history.length-1]!==id)state.history.push(id);
+  if(push!==false){
+    try{setLocationRoute(id, {projectId: (id==="project"&&state.currentProjectId)?state.currentProjectId:null})}catch(e){}
+  }else{
+    try{setLocationRoute(id, {replace:true, projectId: (id==="project"&&state.currentProjectId)?state.currentProjectId:null})}catch(e){}
+  }
   const bar=document.getElementById("menu-back-bar");
   const content=document.querySelector(".content");
   if(bar){
@@ -1518,7 +1740,9 @@ async function loadProjects(){
   }catch(e){list.innerHTML='<div class="empty">err</div>';meta.textContent=String(e.message||e)}
 }
 async function openProject(pid){
+  state.currentProjectId=pid;
   show("project");
+  try{setLocationRoute("project",{projectId:pid})}catch(e){}
   document.getElementById("pd-title").textContent="#"+pid;
   document.getElementById("pd-body").textContent="…";
   const act=document.getElementById("pd-actions");
@@ -1981,7 +2205,31 @@ function bindMainMenu(){
 }
 try{bindMainMenu()}catch(e){console.warn(e)}
 
-window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
+
+// Deep link after boot
+(function routeBoot(){
+  function run(){
+    try{
+      // SPA redirect from 404.html
+      const redir = sessionStorage.getItem("advinced_spa_redirect");
+      if(redir){
+        sessionStorage.removeItem("advinced_spa_redirect");
+        history.replaceState({}, "", redir);
+      }
+    }catch(e){}
+    // wait a tick for auth to set USER_ID
+    setTimeout(function(){
+      try{applyRouteFromLocation()}catch(e){console.warn("routeBoot",e)}
+    }, 50);
+    setTimeout(function(){
+      try{applyRouteFromLocation()}catch(e){}
+    }, 400);
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
+
+window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation};
 </script>
 </body>
 

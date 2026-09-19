@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Advinced Management</title>
+<script>
+(function(){
+  try{
+    var path = location.pathname + location.search + location.hash;
+    sessionStorage.setItem("advinced_spa_redirect", path);
+  }catch(e){}
+  // redirect to app root (custom domain or repo root)
+  var parts = (location.pathname||"/").split("/").filter(Boolean);
+  // if project page: /repo/xxx -> /repo/
+  var base = "/";
+  if(parts.length){
+    // keep first segment as possible repo base only if not a route keyword
+    var known = {home:1,balance:1,projects:1,project:1,settings:1,lang:1,theme:1,profile:1,support:1,help:1,panel:1,admin:1,collaborate:1,hire:1,job:1,deposit:1,withdraw:1,chat:1};
+    if(!known[parts[0].toLowerCase()]){
+      base = "/" + parts[0] + "/";
+    }
+  }
+  location.replace(base);
+})();
+</script>
+</head>
+<body></body>
+</html>
