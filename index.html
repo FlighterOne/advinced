@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="light" data-build="v20260918e">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
@@ -134,10 +134,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .profile-card .v{font-size:14px;font-weight:700;color:var(--text)}
 .profile-card .row.single{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .role-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1px solid var(--brand-line);color:var(--brand);background:var(--brand-soft);white-space:nowrap}
-.panel.role-panel{padding:12px 14px;margin-bottom:12px}
-.role-panel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
-.role-panel-label{font-size:12px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.04em}
-.role-panel .role-badge{font-size:13px;padding:5px 11px;border-radius:10px;max-width:70%;overflow:hidden;text-overflow:ellipsis}
+.panel.role-panel{padding:12px 10px 12px 14px;margin-bottom:12px}
+.role-panel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;width:100%}
+.role-panel-label{font-size:12px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+.role-panel .role-badge{font-size:13px;padding:5px 11px;border-radius:10px;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:auto}
 .tx-detail-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
 .tx-detail-overlay.open{display:flex}
 .tx-detail-card{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 12px 12px;padding:18px 16px;box-shadow:var(--shadow);max-height:80vh;overflow:auto}
@@ -235,13 +235,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .toggle:disabled{opacity:.5;cursor:default}
 
 
- .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:0;width:100%}
+ .support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:0;padding:0;width:100%;max-width:100%;box-sizing:border-box}
 .support-tile{
   appearance:none;width:100%;min-width:0;text-align:center;border:1px solid var(--line);background:var(--surface);
-  color:var(--text);border-radius:16px;padding:16px 12px;cursor:pointer;box-shadow:var(--shadow);
-  min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  color:var(--text);border-radius:16px;padding:12px 9px;cursor:pointer;box-shadow:var(--shadow);
+  aspect-ratio:1;height:auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;overflow:hidden;box-sizing:border-box;
 }
-.support-tile.no-sub{min-height:64px}
+.support-tile.no-sub{aspect-ratio:1;min-height:0}
 .support-tile:active{opacity:.85}
 .support-tile-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
 .support-tile-sub{font-size:11px;color:var(--hint);line-height:1.2;word-break:break-all}
@@ -256,10 +256,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .chat-bubble.me{align-self:flex-end;background:var(--brand-soft);border-color:var(--brand-line)}
 .chat-bubble.staff{align-self:flex-start}
 .chat-bubble .meta{display:block;font-size:10px;color:var(--hint);margin-top:4px}
-.chat-footer{position:sticky;bottom:0;padding-bottom:4px}
 .chat-input-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%}
 .chat-input-row .form-input{width:100%;min-width:0}
 .chat-input-row .btn{width:auto;min-width:88px;max-width:42vw;padding-left:12px;padding-right:12px}
+
+/* Support chat screen: title top, messages scroll in the middle, ETA + input pinned to the bottom */
+#screen-support-chat.active{display:flex;flex-direction:column;min-height:0}
+
+#screen-support-chat .chat-messages{flex:1 1 auto;min-height:120px;max-height:none;margin:10px 0 12px}
+#screen-support-chat .chat-footer{flex-shrink:0;margin-top:auto;position:static;border-top:1px solid var(--line);padding-top:10px}
+#screen-support-chat .chat-eta{display:block;margin:0 0 8px}
 
 
 .section-title{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text);line-height:1.25;padding:0;letter-spacing:-0.01em}
@@ -274,7 +280,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .support-tile{text-align:center;align-items:center}
 .support-tile-title{text-align:center}
 .support-tile-sub{text-align:center}
-.support-tile.no-sub{min-height:64px;justify-content:center}
+.support-tile.no-sub{justify-content:center}
 .seg-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin:0 0 12px}
 .seg-toggle button{
   height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
@@ -304,6 +310,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .login-widget-wrap{display:flex;justify-content:center;min-height:52px;margin:8px 0 12px;align-items:center}
 .login-card .muted{font-size:12px;color:var(--hint);margin-top:10px;line-height:1.4}
 .login-card a{color:var(--brand);font-weight:600;text-decoration:none}
+
+/* Settings / Support / Panel menus: nudge slightly right + up, keep everything else (sizes, gaps) untouched */
+#screen-settings .section-title,
+#screen-support .section-title,
+#screen-panel .section-title{
+  margin-top:-4px;
+  margin-left:10px;
+}
+#screen-settings .tile-grid,
+#screen-panel .tile-grid,
+#screen-panel .role-panel{
+  margin-left:10px;
+}
+#screen-support .support-grid{
+  width:calc(100% - 10px);
+  margin-left:10px;
+}
+#screen-support #sup-other{
+  width:calc(100% - 10px);
+  margin-left:10px;
+}
 
 </style>
 </head>
@@ -617,6 +644,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
         
+    
     <div id="screen-collaborate" class="screen">
       <div class="section-title" data-i18n="support_hire">Сотрудничать</div>
       <div class="seg-toggle" id="collab-seg">
@@ -624,11 +652,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" id="collab-seg-work" data-i18n="collab_work">Работа</button>
       </div>
       <div id="collab-ads-panel">
-        <div id="referral-panel" class="info-block" data-i18n="collab_ads_hint">Размещение рекламы и партнёрские материалы — напишите менеджеру.</div>
+        <div class="panel">
+          <h2 data-i18n="ref_my_code">Мой реферальный код</h2>
+          <div class="ref-row">
+            <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="MYCODE"/>
+            <button type="button" class="btn primary" id="ref-save-btn" data-i18n="save">Сохранить</button>
+          </div>
+          <div class="ref-stats" id="ref-stats">—</div>
+          <div id="ref-status"></div>
+        </div>
+        <div class="panel">
+          <div class="ref-row">
+            <input class="form-input" type="text" id="promo-code-input" maxlength="24" placeholder="PROMO"/>
+            <button type="button" class="btn promo-apply-btn" id="promo-apply-btn" data-i18n="apply">Применить</button>
+          </div>
+          <div id="promo-status" class="hint" style="margin-top:8px"></div>
+        </div>
         <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
       </div>
       <div id="collab-work-panel" style="display:none">
-        <div class="info-block" id="hire-info-block"></div>
+        <div class="info-block" id="hire-info-block" data-i18n="collab_work_hint">Открыты позиции: модерация, поддержка пользователей, работа с проектами. Стартовая роль — стажёр. График обсуждается с менеджером. Заполните анкету — заявки рассматриваются в порядке очереди. Минимальный возраст — 16 лет.</div>
         <div class="btn-stack">
           <button type="button" class="btn primary wide" id="collab-job-form" data-i18n="application_form">Составить анкету</button>
           <button type="button" class="btn wide" id="collab-work-mgr" data-i18n="write_manager">Написать менеджеру</button>
@@ -653,7 +696,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <div class="method-item" data-emp="student"><div class="title" data-i18n="student">Студент</div></div>
           <div class="method-item" data-emp="working"><div class="title" data-i18n="working">Работаю</div></div>
           <div class="method-item" data-emp="retired"><div class="title" data-i18n="retired">На пенсии</div></div>
-          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">В поиске</div></div>
+          <div class="method-item" data-emp="searching"><div class="title" data-i18n="searching">Окончил обучение, в активных поисках работы</div></div>
         </div>
       </div>
       <div class="form-group">
@@ -669,12 +712,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <input class="form-input" type="email" id="job-email" placeholder="mail@example.com"/>
       </div>
       <button type="button" class="btn primary wide" id="job-submit-btn" data-i18n="submit_app">Отправить анкету</button>
+      <div id="job-status"></div>
     </div>
+
 <div id="screen-support-chat" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
-      <div class="hint" data-i18n="manager_eta" style="margin:-6px 0 8px">*менеджер напишет вам в течение 96ч</div>
       <div id="support-chat-messages" class="chat-messages"></div>
       <div class="chat-footer">
+        <div class="hint chat-eta" data-i18n="manager_eta">*менеджер напишет вам в течение 96ч</div>
         <div class="chat-input-row">
           <input class="form-input" type="text" id="support-chat-input" maxlength="4000" data-i18n-placeholder="message_ph" placeholder="Сообщение..."/>
           <button type="button" class="btn primary" id="support-chat-send" data-i18n="send">Отправить</button>
@@ -696,7 +741,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="tile" data-panel="mod_tx"><div class="t-title" data-i18n="mod_tx">Транзакции</div></button>
         <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
       </div>
-      <div class="panel" id="panel-body" style="display:none"><div class="muted" data-i18n="panel_hint">Управление выполняется в боте. Данные синхронизированы по API.</div></div>
+      
     </div>
   </div>
 </div>
@@ -765,7 +810,7 @@ terms_prefix:"Продолжая, вы принимаете ",terms_link:"пол
 help_body:"Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.",
 support_manager:"Менеджер",support_bot:"Бот",support_email:"Почта",support_faq:"FAQ",soon:"Скоро",
 staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",
-panel_hint:"Управление выполняется в боте. Данные синхронизированы по API.",prev:"Назад",next:"Вперёд",
+prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
 en:baseI18n({back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
@@ -776,7 +821,7 @@ total_to_debit:"Total to debit",withdraw_amount:"Withdrawal amount",confirm_paym
 pay_placeholder:"Payment will be available after acquiring is connected.",
 terms_prefix:"By continuing you accept the ",terms_link:"terms of service",terms_suffix:" and service rules",
 help_body:"Mini App is synced with the bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Soon",
-staff:"Staff",mod_sell:"Sell",mod_buy:"Buy",mod_tx:"Transactions",analytics:"Analytics",panel_hint:"Manage in the bot.",prev:"Prev",next:"Next",
+staff:"Staff",mod_sell:"Sell",mod_buy:"Buy",mod_tx:"Transactions",analytics:"Analytics",prev:"Prev",next:"Next",
 roles:{user:"User",partner:"Partner",corp:"Corporate",intern:"Intern",mod:"Moderator",admin:"Admin",owner:"Owner"}}),
 uk:baseI18n({back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
 language:"Мова",theme:"Тема",theme_light:"Світла",theme_dark:"Темна",theme_auto:"Як у Telegram",original:"Оригінал",on_moderation:"на модерації",status:"Статус",no_projects:"Немає проєктів",btn_start:"Запустити",btn_stop:"Зупинити",my_transactions:"Мої транзакції",no_transactions:"Немає транзакцій",transaction:"Транзакція",close:"Закрити",tx_type:"Тип",date_time:"Дата і час",operation_id:"Id операції",tx_deposit:"Поповнення",tx_withdraw:"Вивід",tx_purchase:"Покупка",tx_monetization:"Монетизація",tx_salary:"Зарплата",tx_admin:"Зміна балансу адміном",
@@ -787,7 +832,7 @@ total_to_debit:"Разом до списання",withdraw_amount:"Сума ви
 pay_placeholder:"Оплата буде доступна після підключення еквайрингу.",
 terms_prefix:"Продовжуючи, ви приймаєте ",terms_link:"умови користування",terms_suffix:" і правила сервісу",
 help_body:"Mini App синхронізовано з ботом.",support_manager:"Менеджер",support_bot:"Бот",support_email:"Пошта",support_faq:"FAQ",soon:"Незабаром",
-staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",analytics:"Аналітика",panel_hint:"Керування в боті.",prev:"Назад",next:"Вперед",
+staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",analytics:"Аналітика",prev:"Назад",next:"Вперед",
 roles:{user:"Користувач",partner:"Партнер",corp:"Корпоративний",intern:"Стажер",mod:"Модератор",admin:"Адмін",owner:"Власник"}}),
 de:baseI18n({back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
 language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",on_moderation:"in Moderation",status:"Status",no_projects:"Keine Projekte",btn_start:"Starten",btn_stop:"Stoppen",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
@@ -798,7 +843,7 @@ total_to_debit:"Gesamt abzubuchen",withdraw_amount:"Auszahlungsbetrag",confirm_p
 pay_placeholder:"Zahlung nach Anbindung des Acquiring.",
 terms_prefix:"Mit dem Fortfahren akzeptieren Sie die ",terms_link:"Nutzungsbedingungen",terms_suffix:" und Regeln",
 help_body:"Mini App ist mit dem Bot synchronisiert.",support_manager:"Manager",support_bot:"Bot",support_email:"E-Mail",support_faq:"FAQ",soon:"Bald",
-staff:"Personal",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",analytics:"Analyse",panel_hint:"Verwaltung im Bot.",prev:"Zurück",next:"Weiter",
+staff:"Personal",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",analytics:"Analyse",prev:"Zurück",next:"Weiter",
 roles:{user:"Benutzer",partner:"Partner",corp:"Unternehmen",intern:"Praktikant",mod:"Moderator",admin:"Admin",owner:"Inhaber"}}),
 fr:baseI18n({back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
 language:"Langue",theme:"Thème",theme_light:"Clair",theme_dark:"Sombre",theme_auto:"Comme Telegram",original:"Original",on_moderation:"en modération",status:"Statut",no_projects:"Aucun projet",btn_start:"Démarrer",btn_stop:"Arrêter",my_transactions:"Mes transactions",no_transactions:"Aucune transaction",transaction:"Transaction",close:"Fermer",tx_type:"Type",date_time:"Date et heure",operation_id:"ID opération",tx_deposit:"Dépôt",tx_withdraw:"Retrait",tx_purchase:"Achat",tx_monetization:"Monétisation",tx_salary:"Salaire",tx_admin:"Modification admin",
@@ -809,7 +854,7 @@ total_to_debit:"Total à débiter",withdraw_amount:"Montant du retrait",confirm_
 pay_placeholder:"Paiement disponible après connexion de l'acquiring.",
 terms_prefix:"En continuant, vous acceptez les ",terms_link:"conditions d'utilisation",terms_suffix:" et les règles",
 help_body:"Mini App synchronisée avec le bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Bientôt",
-staff:"Personnel",mod_sell:"Vente",mod_buy:"Achat",mod_tx:"Transactions",analytics:"Analytique",panel_hint:"Gestion dans le bot.",prev:"Préc.",next:"Suiv.",
+staff:"Personnel",mod_sell:"Vente",mod_buy:"Achat",mod_tx:"Transactions",analytics:"Analytique",prev:"Préc.",next:"Suiv.",
 roles:{user:"Utilisateur",partner:"Partenaire",corp:"Entreprise",intern:"Stagiaire",mod:"Modérateur",admin:"Admin",owner:"Propriétaire"}}),
 es:baseI18n({back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Oscuro",theme_auto:"Como en Telegram",original:"Original",on_moderation:"en moderación",status:"Estado",no_projects:"Sin proyectos",btn_start:"Iniciar",btn_stop:"Detener",my_transactions:"Mis transacciones",no_transactions:"Sin transacciones",transaction:"Transacción",close:"Cerrar",tx_type:"Tipo",date_time:"Fecha y hora",operation_id:"ID de operación",tx_deposit:"Depósito",tx_withdraw:"Retiro",tx_purchase:"Compra",tx_monetization:"Monetización",tx_salary:"Salario",tx_admin:"Cambio de saldo admin",
@@ -820,7 +865,7 @@ total_to_debit:"Total a debitar",withdraw_amount:"Importe del retiro",confirm_pa
 pay_placeholder:"El pago estará disponible tras conectar el acquiring.",
 terms_prefix:"Al continuar aceptas el ",terms_link:"acuerdo de usuario",terms_suffix:" y las reglas",
 help_body:"Mini App sincronizado con el bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Correo",support_faq:"FAQ",soon:"Pronto",
-staff:"Personal",mod_sell:"Venta",mod_buy:"Compra",mod_tx:"Transacciones",analytics:"Analítica",panel_hint:"Gestión en el bot.",prev:"Atrás",next:"Adelante",
+staff:"Personal",mod_sell:"Venta",mod_buy:"Compra",mod_tx:"Transacciones",analytics:"Analítica",prev:"Atrás",next:"Adelante",
 roles:{user:"Usuario",partner:"Socio",corp:"Corporativo",intern:"Interno",mod:"Moderador",admin:"Admin",owner:"Propietario"}}),
 it:baseI18n({back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
 language:"Lingua",theme:"Tema",theme_light:"Chiaro",theme_dark:"Scuro",theme_auto:"Come Telegram",original:"Originale",on_moderation:"in moderazione",status:"Stato",no_projects:"Nessun progetto",btn_start:"Avvia",btn_stop:"Ferma",my_transactions:"Le mie transazioni",no_transactions:"Nessuna transazione",transaction:"Transazione",close:"Chiudi",tx_type:"Tipo",date_time:"Data e ora",operation_id:"ID operazione",tx_deposit:"Deposito",tx_withdraw:"Prelievo",tx_purchase:"Acquisto",tx_monetization:"Monetizzazione",tx_salary:"Stipendio",tx_admin:"Modifica saldo admin",
@@ -831,7 +876,7 @@ total_to_debit:"Totale da addebitare",withdraw_amount:"Importo prelievo",confirm
 pay_placeholder:"Pagamento disponibile dopo l'acquisizione.",
 terms_prefix:"Continuando accetti i ",terms_link:"termini di servizio",terms_suffix:" e le regole",
 help_body:"Mini App sincronizzata con il bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Presto",
-staff:"Personale",mod_sell:"Vendita",mod_buy:"Acquisto",mod_tx:"Transazioni",analytics:"Analitica",panel_hint:"Gestione nel bot.",prev:"Indietro",next:"Avanti",
+staff:"Personale",mod_sell:"Vendita",mod_buy:"Acquisto",mod_tx:"Transazioni",analytics:"Analitica",prev:"Indietro",next:"Avanti",
 roles:{user:"Utente",partner:"Partner",corp:"Aziendale",intern:"Stagista",mod:"Moderatore",admin:"Admin",owner:"Proprietario"}}),
 pt:baseI18n({back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",on_moderation:"em moderação",status:"Estado",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"As minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Levantamento",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
@@ -842,7 +887,7 @@ total_to_debit:"Total a debitar",withdraw_amount:"Montante do levantamento",conf
 pay_placeholder:"Pagamento disponível após o acquiring.",
 terms_prefix:"Ao continuar aceita o ",terms_link:"acordo de utilizador",terms_suffix:" e as regras",
 help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Em breve",
-staff:"Pessoal",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",panel_hint:"Gestão no bot.",prev:"Anterior",next:"Seguinte",
+staff:"Pessoal",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",prev:"Anterior",next:"Seguinte",
 roles:{user:"Utilizador",partner:"Parceiro",corp:"Empresarial",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"}}),
 "pt-BR":baseI18n({back:"Voltar",balance:"Saldo",settings:"Configurações",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",on_moderation:"em moderação",status:"Status",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"Minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Saque",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
@@ -853,7 +898,7 @@ total_to_debit:"Total a debitar",withdraw_amount:"Valor do saque",confirm_paymen
 pay_placeholder:"Pagamento disponível após o acquiring.",
 terms_prefix:"Ao continuar você aceita o ",terms_link:"termo de uso",terms_suffix:" e as regras",
 help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Em breve",
-staff:"Equipe",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",panel_hint:"Gestão no bot.",prev:"Anterior",next:"Próximo",
+staff:"Equipe",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",prev:"Anterior",next:"Próximo",
 roles:{user:"Usuário",partner:"Parceiro",corp:"Corporativo",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"}}),
 tr:baseI18n({back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
 language:"Dil",theme:"Tema",theme_light:"Açık",theme_dark:"Koyu",theme_auto:"Telegram gibi",original:"Orijinal",on_moderation:"moderasyonda",status:"Durum",no_projects:"Proje yok",btn_start:"Başlat",btn_stop:"Durdur",my_transactions:"İşlemlerim",no_transactions:"İşlem yok",transaction:"İşlem",close:"Kapat",tx_type:"Tür",date_time:"Tarih ve saat",operation_id:"İşlem kimliği",tx_deposit:"Yatırma",tx_withdraw:"Çekme",tx_purchase:"Satın alma",tx_monetization:"Monetizasyon",tx_salary:"Maaş",tx_admin:"Admin bakiye değişikliği",
@@ -864,7 +909,7 @@ total_to_debit:"Kesilecek toplam",withdraw_amount:"Çekim tutarı",confirm_payme
 pay_placeholder:"Ödeme, acquiring bağlantısından sonra.",
 terms_prefix:"Devam ederek ",terms_link:"kullanım koşullarını",terms_suffix:" kabul edersiniz",
 help_body:"Mini App bot ile senkron.",support_manager:"Yönetici",support_bot:"Bot",support_email:"E-posta",support_faq:"SSS",soon:"Yakında",
-staff:"Personel",mod_sell:"Satış",mod_buy:"Alış",mod_tx:"İşlemler",analytics:"Analitik",panel_hint:"Yönetim botta.",prev:"Geri",next:"İleri",
+staff:"Personel",mod_sell:"Satış",mod_buy:"Alış",mod_tx:"İşlemler",analytics:"Analitik",prev:"Geri",next:"İleri",
 roles:{user:"Kullanıcı",partner:"Partner",corp:"Kurumsal",intern:"Stajyer",mod:"Moderatör",admin:"Admin",owner:"Sahip"}}),
 id:baseI18n({back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
 language:"Bahasa",theme:"Tema",theme_light:"Terang",theme_dark:"Gelap",theme_auto:"Seperti Telegram",original:"Asli",on_moderation:"moderasi",status:"Status",no_projects:"Tidak ada proyek",btn_start:"Mulai",btn_stop:"Stop",my_transactions:"Transaksi saya",no_transactions:"Tidak ada transaksi",transaction:"Transaksi",close:"Tutup",tx_type:"Jenis",date_time:"Tanggal dan waktu",operation_id:"ID operasi",tx_deposit:"Deposit",tx_withdraw:"Penarikan",tx_purchase:"Pembelian",tx_monetization:"Monetisasi",tx_salary:"Gaji",tx_admin:"Perubahan saldo admin",
@@ -875,7 +920,7 @@ total_to_debit:"Total didebit",withdraw_amount:"Jumlah penarikan",confirm_paymen
 pay_placeholder:"Pembayaran setelah acquiring terhubung.",
 terms_prefix:"Dengan melanjutkan Anda menerima ",terms_link:"ketentuan layanan",terms_suffix:"",
 help_body:"Mini App tersinkron dengan bot.",support_manager:"Manajer",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Segera",
-staff:"Staf",mod_sell:"Jual",mod_buy:"Beli",mod_tx:"Transaksi",analytics:"Analitik",panel_hint:"Kelola di bot.",prev:"Sebelumnya",next:"Berikutnya",
+staff:"Staf",mod_sell:"Jual",mod_buy:"Beli",mod_tx:"Transaksi",analytics:"Analitik",prev:"Sebelumnya",next:"Berikutnya",
 roles:{user:"Pengguna",partner:"Mitra",corp:"Korporat",intern:"Magang",mod:"Moderator",admin:"Admin",owner:"Pemilik"}}),
 ar:baseI18n({back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
 language:"اللغة",theme:"المظهر",theme_light:"فاتح",theme_dark:"داكن",theme_auto:"مثل تيليجرام",original:"أصلي",on_moderation:"قيد المراجعة",status:"الحالة",no_projects:"لا مشاريع",btn_start:"تشغيل",btn_stop:"إيقاف",my_transactions:"معاملاتي",no_transactions:"لا معاملات",transaction:"معاملة",close:"إغلاق",tx_type:"النوع",date_time:"التاريخ والوقت",operation_id:"معرّف العملية",tx_deposit:"إيداع",tx_withdraw:"سحب",tx_purchase:"شراء",tx_monetization:"تحقيق الدخل",tx_salary:"راتب",tx_admin:"تعديل الرصيد من المشرف",
@@ -886,7 +931,7 @@ total_to_debit:"الإجمالي للخصم",withdraw_amount:"مبلغ السح�
 pay_placeholder:"الدفع بعد ربط خدمة التحصيل.",
 terms_prefix:"بالمتابعة فإنك توافق على ",terms_link:"شروط الخدمة",terms_suffix:"",
 help_body:"التطبيق متزامن مع البوت.",support_manager:"المدير",support_bot:"البوت",support_email:"البريد",support_faq:"الأسئلة",soon:"قريباً",
-staff:"الموظفون",mod_sell:"بيع",mod_buy:"شراء",mod_tx:"المعاملات",analytics:"تحليلات",panel_hint:"الإدارة في البوت.",prev:"السابق",next:"التالي",
+staff:"الموظفون",mod_sell:"بيع",mod_buy:"شراء",mod_tx:"المعاملات",analytics:"تحليلات",prev:"السابق",next:"التالي",
 roles:{user:"مستخدم",partner:"شريك",corp:"شركات",intern:"متدرب",mod:"مشرف",admin:"مسؤول",owner:"مالك"}}),
 zh:baseI18n({back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
 language:"语言",theme:"主题",theme_light:"浅色",theme_dark:"深色",theme_auto:"跟随 Telegram",original:"原版",on_moderation:"审核中",status:"状态",no_projects:"暂无项目",btn_start:"启动",btn_stop:"停止",my_transactions:"我的交易",no_transactions:"暂无交易",transaction:"交易",close:"关闭",tx_type:"类型",date_time:"日期和时间",operation_id:"操作编号",tx_deposit:"充值",tx_withdraw:"提现",tx_purchase:"购买",tx_monetization:"变现",tx_salary:"工资",tx_admin:"管理员调整余额",
@@ -897,7 +942,7 @@ total_to_debit:"扣款总额",withdraw_amount:"提现金额",confirm_payment:"�
 pay_placeholder:"接入收单后可支付。",
 terms_prefix:"继续即表示同意",terms_link:"服务条款",terms_suffix:"",
 help_body:"小程序已与机器人同步。",support_manager:"经理",support_bot:"机器人",support_email:"邮箱",support_faq:"常见问题",soon:"即将推出",
-staff:"员工",mod_sell:"出售",mod_buy:"购买",mod_tx:"交易",analytics:"分析",panel_hint:"请在机器人中管理。",prev:"上一页",next:"下一页",
+staff:"员工",mod_sell:"出售",mod_buy:"购买",mod_tx:"交易",analytics:"分析",prev:"上一页",next:"下一页",
 roles:{user:"用户",partner:"合作伙伴",corp:"企业",intern:"实习",mod:"版主",admin:"管理员",owner:"所有者"}}),
 ja:baseI18n({back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
 language:"言語",theme:"テーマ",theme_light:"ライト",theme_dark:"ダーク",theme_auto:"Telegramと同じ",original:"オリジナル",on_moderation:"審査中",status:"ステータス",no_projects:"プロジェクトなし",btn_start:"開始",btn_stop:"停止",my_transactions:"取引履歴",no_transactions:"取引なし",transaction:"取引",close:"閉じる",tx_type:"種類",date_time:"日時",operation_id:"操作ID",tx_deposit:"入金",tx_withdraw:"出金",tx_purchase:"購入",tx_monetization:"収益化",tx_salary:"給与",tx_admin:"管理者による残高変更",
@@ -908,7 +953,7 @@ total_to_debit:"引き落とし合計",withdraw_amount:"出金額",confirm_payme
 pay_placeholder:"アクワイアリング接続後に支払い可能。",
 terms_prefix:"続行すると",terms_link:"利用規約",terms_suffix:"に同意したことになります",
 help_body:"Mini Appはボットと同期しています。",support_manager:"マネージャー",support_bot:"ボット",support_email:"メール",support_faq:"FAQ",soon:"近日",
-staff:"スタッフ",mod_sell:"販売",mod_buy:"購入",mod_tx:"取引",analytics:"分析",panel_hint:"管理はボットで。",prev:"前へ",next:"次へ",
+staff:"スタッフ",mod_sell:"販売",mod_buy:"購入",mod_tx:"取引",analytics:"分析",prev:"前へ",next:"次へ",
 roles:{user:"ユーザー",partner:"パートナー",corp:"法人",intern:"インターン",mod:"モデレーター",admin:"管理者",owner:"オーナー"}}),
 ko:baseI18n({back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
 language:"언어",theme:"테마",theme_light:"라이트",theme_dark:"다크",theme_auto:"텔레그램과 동일",original:"원본",on_moderation:"검토 중",status:"상태",no_projects:"프로젝트 없음",btn_start:"시작",btn_stop:"중지",my_transactions:"내 거래",no_transactions:"거래 없음",transaction:"거래",close:"닫기",tx_type:"유형",date_time:"날짜 및 시간",operation_id:"작업 ID",tx_deposit:"입금",tx_withdraw:"출금",tx_purchase:"구매",tx_monetization:"수익화",tx_salary:"급여",tx_admin:"관리자 잔액 변경",
@@ -919,7 +964,7 @@ total_to_debit:"차감 합계",withdraw_amount:"출금 금액",confirm_payment:"
 pay_placeholder:"결제 연동 후 이용 가능합니다.",
 terms_prefix:"계속하면 ",terms_link:"서비스 약관",terms_suffix:"에 동의합니다",
 help_body:"미니앱이 봇과 동기화됩니다.",support_manager:"매니저",support_bot:"봇",support_email:"이메일",support_faq:"FAQ",soon:"곧",
-staff:"직원",mod_sell:"판매",mod_buy:"구매",mod_tx:"거래",analytics:"분석",panel_hint:"봇에서 관리하세요.",prev:"이전",next:"다음",
+staff:"직원",mod_sell:"판매",mod_buy:"구매",mod_tx:"거래",analytics:"분석",prev:"이전",next:"다음",
 roles:{user:"사용자",partner:"파트너",corp:"기업",intern:"인턴",mod:"모더레이터",admin:"관리자",owner:"소유자"}}),
 };
 
@@ -1726,204 +1771,336 @@ on("wc-pay","onclick",async()=>{
   }catch(e){if(st)st.textContent=String(e.message||e)}
 });
 
-document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{const pb=document.getElementById("panel-body");if(pb)pb.style.display="block"});
+document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{});
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
+
+
+// Collaborate + referral + job (exchange logic)
+state.jobEmp = state.jobEmp || "";
+function openUrlSafe(u){
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}
+}
+async function loadReferralMe(){
+  const st=document.getElementById("ref-stats");
+  const inp=document.getElementById("ref-code-input");
+  const rs=document.getElementById("ref-status");
+  if(rs)rs.textContent="";
+  if(!USER_ID){if(st)st.textContent="—";return}
+  try{
+    const r=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),8000);
+    if(inp && r.ref_code) inp.value=r.ref_code;
+    const line=(t("ref_stats_line")||"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽")
+      .replace("{level}", String(r.ref_level!=null?r.ref_level:1))
+      .replace("{total}", String((r.stats&&r.stats.refs_total)||0))
+      .replace("{d10}", String((r.stats&&r.stats.refs_10d)||0))
+      .replace("{earn}", String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00"));
+    if(st)st.textContent=line;
+  }catch(e){if(st)st.textContent="—"}
+}
+async function saveRefCode(){
+  const inp=document.getElementById("ref-code-input");
+  const rs=document.getElementById("ref-status");
+  const code=(inp&&inp.value||"").trim().toUpperCase();
+  if(rs)rs.textContent="…";
+  try{
+    const path = (state.me && state.me.ref_code) || (inp && inp.dataset.hasCode==="1") ? "/api/referral/change-code" : "/api/referral/register";
+    // if input already had code from server use change
+    let endpoint="/api/referral/register";
+    try{
+      const cur=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),5000);
+      if(cur && cur.ref_code) endpoint="/api/referral/change-code";
+    }catch(e){}
+    const r=await apiPost(endpoint,{user_id:USER_ID,code:code});
+    if(r.ok||r.ref_code){
+      if(rs)rs.textContent="OK: "+(r.ref_code||code);
+      await loadReferralMe();
+    }else{
+      if(rs)rs.textContent=r.error||r.message||"error";
+    }
+  }catch(e){if(rs)rs.textContent=String(e.message||e)}
+}
+async function applyPromoCode(){
+  const inp=document.getElementById("promo-code-input");
+  const ps=document.getElementById("promo-status");
+  const code=(inp&&inp.value||"").trim().toUpperCase();
+  if(ps)ps.textContent="…";
+  try{
+    const r=await apiPost("/api/referral/apply-code",{user_id:USER_ID,code:code});
+    if(r.ok){if(ps)ps.textContent="OK"}
+    else{if(ps)ps.textContent=r.error||r.message||"error"}
+  }catch(e){if(ps)ps.textContent=String(e.message||e)}
+}
+async function submitJobApplication(){
+  const st=document.getElementById("job-status");
+  const full_name=(document.getElementById("job-fio")&&document.getElementById("job-fio").value||"").trim();
+  const age=parseInt((document.getElementById("job-age")&&document.getElementById("job-age").value)||"0",10)||0;
+  const employment=state.jobEmp||"";
+  const username=(document.getElementById("job-username")&&document.getElementById("job-username").value||"").trim().replace(/^@/,"");
+  const phone=(document.getElementById("job-phone")&&document.getElementById("job-phone").value||"").trim();
+  const email=(document.getElementById("job-email")&&document.getElementById("job-email").value||"").trim();
+  if(!full_name){if(st)st.textContent=t("fio")||"ФИО";return}
+  if(age<16){if(st)st.textContent=t("age_min16")||"16+";return}
+  if(!employment){if(st)st.textContent=t("select_employment")||"employment";return}
+  if(!phone){if(st)st.textContent=t("phone_number")||"phone";return}
+  if(!email||email.indexOf("@")<0){if(st)st.textContent=t("email")||"email";return}
+  if(st)st.textContent="…";
+  try{
+    const r=await apiPost("/api/job-applications",{user_id:USER_ID,full_name:full_name,age:age,employment:employment,username:username,phone:phone,email:email});
+    if(r&&(r.status==="ok"||r.ok||r.id)){
+      if(st)st.textContent=(t("job_sent")||"OK #{id}").replace("{id}",String(r.id||""));
+    }else{
+      if(st)st.textContent=r.error||r.message||t("job_err")||"error";
+    }
+  }catch(e){if(st)st.textContent=String(e.message||e||t("job_err"))}
+}
+function wireCollaborate(){
+  const openMgr=()=>openUrlSafe("https://t.me/mediamanagering");
+  const hire=document.getElementById("sup-hire");
+  if(hire)hire.onclick=function(){show("collaborate");applyI18n();loadReferralMe();};
+  const segAds=document.getElementById("collab-seg-ads");
+  const segWork=document.getElementById("collab-seg-work");
+  const adsPanel=document.getElementById("collab-ads-panel");
+  const workPanel=document.getElementById("collab-work-panel");
+  function setSeg(which){
+    if(segAds)segAds.classList.toggle("active",which==="ads");
+    if(segWork)segWork.classList.toggle("active",which==="work");
+    if(adsPanel)adsPanel.style.display=which==="ads"?"":"none";
+    if(workPanel)workPanel.style.display=which==="work"?"":"none";
+    if(which==="ads")loadReferralMe();
+  }
+  if(segAds)segAds.onclick=()=>setSeg("ads");
+  if(segWork)segWork.onclick=()=>setSeg("work");
+  const adsMgr=document.getElementById("collab-ads-mgr");
+  const workMgr=document.getElementById("collab-work-mgr");
+  if(adsMgr)adsMgr.onclick=openMgr;
+  if(workMgr)workMgr.onclick=openMgr;
+  const save=document.getElementById("ref-save-btn");
+  if(save)save.onclick=saveRefCode;
+  const promo=document.getElementById("promo-apply-btn");
+  if(promo)promo.onclick=applyPromoCode;
+  const jobFormBtn=document.getElementById("collab-job-form");
+  if(jobFormBtn)jobFormBtn.onclick=function(){
+    show("job-form");applyI18n();
+    try{const u=tgUser||getTgUser()||{};const ju=document.getElementById("job-username");if(ju&&!ju.value&&u.username)ju.value="@"+u.username}catch(e){}
+    const st=document.getElementById("job-status");if(st)st.textContent="";
+  };
+  document.querySelectorAll("#job-employment-list .method-item").forEach(function(el){
+    el.onclick=function(){
+      document.querySelectorAll("#job-employment-list .method-item").forEach(x=>x.classList.remove("selected"));
+      el.classList.add("selected");
+      state.jobEmp=el.getAttribute("data-emp")||"";
+    };
+  });
+  const sub=document.getElementById("job-submit-btn");
+  if(sub)sub.onclick=submitJobApplication;
+}
+try{wireCollaborate()}catch(e){console.warn(e)}
 
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme};
 </script>
 </body>
-</html>
 
-<style id="final-layout-fix">
-*,*::before,*::after{box-sizing:border-box}
+
+<style id="layout-edge-fix">
+/* keep base; detailed tile sizing in support-panel-nudge */
 html,body{width:100%;max-width:100%;overflow-x:hidden}
-.app,.content,.screen{width:100%;max-width:100%;min-width:0}
-.content{padding-left:16px;padding-right:16px}
-
-/* Support + Panel headings/tiles are aligned with Settings */
-#screen-support .section-title,#screen-panel .section-title{
-  margin:0 0 12px!important;padding:0!important;line-height:1.25!important;
-  transform:none!important;
-}
-#screen-support .support-grid,#screen-panel .tile-grid{
-  width:100%;max-width:100%;min-width:0;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  gap:10px;margin:0;padding:0;
-}
-#screen-support .support-tile,#screen-panel .tile{
-  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
-  overflow:hidden;overflow-wrap:anywhere;word-break:break-word;
-}
-
-/* Square Support buttons exactly like Settings */
-#screen-support .support-tile{
-  aspect-ratio:1/1;height:auto;min-height:0!important;
-  padding:12px 9px;border-radius:16px;
-}
-#screen-support .support-tile-title,#screen-support .support-tile-sub{
-  width:100%;max-width:100%;min-width:0;
-  overflow-wrap:anywhere;word-break:break-word;white-space:normal;
-}
-#screen-support .support-tile-title{font-size:13px;line-height:1.18}
-#screen-support .support-tile-sub{font-size:10px;line-height:1.15}
-#screen-support .support-tile.no-sub{min-height:0!important}
-
-/* Panel buttons exactly follow Settings' square footprint */
-#screen-panel .tile{
-  aspect-ratio:1/1;height:auto;min-height:0!important;
-  padding:12px 9px;border-radius:16px;
-}
-#screen-panel .tile .t-title,#screen-panel .tile .t-sub{
-  width:100%;max-width:100%;min-width:0;
-  overflow-wrap:anywhere;word-break:break-word;white-space:normal;text-align:center;
-}
-#screen-panel .tile .t-title{font-size:13px;line-height:1.18}
-#screen-panel .tile[style*="grid-column"]{
-  grid-column:1/-1!important;aspect-ratio:auto!important;
-  min-height:72px!important;height:auto;
-}
-#screen-panel #panel-role{
-  width:100%;max-width:100%;min-width:0;overflow:hidden;
-  overflow-wrap:anywhere;word-break:break-word;
-}
-
-/* Support chat */
-#screen-support-chat .chat-input-row{
-  display:grid;grid-template-columns:minmax(0,1fr) auto;
-  gap:8px;width:100%;max-width:100%;min-width:0;
-}
-#screen-support-chat .chat-input-row .form-input{width:100%;min-width:0}
-#screen-support-chat .chat-input-row .btn{
-  width:auto;min-width:78px;max-width:100%;
-  padding-left:10px;padding-right:10px;white-space:nowrap;
-}
-
-@media(max-width:600px){
-  .content{padding-left:12px!important;padding-right:12px!important}
-}
-@media(max-width:360px){
-  #screen-support .support-grid,#screen-panel .tile-grid{gap:8px}
-  #screen-support .support-tile,#screen-panel .tile{padding-left:7px;padding-right:7px}
-  #screen-support .support-tile-title,#screen-panel .tile .t-title{font-size:12px;line-height:1.12}
-}
+.app{width:100%;max-width:480px;margin:0 auto;box-sizing:border-box}
 </style>
 
 
-<style id="panel-chat-final-v2">
-/* Use the same content width/side margins as Settings. */
-#screen-panel,
-#screen-support,
-#screen-support-chat{
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
-  overflow-x:hidden!important;
-}
-
-/* Same vertical start as Settings: immediately under the Back control. */
-#screen-panel > .section-title,
-#screen-support > .section-title,
-#screen-support-chat > .section-title{
-  margin-top:0!important;
-  padding-top:0!important;
-  transform:none!important;
+<style id="collab-chat-fix">
+#screen-balance .section-title,
+#screen-support-chat .section-title,
+#screen-collaborate .section-title,
+#screen-job-form .section-title{
+  margin:0 0 12px!important;
+  padding:0!important;
+  text-align:left!important;
   line-height:1.25!important;
 }
-#screen-panel > .section-title,
-#screen-support > .section-title{
-  margin-bottom:12px!important;
-}
-
-/* Keep the panel itself centered and inside the Settings content width. */
-#screen-panel .role-panel,
-#screen-panel .tile-grid{
-  width:100%!important;
-  max-width:100%!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
-}
-
-/* Role badge: close to the right side of the white frame, with a small inset. */
-#screen-panel .role-panel{
-  padding:12px 8px 12px 14px!important;
-  box-sizing:border-box!important;
-}
-#screen-panel .role-panel-row{
-  width:100%!important;
-  min-width:0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  gap:8px!important;
-}
-#screen-panel .role-panel-label{
-  min-width:0!important;
-  flex:1 1 auto!important;
-}
-#screen-panel .role-panel .role-badge,
-#screen-panel #panel-role{
-  flex:0 1 auto!important;
-  max-width:70%!important;
-  margin-left:auto!important;
-  margin-right:0!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-
-/* Manager chat:
-   title stays centered; 96h note is at the bottom, directly above input. */
-#screen-support-chat{
+#screen-support-chat.active{
   display:flex!important;
   flex-direction:column!important;
-  align-items:stretch!important;
+  min-height:0!important;
 }
-#screen-support-chat > .section-title{
-  flex:0 0 auto!important;
-  text-align:center!important;
-  margin:0 0 12px!important;
-}
-#screen-support-chat > .hint[data-i18n="manager_eta"]{
-  order:3!important;
-  flex:0 0 auto!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-  text-align:center!important;
-  margin:0 0 6px!important;
-}
-#screen-support-chat #support-chat-messages{
-  order:2!important;
+#screen-support-chat .chat-messages{
   flex:1 1 auto!important;
-  min-height:220px;
+  min-height:160px!important;
+  overflow-y:auto!important;
+  margin:0 0 8px!important;
 }
-#screen-support-chat .chat-footer{
-  order:4!important;
-  flex:0 0 auto!important;
-  margin-top:0!important;
+#screen-support-chat .chat-footer{flex-shrink:0;margin-top:auto;width:100%}
+#screen-support-chat .chat-eta{display:block;text-align:left;margin:0 0 8px;font-size:12px}
+
+.seg-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin:0 0 12px}
+.seg-toggle button{
+  appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);
+  min-height:42px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);
+}
+.seg-toggle button.active{background:var(--brand);border-color:var(--brand);color:var(--btn-p)}
+.info-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:1.45;color:var(--text);margin-bottom:12px;box-shadow:var(--shadow)}
+.method-list{display:grid;gap:8px}
+.method-item{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;cursor:pointer;box-shadow:var(--shadow);font-size:14px;font-weight:600}
+.method-item.selected{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.ref-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.ref-row .form-input{flex:1;min-width:0}
+.ref-stats{font-size:13px;color:var(--text2);line-height:1.45;margin-top:8px}
+#job-status,#ref-status{margin-top:10px;font-size:13px;color:var(--hint)}
+</style>
+
+
+<style id="support-panel-nudge">
+/* Exact square tiles + side gaps like Exchange; titles not glued to tiles */
+.content{
+  padding-left:16px!important;
+  padding-right:16px!important;
+  box-sizing:border-box!important;
+}
+.content.has-back{padding-top:2px!important}
+
+.section-title{
+  font-size:20px!important;
+  font-weight:700!important;
+  margin:0 0 14px!important;
+  padding:0!important;
+  line-height:1.25!important;
+  text-align:left!important;
 }
 
-/* Don't let the chat note or controls create horizontal overflow. */
-#screen-support-chat > .hint,
-#screen-support-chat .chat-footer,
-#screen-support-chat .chat-input-row{
+/* Settings: extra gap under title so tiles don't merge with heading */
+#screen-settings .section-title{
+  margin:0 0 18px!important;
+}
+
+#screen-support .section-title,
+#screen-panel .section-title,
+#screen-support-chat .section-title,
+#screen-balance .section-title{
+  margin:0 0 14px!important;
+}
+
+/* Grids: Exchange-like 2 columns, gap 10, full width inside content padding */
+#screen-settings .tile-grid,
+#screen-panel .tile-grid,
+#screen-support .support-grid,
+.tile-grid,
+.support-grid{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Square tiles — size/padding as Exchange support-tile */
+#screen-settings .tile,
+#screen-panel .tile,
+#screen-support .support-tile,
+.tile,
+.support-tile{
+  aspect-ratio:1 / 1!important;
+  width:100%!important;
   max-width:100%!important;
   min-width:0!important;
-}
-#screen-support-chat .chat-input-row{
-  grid-template-columns:minmax(0,1fr) auto!important;
-}
-#screen-support-chat .chat-input-row .btn{
-  min-width:78px!important;
-  max-width:40vw!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:16px 12px!important;
+  border-radius:16px!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  overflow:hidden!important;
 }
 
-/* Narrow screens: retain the Settings-like edge spacing. */
-@media(max-width:600px){
-  .content{padding-left:12px!important;padding-right:12px!important}
-  #screen-panel .role-panel{padding-left:12px!important;padding-right:7px!important}
+#screen-settings .tile .t-title,
+#screen-panel .tile .t-title,
+#screen-support .support-tile-title,
+.tile .t-title,
+.support-tile-title{
+  font-size:13px!important;
+  font-weight:600!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+}
+
+#screen-settings .tile .t-sub,
+#screen-support .support-tile-sub,
+.tile .t-sub,
+.support-tile-sub{
+  font-size:12px!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+}
+
+/* Panel role card full width inside content */
+#screen-panel .role-panel{
+  width:100%!important;
+  max-width:100%!important;
+  margin:0 0 12px!important;
+  box-sizing:border-box!important;
+}
+
+/* Wide analytics tile stays full width, not forced square */
+#screen-panel .tile[style*="grid-column"]{
+  grid-column:1 / -1!important;
+  aspect-ratio:auto!important;
+  min-height:72px!important;
+  height:auto!important;
 }
 </style>
 
+
+<style id="collab-promo-fix">
+#collab-ads-panel .ref-row{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#collab-ads-panel .ref-row .form-input{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+}
+#collab-ads-panel .promo-apply-btn,
+#promo-apply-btn{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:110px!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  white-space:nowrap!important;
+}
+#ref-save-btn{
+  flex:0 0 auto!important;
+  width:auto!important;
+  max-width:120px!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  white-space:nowrap!important;
+}
+#collab-ads-panel .info-block[data-i18n="collab_ads_hint"]{display:none!important}
+</style>
+
+</html>
