@@ -1015,41 +1015,35 @@ function getAuthToken(){
 function hideLoginOverlay(){
   const ov=document.getElementById("login-overlay");
   if(ov){ov.classList.remove("show");ov.setAttribute("aria-hidden","true")}
+  try{
+    const r=parseLocationRoute();
+    if(r && r.screen==="login"){
+      setLocationRoute("main",{replace:true});
+    }
+  }catch(e){}
 }
 function showLoginOverlay(){
   if(isTelegramMiniApp()){hideLoginOverlay();return}
   const ov=document.getElementById("login-overlay");
   if(ov){ov.classList.add("show");ov.setAttribute("aria-hidden","false")}
+  try{setLocationRoute("login",{replace:true})}catch(e){}
   loadTelegramLoginWidget();
 }
 async function loadTelegramLoginWidget(){
   const wrap=document.getElementById("login-widget-wrap");
   if(!wrap)return;
-  wrap.innerHTML="<span class=\"hint\">Loading…</span>";
+  wrap.innerHTML="";
   let botName="advincedsbot";
-  let apiOk=false;
-  let apiErr="";
   try{
-    const cfg=await apiGet("/api/auth/config",8000);
-    apiOk=true;
+    const cfg=await apiGet("/api/auth/config",6000);
     const fromApi=(cfg&&cfg.bot_username?String(cfg.bot_username):"").replace(/^@/,"").trim();
     if(fromApi && fromApi!=="granvillemanagment_bot" && fromApi!=="granvillemanagement_bot"){
       botName=fromApi;
     }
   }catch(e){
-    apiErr=String(e&&e.message?e.message:e||"API error");
-    apiOk=false;
+    // API может быть недоступен — виджет всё равно рисуем со своим bot username
   }
-  // Виджет показываем всегда (даже если API временно 503) — иначе вход невозможен.
   try{
-    wrap.innerHTML="";
-    if(!apiOk){
-      const note=document.createElement("div");
-      note.className="hint";
-      note.style.marginBottom="10px";
-      note.textContent="Server: "+apiErr+" — retry after deploy. Widget may still work.";
-      wrap.appendChild(note);
-    }
     const s=document.createElement("script");
     s.async=true;
     s.src="https://telegram.org/js/telegram-widget.js?22";
@@ -1058,33 +1052,16 @@ async function loadTelegramLoginWidget(){
     s.setAttribute("data-radius","12");
     s.setAttribute("data-onauth","onTelegramAuth(user)");
     s.setAttribute("data-request-access","write");
-    s.onerror=function(){
-      const err=document.createElement("div");
-      err.className="hint";
-      err.innerHTML="Widget load failed. <a href=\"#\" id=\"login-retry\">Retry</a>";
-      wrap.appendChild(err);
-      const r=document.getElementById("login-retry");
-      if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
-    };
     wrap.appendChild(s);
-    const retry=document.createElement("div");
-    retry.style.marginTop="10px";
-    retry.innerHTML="<a href=\"#\" id=\"login-retry\" class=\"hint\">Retry</a>";
-    wrap.appendChild(retry);
-    const r=document.getElementById("login-retry");
-    if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
   }catch(e2){
-    wrap.innerHTML="<span class=\"hint\">"+(apiErr||String(e2))+" · <a href=\"#\" id=\"login-retry\">Retry</a></span>";
-    const r=document.getElementById("login-retry");
-    if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
+    wrap.innerHTML="";
   }
 }
 
+
 window.onTelegramAuth=async function(user){
-  const wrap=document.getElementById("login-widget-wrap");
   try{
-    if(!user||!user.id)throw new Error("No Telegram user");
-    if(wrap)wrap.innerHTML="<span class=\"hint\">Signing in…</span>";
+    if(!user||!user.id)return;
     const res=await apiPost("/api/auth/telegram",{
       id:user.id,
       first_name:user.first_name||"",
@@ -1126,19 +1103,14 @@ window.onTelegramAuth=async function(user){
     try{startEventLoop()}catch(e){}
     const lb=document.getElementById("btn-web-logout");
     if(lb)lb.style.display="";
+    try{setLocationRoute("main",{replace:true})}catch(e){}
   }catch(e){
     console.warn("onTelegramAuth",e);
-    if(wrap){
-      wrap.innerHTML="<span class=\"hint\" style=\"color:var(--danger)\">"+(String(e.message||e))+" · <a href=\"#\" id=\"login-retry\">Retry</a></span>";
-      const r=document.getElementById("login-retry");
-      if(r)r.onclick=function(ev){ev.preventDefault();loadTelegramLoginWidget();};
-    }else{
-      alert(String(e.message||e));
-    }
+    // без Retry / Failed to fetch в интерфейсе
   }
 };
-// global alias for Telegram widget callback
 function onTelegramAuth(user){return window.onTelegramAuth(user)}
+
 
 function webLogout(){
   const token=getAuthToken();
@@ -1217,6 +1189,7 @@ async function setTheme(theme){applyTheme(theme,true);if(USER_ID){try{await apiP
    Mini App: URL тоже синхронизируется, но без обязательного reload.
 */
 const ROUTES = {
+  login: "login",
   home: "main",
   main: "main",
   "": "main",
@@ -1244,6 +1217,7 @@ const ROUTES = {
 };
 const SCREEN_TO_PATH = {
   main: "/home",
+  login: "/login",
   balance: "/balance",
   projects: "/projects",
   project: "/project",
@@ -1359,7 +1333,17 @@ function applyRouteFromLocation(opts){
   const r = parseLocationRoute();
   __routeSyncing = true;
   try{
-    if(r.screen==="project" && r.projectId){
+    if(r.screen==="login"){
+      show("main", false);
+      try{
+        if(!isTelegramMiniApp()){
+          showLoginOverlay();
+          loadTelegramLoginWidget();
+        }else{
+          hideLoginOverlay();
+        }
+      }catch(e){}
+    }else if(r.screen==="project" && r.projectId){
       if(typeof openProject==="function") openProject(r.projectId);
       else show("project", false);
     }else if(r.screen==="balance"){
