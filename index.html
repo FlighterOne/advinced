@@ -981,14 +981,18 @@ let tgUser=getTgUser();
 const WEB_SESSION_KEY="advinced_web_session";
 let __webSessionToken=null;
 let __isMiniApp=false;
-let USER_ID=tgUser?tgUser.id:null;
+let USER_ID=null;
 
 function isTelegramMiniApp(){
   try{
     const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
     if(!wa)return false;
-    if(wa.initData&&String(wa.initData).length>10)return true;
-    if(wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return true;
+    // Только реальный Mini App: подписанный initData, не заглушка скрипта
+    if(wa.initData&&String(wa.initData).length>20)return true;
+    // platform mobile/desktop + user — но без initData на сайте не считаем миниаппом
+    const plat=String(wa.platform||"");
+    if((plat==="ios"||plat==="android"||plat==="android_x"||plat==="tdesktop"||plat==="macos"||plat==="weba"||plat==="webk")
+      && wa.initData&&String(wa.initData).length>10)return true;
   }catch(e){}
   return false;
 }
@@ -1024,26 +1028,51 @@ async function loadTelegramLoginWidget(){
   wrap.innerHTML="<span class=\"hint\">Loading…</span>";
   try{
     const cfg=await apiGet("/api/auth/config",8000);
-    const bot=(cfg.bot_username||"").replace(/^@/,"");
-    if(!bot){wrap.innerHTML="<span class=\"hint\">Bot unavailable</span>";return}
+    let botName=(cfg&&cfg.bot_username?String(cfg.bot_username):"").replace(/^@/,"").trim();
+    if(!botName||botName==="granvillemanagment_bot"||botName==="granvillemanagement_bot"){
+      botName="advincedsbot";
+    }
     wrap.innerHTML="";
+    // Telegram Login Widget
     const s=document.createElement("script");
     s.async=true;
     s.src="https://telegram.org/js/telegram-widget.js?22";
-    s.setAttribute("data-telegram-login",bot);
+    s.setAttribute("data-telegram-login", botName);
     s.setAttribute("data-size","large");
     s.setAttribute("data-radius","12");
     s.setAttribute("data-onauth","onTelegramAuth(user)");
     s.setAttribute("data-request-access","write");
+    s.onerror=function(){
+      wrap.innerHTML="<span class=\"hint\">Widget load failed. <a href=\"#\" id=\"login-retry\">Retry</a></span>";
+      const r=document.getElementById("login-retry");
+      if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
+    };
     wrap.appendChild(s);
   }catch(e){
-    wrap.innerHTML="<span class=\"hint\">API connection error</span>";
+    wrap.innerHTML="<span class=\"hint\">API error. <a href=\"#\" id=\"login-retry\">Retry</a></span>";
+    const r=document.getElementById("login-retry");
+    if(r)r.onclick=function(e){e.preventDefault();loadTelegramLoginWidget();};
   }
 }
 window.onTelegramAuth=async function(user){
+  const wrap=document.getElementById("login-widget-wrap");
   try{
-    const res=await apiPost("/api/auth/telegram",user,12000);
-    if(!res||!res.ok||!res.session_token)throw new Error((res&&(res.error||res.message))||"auth_failed");
+    if(!user||!user.id)throw new Error("No Telegram user");
+    if(wrap)wrap.innerHTML="<span class=\"hint\">Signing in…</span>";
+    const res=await apiPost("/api/auth/telegram",{
+      id:user.id,
+      first_name:user.first_name||"",
+      last_name:user.last_name||"",
+      username:user.username||"",
+      photo_url:user.photo_url||"",
+      auth_date:user.auth_date,
+      hash:user.hash
+    },15000);
+    if(!res||!res.ok||!res.session_token){
+      throw new Error((res&&(res.error||res.message))||"auth_failed");
+    }
+    __isMiniApp=false;
+    __webSessionToken=res.session_token;
     saveWebSession({
       token:res.session_token,
       user_id:res.user_id,
@@ -1054,12 +1083,11 @@ window.onTelegramAuth=async function(user){
     });
     USER_ID=Number(res.user_id)||res.user_id;
     if(res.lang)state.lang=res.lang;
-    if(res.theme&&res.theme!=="auto")state.theme=res.theme;
+    if(res.theme==="dark"||res.theme==="light"||res.theme==="auto")state.theme=res.theme;
     applyTheme(state.theme,false);
     applyI18n();
     hideLoginOverlay();
     try{setAvatar()}catch(e){}
-    // сразу баланс из ответа логина (БД), не ждём второй запрос
     if(res.balance!=null)applyBalanceUI(res.balance);
     if(res.role!=null){
       const pr=document.getElementById("p-role");
@@ -1067,16 +1095,25 @@ window.onTelegramAuth=async function(user){
       const bp=document.getElementById("btn-panel");
       if(bp)bp.style.display=(Number(res.role||0)>=ROLE_INTERN)?"":"none";
     }
-    // полный профиль из API
     try{await loadMe(true)}catch(e){console.warn("loadMe after login",e)}
     try{loadRequests()}catch(e){}
     try{startEventLoop()}catch(e){}
     const lb=document.getElementById("btn-web-logout");
     if(lb)lb.style.display="";
   }catch(e){
-    alert(String(e.message||e));
+    console.warn("onTelegramAuth",e);
+    if(wrap){
+      wrap.innerHTML="<span class=\"hint\" style=\"color:var(--danger)\">"+(String(e.message||e))+" · <a href=\"#\" id=\"login-retry\">Retry</a></span>";
+      const r=document.getElementById("login-retry");
+      if(r)r.onclick=function(ev){ev.preventDefault();loadTelegramLoginWidget();};
+    }else{
+      alert(String(e.message||e));
+    }
   }
 };
+// global alias for Telegram widget callback
+function onTelegramAuth(user){return window.onTelegramAuth(user)}
+
 function webLogout(){
   const token=getAuthToken();
   if(token){apiPost("/api/auth/logout",{},5000).catch(function(){})}
@@ -1636,7 +1673,8 @@ try{wireSupport()}catch(e){console.warn(e)}
     let hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
     let hasUser=!!(tgUser&&tgUser.id);
 
-    if(hasInit||hasUser){
+    // Сайт не должен попадать в ветку миниаппа только из-за пустого user
+    if(hasInit){
       __isMiniApp=true;
 
       // Иногда Telegram отдаёт initDataUnsafe.user с небольшой задержкой.
@@ -1668,6 +1706,7 @@ try{wireSupport()}catch(e){console.warn(e)}
     const sess=loadWebSession();
 
     if(sess&&sess.token){
+      __isMiniApp=false;
       __webSessionToken=sess.token;
 
       try{
