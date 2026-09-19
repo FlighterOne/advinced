@@ -979,6 +979,51 @@ function getTgUser(){
 }
 let tgUser=getTgUser();
 const WEB_SESSION_KEY="advinced_web_session";
+
+const INTENDED_ROUTE_KEY="advinced_intended_route";
+function saveIntendedRoute(path){
+  try{
+    if(!path)return;
+    const p=String(path);
+    if(!p||p==="/login"||p==="login"||/\/login\/?$/.test(p))return;
+    sessionStorage.setItem(INTENDED_ROUTE_KEY, p);
+  }catch(e){}
+}
+function peekIntendedRoute(){
+  try{return sessionStorage.getItem(INTENDED_ROUTE_KEY)||""}catch(e){return ""}
+}
+function consumeIntendedRoute(){
+  try{
+    const p=sessionStorage.getItem(INTENDED_ROUTE_KEY)||"";
+    sessionStorage.removeItem(INTENDED_ROUTE_KEY);
+    return p;
+  }catch(e){return ""}
+}
+function currentPathForIntent(){
+  try{
+    if(location.hash&&location.hash.indexOf("#/")===0)return location.hash.slice(1);
+    return location.pathname||"/home";
+  }catch(e){return "/home"}
+}
+function hasValidWebSessionLocal(){
+  try{
+    const s=loadWebSession();
+    if(!s||!s.token)return false;
+    if(s.expires_at){
+      const exp=Date.parse(s.expires_at);
+      if(!isNaN(exp)&&exp < Date.now()){clearWebSession();return false}
+    }
+    // также помечаем «свежесть» 24ч по last_ok если есть
+    if(s.last_ok){
+      const t=Date.parse(s.last_ok);
+      if(!isNaN(t)&&(Date.now()-t)>86400000){
+        // старше 24ч — всё равно пробуем по expires_at токена, не сбрасываем здесь
+      }
+    }
+    return true;
+  }catch(e){return false}
+}
+
 let __webSessionToken=null;
 let __isMiniApp=false;
 let USER_ID=null;
@@ -1015,20 +1060,26 @@ function getAuthToken(){
 function hideLoginOverlay(){
   const ov=document.getElementById("login-overlay");
   if(ov){ov.classList.remove("show");ov.setAttribute("aria-hidden","true")}
-  try{
-    const r=parseLocationRoute();
-    if(r && r.screen==="login"){
-      setLocationRoute("main",{replace:true});
-    }
-  }catch(e){}
 }
+
 function showLoginOverlay(){
   if(isTelegramMiniApp()){hideLoginOverlay();return}
+  // запомнить куда хотели попасть (deep link), кроме /login
+  try{
+    const cur=currentPathForIntent();
+    const r=parseLocationRoute();
+    if(r&&r.screen&&r.screen!=="login"){
+      saveIntendedRoute(r.path||cur);
+    }else if(cur&&!/\/login\/?$/.test(cur)){
+      saveIntendedRoute(cur);
+    }
+  }catch(e){}
   const ov=document.getElementById("login-overlay");
   if(ov){ov.classList.add("show");ov.setAttribute("aria-hidden","false")}
   try{setLocationRoute("login",{replace:true})}catch(e){}
   loadTelegramLoginWidget();
 }
+
 async function loadTelegramLoginWidget(){
   const wrap=document.getElementById("login-widget-wrap");
   if(!wrap)return;
@@ -1059,6 +1110,33 @@ async function loadTelegramLoginWidget(){
 }
 
 
+
+async function goAfterLogin(){
+  hideLoginOverlay();
+  let path=consumeIntendedRoute();
+  if(!path){
+    try{
+      const r=parseLocationRoute();
+      if(r&&r.screen&&r.screen!=="login") path=r.path;
+    }catch(e){}
+  }
+  if(!path||path==="/"||path==="/login") path="/home";
+  try{
+    const base=getRouteBase();
+    let url=path;
+    if(base&&base!=="/"&&path.indexOf(base)!==0&&path.indexOf("/login")!==0){
+      // path already app-relative like /balance
+      url=(base.replace(/\/$/,"")+path).replace(/\/+/g,"/");
+    }
+    history.replaceState({screen:"pending"},"", url.startsWith("/")?url:("/"+url));
+  }catch(e){}
+  try{
+    applyRouteFromLocation();
+  }catch(e){
+    try{show("main",false);setLocationRoute("main",{replace:true})}catch(e2){}
+  }
+}
+
 window.onTelegramAuth=async function(user){
   try{
     if(!user||!user.id)return;
@@ -1082,14 +1160,14 @@ window.onTelegramAuth=async function(user){
       expires_at:res.expires_at,
       photo_url:res.photo_url||user.photo_url||"",
       username:res.username||user.username||"",
-      first_name:res.first_name||user.first_name||""
+      first_name:res.first_name||user.first_name||"",
+      last_ok:new Date().toISOString()
     });
     USER_ID=Number(res.user_id)||res.user_id;
     if(res.lang)state.lang=res.lang;
     if(res.theme==="dark"||res.theme==="light"||res.theme==="auto")state.theme=res.theme;
     applyTheme(state.theme,false);
     applyI18n();
-    hideLoginOverlay();
     try{setAvatar()}catch(e){}
     if(res.balance!=null)applyBalanceUI(res.balance);
     if(res.role!=null){
@@ -1103,13 +1181,14 @@ window.onTelegramAuth=async function(user){
     try{startEventLoop()}catch(e){}
     const lb=document.getElementById("btn-web-logout");
     if(lb)lb.style.display="";
-    try{setLocationRoute("main",{replace:true})}catch(e){}
+    // уйти с экрана логина → deep link или /home
+    await goAfterLogin();
   }catch(e){
     console.warn("onTelegramAuth",e);
-    // без Retry / Failed to fetch в интерфейсе
   }
 };
 function onTelegramAuth(user){return window.onTelegramAuth(user)}
+
 
 
 function webLogout(){
@@ -1333,6 +1412,12 @@ function applyRouteFromLocation(opts){
   const r = parseLocationRoute();
   __routeSyncing = true;
   try{
+    // сайт без сессии: любой deep link → login, затем возврат
+    if(!isTelegramMiniApp() && !USER_ID && !hasValidWebSessionLocal() && r.screen!=="login"){
+      saveIntendedRoute(r.path||currentPathForIntent());
+      showLoginOverlay();
+      return;
+    }
     if(r.screen==="login"){
       show("main", false);
       try{
@@ -1906,6 +1991,7 @@ try{wireSupport()}catch(e){console.warn(e)}
 
       const lb=document.getElementById("btn-web-logout");
       if(lb)lb.style.display="none";
+      try{applyRouteFromLocation()}catch(e){}
       return;
     }
 
@@ -1935,6 +2021,12 @@ try{wireSupport()}catch(e){console.warn(e)}
           hideLoginOverlay();
           const lb=document.getElementById("btn-web-logout");
           if(lb)lb.style.display="";
+          try{
+            // обновить last_ok для кросс-вкладочной «свежести»
+            const s2=loadWebSession();
+            if(s2){s2.last_ok=new Date().toISOString();saveWebSession(s2)}
+          }catch(e){}
+          try{await goAfterLogin()}catch(e){try{applyRouteFromLocation()}catch(e2){}}
           return;
         }
       }catch(e){
@@ -1943,7 +2035,12 @@ try{wireSupport()}catch(e){console.warn(e)}
       }
     }
 
-    // Нет валидной сессии — показываем Telegram Login.
+    // Нет валидной сессии — запомнить deep link и показать Login.
+    try{
+      const r=parseLocationRoute();
+      if(r&&r.screen&&r.screen!=="login") saveIntendedRoute(r.path||currentPathForIntent());
+      else saveIntendedRoute(currentPathForIntent());
+    }catch(e){}
     try{setAvatar()}catch(e){}
     showLoginOverlay();
 
@@ -2194,20 +2291,16 @@ try{bindMainMenu()}catch(e){console.warn(e)}
 (function routeBoot(){
   function run(){
     try{
-      // SPA redirect from 404.html
       const redir = sessionStorage.getItem("advinced_spa_redirect");
       if(redir){
         sessionStorage.removeItem("advinced_spa_redirect");
+        // не /login — сохранить как intended
+        try{
+          if(redir && !/\/login\/?$/.test(redir)) saveIntendedRoute(redir);
+        }catch(e){}
         history.replaceState({}, "", redir);
       }
     }catch(e){}
-    // wait a tick for auth to set USER_ID
-    setTimeout(function(){
-      try{applyRouteFromLocation()}catch(e){console.warn("routeBoot",e)}
-    }, 50);
-    setTimeout(function(){
-      try{applyRouteFromLocation()}catch(e){}
-    }, 400);
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", run);
   else run();
