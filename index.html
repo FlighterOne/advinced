@@ -463,8 +463,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-profile" class="screen">
-      <div class="panel">
-        <button type="button" class="btn wide" id="btn-web-logout" style="display:none;margin-bottom:12px">Log out</button>
+      <div class="profile-logout-row">
+        <button type="button" class="btn-logout" id="btn-web-logout" style="display:none" data-i18n="logout">Log out</button>
+      </div>
       <div class="profile-wrap">
           <div class="avatar-lg" id="p-av"><span id="p-av-fb">A</span><img id="p-av-img" style="display:none" alt=""/></div>
           <div class="profile-name" id="p-name">—</div>
@@ -799,7 +800,7 @@ const LANGS=[
 
 function baseI18n(o){return o}
 const I18N={
-ru:baseI18n({ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
+ru:baseI18n({logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
 language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
@@ -812,7 +813,7 @@ support_manager:"Менеджер",support_bot:"Бот",support_email:"Почт�
 staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",
 prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"}}),
-en:baseI18n({ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
+en:baseI18n({logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
@@ -823,7 +824,7 @@ terms_prefix:"By continuing you accept the ",terms_link:"terms of service",terms
 help_body:"Mini App is synced with the bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Soon",
 staff:"Staff",mod_sell:"Sell",mod_buy:"Buy",mod_tx:"Transactions",analytics:"Analytics",prev:"Prev",next:"Next",
 roles:{user:"User",partner:"Partner",corp:"Corporate",intern:"Intern",mod:"Moderator",admin:"Admin",owner:"Owner"}}),
-uk:baseI18n({ref_my_code:"Мій реферальний код",save:"Зберегти",apply:"Застосувати",ref_stats_line:"Рівень: {level} · Рефералів: {total} · За 10 днів: {d10} · Зароблено: {earn} ₽",ref_apply_title:"Застосувати промокод",back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
+uk:baseI18n({logout:"Вийти",ref_my_code:"Мій реферальний код",save:"Зберегти",apply:"Застосувати",ref_stats_line:"Рівень: {level} · Рефералів: {total} · За 10 днів: {d10} · Зароблено: {earn} ₽",ref_apply_title:"Застосувати промокод",back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
 language:"Мова",theme:"Тема",theme_light:"Світла",theme_dark:"Темна",theme_auto:"Як у Telegram",original:"Оригінал",on_moderation:"на модерації",status:"Статус",no_projects:"Немає проєктів",btn_start:"Запустити",btn_stop:"Зупинити",my_transactions:"Мої транзакції",no_transactions:"Немає транзакцій",transaction:"Транзакція",close:"Закрити",tx_type:"Тип",date_time:"Дата і час",operation_id:"Id операції",tx_deposit:"Поповнення",tx_withdraw:"Вивід",tx_purchase:"Покупка",tx_monetization:"Монетизація",tx_salary:"Зарплата",tx_admin:"Зміна балансу адміном",
 role:"Роль",deposit:"Поповнення",withdraw:"Вивід",my_requests:"Мої заявки",no_requests:"Немає заявок",
 amount_rub:"Сума (₽)",method:"Спосіб оплати",comment:"Коментар",continue:"Продовжити",pay:"Оплатити",confirm:"Підтвердити",
@@ -834,7 +835,7 @@ terms_prefix:"Продовжуючи, ви приймаєте ",terms_link:"ум
 help_body:"Mini App синхронізовано з ботом.",support_manager:"Менеджер",support_bot:"Бот",support_email:"Пошта",support_faq:"FAQ",soon:"Незабаром",
 staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",analytics:"Аналітика",prev:"Назад",next:"Вперед",
 roles:{user:"Користувач",partner:"Партнер",corp:"Корпоративний",intern:"Стажер",mod:"Модератор",admin:"Адмін",owner:"Власник"}}),
-de:baseI18n({ref_my_code:"Mein Empfehlungscode",save:"Speichern",apply:"Anwenden",ref_stats_line:"Stufe: {level} · Refs: {total} · 10T: {d10} · Verdient: {earn} ₽",ref_apply_title:"Promo-Code anwenden",back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
+de:baseI18n({logout:"Abmelden",ref_my_code:"Mein Empfehlungscode",save:"Speichern",apply:"Anwenden",ref_stats_line:"Stufe: {level} · Refs: {total} · 10T: {d10} · Verdient: {earn} ₽",ref_apply_title:"Promo-Code anwenden",back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
 language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",on_moderation:"in Moderation",status:"Status",no_projects:"Keine Projekte",btn_start:"Starten",btn_stop:"Stoppen",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
 role:"Rolle",deposit:"Einzahlung",withdraw:"Auszahlung",my_requests:"Meine Anfragen",no_requests:"Keine Anfragen",
 amount_rub:"Betrag (₽)",method:"Zahlungsmethode",comment:"Kommentar",continue:"Weiter",pay:"Bezahlen",confirm:"Bestätigen",
@@ -845,7 +846,7 @@ terms_prefix:"Mit dem Fortfahren akzeptieren Sie die ",terms_link:"Nutzungsbedin
 help_body:"Mini App ist mit dem Bot synchronisiert.",support_manager:"Manager",support_bot:"Bot",support_email:"E-Mail",support_faq:"FAQ",soon:"Bald",
 staff:"Personal",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",analytics:"Analyse",prev:"Zurück",next:"Weiter",
 roles:{user:"Benutzer",partner:"Partner",corp:"Unternehmen",intern:"Praktikant",mod:"Moderator",admin:"Admin",owner:"Inhaber"}}),
-fr:baseI18n({ref_my_code:"Mon code de parrainage",save:"Enregistrer",apply:"Appliquer",ref_stats_line:"Niveau: {level} · Refs: {total} · 10j: {d10} · Gagné: {earn} ₽",ref_apply_title:"Appliquer le code promo",back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
+fr:baseI18n({logout:"Déconnexion",ref_my_code:"Mon code de parrainage",save:"Enregistrer",apply:"Appliquer",ref_stats_line:"Niveau: {level} · Refs: {total} · 10j: {d10} · Gagné: {earn} ₽",ref_apply_title:"Appliquer le code promo",back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
 language:"Langue",theme:"Thème",theme_light:"Clair",theme_dark:"Sombre",theme_auto:"Comme Telegram",original:"Original",on_moderation:"en modération",status:"Statut",no_projects:"Aucun projet",btn_start:"Démarrer",btn_stop:"Arrêter",my_transactions:"Mes transactions",no_transactions:"Aucune transaction",transaction:"Transaction",close:"Fermer",tx_type:"Type",date_time:"Date et heure",operation_id:"ID opération",tx_deposit:"Dépôt",tx_withdraw:"Retrait",tx_purchase:"Achat",tx_monetization:"Monétisation",tx_salary:"Salaire",tx_admin:"Modification admin",
 role:"Rôle",deposit:"Dépôt",withdraw:"Retrait",my_requests:"Mes demandes",no_requests:"Aucune demande",
 amount_rub:"Montant (₽)",method:"Mode de paiement",comment:"Commentaire",continue:"Continuer",pay:"Payer",confirm:"Confirmer",
@@ -856,7 +857,7 @@ terms_prefix:"En continuant, vous acceptez les ",terms_link:"conditions d'utilis
 help_body:"Mini App synchronisée avec le bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Bientôt",
 staff:"Personnel",mod_sell:"Vente",mod_buy:"Achat",mod_tx:"Transactions",analytics:"Analytique",prev:"Préc.",next:"Suiv.",
 roles:{user:"Utilisateur",partner:"Partenaire",corp:"Entreprise",intern:"Stagiaire",mod:"Modérateur",admin:"Admin",owner:"Propriétaire"}}),
-es:baseI18n({ref_my_code:"Mi código de referido",save:"Guardar",apply:"Aplicar",ref_stats_line:"Nivel: {level} · Refs: {total} · 10d: {d10} · Ganado: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
+es:baseI18n({logout:"Cerrar sesión",ref_my_code:"Mi código de referido",save:"Guardar",apply:"Aplicar",ref_stats_line:"Nivel: {level} · Refs: {total} · 10d: {d10} · Ganado: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Oscuro",theme_auto:"Como en Telegram",original:"Original",on_moderation:"en moderación",status:"Estado",no_projects:"Sin proyectos",btn_start:"Iniciar",btn_stop:"Detener",my_transactions:"Mis transacciones",no_transactions:"Sin transacciones",transaction:"Transacción",close:"Cerrar",tx_type:"Tipo",date_time:"Fecha y hora",operation_id:"ID de operación",tx_deposit:"Depósito",tx_withdraw:"Retiro",tx_purchase:"Compra",tx_monetization:"Monetización",tx_salary:"Salario",tx_admin:"Cambio de saldo admin",
 role:"Rol",deposit:"Depósito",withdraw:"Retiro",my_requests:"Mis solicitudes",no_requests:"Sin solicitudes",
 amount_rub:"Importe (₽)",method:"Método de pago",comment:"Comentario",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
@@ -867,7 +868,7 @@ terms_prefix:"Al continuar aceptas el ",terms_link:"acuerdo de usuario",terms_su
 help_body:"Mini App sincronizado con el bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Correo",support_faq:"FAQ",soon:"Pronto",
 staff:"Personal",mod_sell:"Venta",mod_buy:"Compra",mod_tx:"Transacciones",analytics:"Analítica",prev:"Atrás",next:"Adelante",
 roles:{user:"Usuario",partner:"Socio",corp:"Corporativo",intern:"Interno",mod:"Moderador",admin:"Admin",owner:"Propietario"}}),
-it:baseI18n({ref_my_code:"Il mio codice referral",save:"Salva",apply:"Applica",ref_stats_line:"Livello: {level} · Ref: {total} · 10g: {d10} · Guadagno: {earn} ₽",ref_apply_title:"Applica codice promo",back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
+it:baseI18n({logout:"Esci",ref_my_code:"Il mio codice referral",save:"Salva",apply:"Applica",ref_stats_line:"Livello: {level} · Ref: {total} · 10g: {d10} · Guadagno: {earn} ₽",ref_apply_title:"Applica codice promo",back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
 language:"Lingua",theme:"Tema",theme_light:"Chiaro",theme_dark:"Scuro",theme_auto:"Come Telegram",original:"Originale",on_moderation:"in moderazione",status:"Stato",no_projects:"Nessun progetto",btn_start:"Avvia",btn_stop:"Ferma",my_transactions:"Le mie transazioni",no_transactions:"Nessuna transazione",transaction:"Transazione",close:"Chiudi",tx_type:"Tipo",date_time:"Data e ora",operation_id:"ID operazione",tx_deposit:"Deposito",tx_withdraw:"Prelievo",tx_purchase:"Acquisto",tx_monetization:"Monetizzazione",tx_salary:"Stipendio",tx_admin:"Modifica saldo admin",
 role:"Ruolo",deposit:"Deposito",withdraw:"Prelievo",my_requests:"Le mie richieste",no_requests:"Nessuna richiesta",
 amount_rub:"Importo (₽)",method:"Metodo di pagamento",comment:"Commento",continue:"Continua",pay:"Paga",confirm:"Conferma",
@@ -878,7 +879,7 @@ terms_prefix:"Continuando accetti i ",terms_link:"termini di servizio",terms_suf
 help_body:"Mini App sincronizzata con il bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Presto",
 staff:"Personale",mod_sell:"Vendita",mod_buy:"Acquisto",mod_tx:"Transazioni",analytics:"Analitica",prev:"Indietro",next:"Avanti",
 roles:{user:"Utente",partner:"Partner",corp:"Aziendale",intern:"Stagista",mod:"Moderatore",admin:"Admin",owner:"Proprietario"}}),
-pt:baseI18n({ref_my_code:"Meu código de indicação",save:"Salvar",apply:"Aplicar",ref_stats_line:"Nível: {level} · Refs: {total} · 10d: {d10} · Ganho: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
+pt:baseI18n({logout:"Sair",ref_my_code:"Meu código de indicação",save:"Salvar",apply:"Aplicar",ref_stats_line:"Nível: {level} · Refs: {total} · 10d: {d10} · Ganho: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",on_moderation:"em moderação",status:"Estado",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"As minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Levantamento",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
 role:"Função",deposit:"Depósito",withdraw:"Levantamento",my_requests:"Os meus pedidos",no_requests:"Sem pedidos",
 amount_rub:"Montante (₽)",method:"Método de pagamento",comment:"Comentário",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
@@ -900,7 +901,7 @@ terms_prefix:"Ao continuar você aceita o ",terms_link:"termo de uso",terms_suff
 help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Em breve",
 staff:"Equipe",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",prev:"Anterior",next:"Próximo",
 roles:{user:"Usuário",partner:"Parceiro",corp:"Corporativo",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"}}),
-tr:baseI18n({ref_my_code:"Referans kodum",save:"Kaydet",apply:"Uygula",ref_stats_line:"Seviye: {level} · Ref: {total} · 10g: {d10} · Kazanç: {earn} ₽",ref_apply_title:"Promosyon kodu uygula",back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
+tr:baseI18n({logout:"Çıkış",ref_my_code:"Referans kodum",save:"Kaydet",apply:"Uygula",ref_stats_line:"Seviye: {level} · Ref: {total} · 10g: {d10} · Kazanç: {earn} ₽",ref_apply_title:"Promosyon kodu uygula",back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
 language:"Dil",theme:"Tema",theme_light:"Açık",theme_dark:"Koyu",theme_auto:"Telegram gibi",original:"Orijinal",on_moderation:"moderasyonda",status:"Durum",no_projects:"Proje yok",btn_start:"Başlat",btn_stop:"Durdur",my_transactions:"İşlemlerim",no_transactions:"İşlem yok",transaction:"İşlem",close:"Kapat",tx_type:"Tür",date_time:"Tarih ve saat",operation_id:"İşlem kimliği",tx_deposit:"Yatırma",tx_withdraw:"Çekme",tx_purchase:"Satın alma",tx_monetization:"Monetizasyon",tx_salary:"Maaş",tx_admin:"Admin bakiye değişikliği",
 role:"Rol",deposit:"Yatırma",withdraw:"Çekme",my_requests:"Taleplerim",no_requests:"Talep yok",
 amount_rub:"Tutar (₽)",method:"Ödeme yöntemi",comment:"Yorum",continue:"Devam",pay:"Öde",confirm:"Onayla",
@@ -911,7 +912,7 @@ terms_prefix:"Devam ederek ",terms_link:"kullanım koşullarını",terms_suffix:
 help_body:"Mini App bot ile senkron.",support_manager:"Yönetici",support_bot:"Bot",support_email:"E-posta",support_faq:"SSS",soon:"Yakında",
 staff:"Personel",mod_sell:"Satış",mod_buy:"Alış",mod_tx:"İşlemler",analytics:"Analitik",prev:"Geri",next:"İleri",
 roles:{user:"Kullanıcı",partner:"Partner",corp:"Kurumsal",intern:"Stajyer",mod:"Moderatör",admin:"Admin",owner:"Sahip"}}),
-id:baseI18n({ref_my_code:"Kode referral saya",save:"Simpan",apply:"Terapkan",ref_stats_line:"Level: {level} · Ref: {total} · 10h: {d10} · Diperoleh: {earn} ₽",ref_apply_title:"Terapkan kode promo",back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
+id:baseI18n({logout:"Keluar",ref_my_code:"Kode referral saya",save:"Simpan",apply:"Terapkan",ref_stats_line:"Level: {level} · Ref: {total} · 10h: {d10} · Diperoleh: {earn} ₽",ref_apply_title:"Terapkan kode promo",back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
 language:"Bahasa",theme:"Tema",theme_light:"Terang",theme_dark:"Gelap",theme_auto:"Seperti Telegram",original:"Asli",on_moderation:"moderasi",status:"Status",no_projects:"Tidak ada proyek",btn_start:"Mulai",btn_stop:"Stop",my_transactions:"Transaksi saya",no_transactions:"Tidak ada transaksi",transaction:"Transaksi",close:"Tutup",tx_type:"Jenis",date_time:"Tanggal dan waktu",operation_id:"ID operasi",tx_deposit:"Deposit",tx_withdraw:"Penarikan",tx_purchase:"Pembelian",tx_monetization:"Monetisasi",tx_salary:"Gaji",tx_admin:"Perubahan saldo admin",
 role:"Peran",deposit:"Deposit",withdraw:"Penarikan",my_requests:"Permintaan saya",no_requests:"Tidak ada",
 amount_rub:"Jumlah (₽)",method:"Metode pembayaran",comment:"Komentar",continue:"Lanjut",pay:"Bayar",confirm:"Konfirmasi",
@@ -922,7 +923,7 @@ terms_prefix:"Dengan melanjutkan Anda menerima ",terms_link:"ketentuan layanan",
 help_body:"Mini App tersinkron dengan bot.",support_manager:"Manajer",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Segera",
 staff:"Staf",mod_sell:"Jual",mod_buy:"Beli",mod_tx:"Transaksi",analytics:"Analitik",prev:"Sebelumnya",next:"Berikutnya",
 roles:{user:"Pengguna",partner:"Mitra",corp:"Korporat",intern:"Magang",mod:"Moderator",admin:"Admin",owner:"Pemilik"}}),
-ar:baseI18n({ref_my_code:"رمز الإحالة الخاص بي",save:"حفظ",apply:"تطبيق",ref_stats_line:"المستوى: {level} · الإحالات: {total} · 10 أيام: {d10} · الأرباح: {earn} ₽",ref_apply_title:"تطبيق رمز ترويجي",back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
+ar:baseI18n({logout:"تسجيل الخروج",ref_my_code:"رمز الإحالة الخاص بي",save:"حفظ",apply:"تطبيق",ref_stats_line:"المستوى: {level} · الإحالات: {total} · 10 أيام: {d10} · الأرباح: {earn} ₽",ref_apply_title:"تطبيق رمز ترويجي",back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
 language:"اللغة",theme:"المظهر",theme_light:"فاتح",theme_dark:"داكن",theme_auto:"مثل تيليجرام",original:"أصلي",on_moderation:"قيد المراجعة",status:"الحالة",no_projects:"لا مشاريع",btn_start:"تشغيل",btn_stop:"إيقاف",my_transactions:"معاملاتي",no_transactions:"لا معاملات",transaction:"معاملة",close:"إغلاق",tx_type:"النوع",date_time:"التاريخ والوقت",operation_id:"معرّف العملية",tx_deposit:"إيداع",tx_withdraw:"سحب",tx_purchase:"شراء",tx_monetization:"تحقيق الدخل",tx_salary:"راتب",tx_admin:"تعديل الرصيد من المشرف",
 role:"الدور",deposit:"إيداع",withdraw:"سحب",my_requests:"طلباتي",no_requests:"لا طلبات",
 amount_rub:"المبلغ (₽)",method:"طريقة الدفع",comment:"تعليق",continue:"متابعة",pay:"ادفع",confirm:"تأكيد",
@@ -933,7 +934,7 @@ terms_prefix:"بالمتابعة فإنك توافق على ",terms_link:"شرو
 help_body:"التطبيق متزامن مع البوت.",support_manager:"المدير",support_bot:"البوت",support_email:"البريد",support_faq:"الأسئلة",soon:"قريباً",
 staff:"الموظفون",mod_sell:"بيع",mod_buy:"شراء",mod_tx:"المعاملات",analytics:"تحليلات",prev:"السابق",next:"التالي",
 roles:{user:"مستخدم",partner:"شريك",corp:"شركات",intern:"متدرب",mod:"مشرف",admin:"مسؤول",owner:"مالك"}}),
-zh:baseI18n({ref_my_code:"我的推荐码",save:"保存",apply:"应用",ref_stats_line:"等级: {level} · 推荐: {total} · 10天: {d10} · 收益: {earn} ₽",ref_apply_title:"应用优惠码",back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
+zh:baseI18n({logout:"退出",ref_my_code:"我的推荐码",save:"保存",apply:"应用",ref_stats_line:"等级: {level} · 推荐: {total} · 10天: {d10} · 收益: {earn} ₽",ref_apply_title:"应用优惠码",back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
 language:"语言",theme:"主题",theme_light:"浅色",theme_dark:"深色",theme_auto:"跟随 Telegram",original:"原版",on_moderation:"审核中",status:"状态",no_projects:"暂无项目",btn_start:"启动",btn_stop:"停止",my_transactions:"我的交易",no_transactions:"暂无交易",transaction:"交易",close:"关闭",tx_type:"类型",date_time:"日期和时间",operation_id:"操作编号",tx_deposit:"充值",tx_withdraw:"提现",tx_purchase:"购买",tx_monetization:"变现",tx_salary:"工资",tx_admin:"管理员调整余额",
 role:"角色",deposit:"充值",withdraw:"提现",my_requests:"我的申请",no_requests:"暂无申请",
 amount_rub:"金额 (₽)",method:"支付方式",comment:"备注",continue:"继续",pay:"支付",confirm:"确认",
@@ -944,7 +945,7 @@ terms_prefix:"继续即表示同意",terms_link:"服务条款",terms_suffix:"",
 help_body:"小程序已与机器人同步。",support_manager:"经理",support_bot:"机器人",support_email:"邮箱",support_faq:"常见问题",soon:"即将推出",
 staff:"员工",mod_sell:"出售",mod_buy:"购买",mod_tx:"交易",analytics:"分析",prev:"上一页",next:"下一页",
 roles:{user:"用户",partner:"合作伙伴",corp:"企业",intern:"实习",mod:"版主",admin:"管理员",owner:"所有者"}}),
-ja:baseI18n({ref_my_code:"紹介コード",save:"保存",apply:"適用",ref_stats_line:"レベル: {level} · 紹介: {total} · 10日: {d10} · 収益: {earn} ₽",ref_apply_title:"プロモコードを適用",back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
+ja:baseI18n({logout:"ログアウト",ref_my_code:"紹介コード",save:"保存",apply:"適用",ref_stats_line:"レベル: {level} · 紹介: {total} · 10日: {d10} · 収益: {earn} ₽",ref_apply_title:"プロモコードを適用",back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
 language:"言語",theme:"テーマ",theme_light:"ライト",theme_dark:"ダーク",theme_auto:"Telegramと同じ",original:"オリジナル",on_moderation:"審査中",status:"ステータス",no_projects:"プロジェクトなし",btn_start:"開始",btn_stop:"停止",my_transactions:"取引履歴",no_transactions:"取引なし",transaction:"取引",close:"閉じる",tx_type:"種類",date_time:"日時",operation_id:"操作ID",tx_deposit:"入金",tx_withdraw:"出金",tx_purchase:"購入",tx_monetization:"収益化",tx_salary:"給与",tx_admin:"管理者による残高変更",
 role:"ロール",deposit:"入金",withdraw:"出金",my_requests:"申請一覧",no_requests:"申請なし",
 amount_rub:"金額 (₽)",method:"支払い方法",comment:"コメント",continue:"続行",pay:"支払う",confirm:"確認",
@@ -955,7 +956,7 @@ terms_prefix:"続行すると",terms_link:"利用規約",terms_suffix:"に同意
 help_body:"Mini Appはボットと同期しています。",support_manager:"マネージャー",support_bot:"ボット",support_email:"メール",support_faq:"FAQ",soon:"近日",
 staff:"スタッフ",mod_sell:"販売",mod_buy:"購入",mod_tx:"取引",analytics:"分析",prev:"前へ",next:"次へ",
 roles:{user:"ユーザー",partner:"パートナー",corp:"法人",intern:"インターン",mod:"モデレーター",admin:"管理者",owner:"オーナー"}}),
-ko:baseI18n({ref_my_code:"내 추천 코드",save:"저장",apply:"적용",ref_stats_line:"레벨: {level} · 추천: {total} · 10일: {d10} · 수익: {earn} ₽",ref_apply_title:"프로모 코드 적용",back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
+ko:baseI18n({logout:"로그아웃",ref_my_code:"내 추천 코드",save:"저장",apply:"적용",ref_stats_line:"레벨: {level} · 추천: {total} · 10일: {d10} · 수익: {earn} ₽",ref_apply_title:"프로모 코드 적용",back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
 language:"언어",theme:"테마",theme_light:"라이트",theme_dark:"다크",theme_auto:"텔레그램과 동일",original:"원본",on_moderation:"검토 중",status:"상태",no_projects:"프로젝트 없음",btn_start:"시작",btn_stop:"중지",my_transactions:"내 거래",no_transactions:"거래 없음",transaction:"거래",close:"닫기",tx_type:"유형",date_time:"날짜 및 시간",operation_id:"작업 ID",tx_deposit:"입금",tx_withdraw:"출금",tx_purchase:"구매",tx_monetization:"수익화",tx_salary:"급여",tx_admin:"관리자 잔액 변경",
 role:"역할",deposit:"입금",withdraw:"출금",my_requests:"내 요청",no_requests:"요청 없음",
 amount_rub:"금액 (₽)",method:"결제 수단",comment:"메모",continue:"계속",pay:"결제",confirm:"확인",
@@ -1238,14 +1239,31 @@ function applyI18n(){
   document.querySelectorAll(".theme-item").forEach(b=>b.classList.toggle("active",b.getAttribute("data-theme-set")===state.theme));
 }
 
-function resolveTheme(theme){if(theme==="auto"){const cs=(tg&&tg.colorScheme)||"light";return cs==="dark"?"dark":"light"}return theme==="dark"?"dark":"light"}
+function resolveTheme(theme){
+  if(theme==="auto"){
+    let cs="light";
+    try{
+      const wa=(window.Telegram&&Telegram.WebApp)?Telegram.WebApp:(typeof tg!=="undefined"?tg:null);
+      if(wa&&wa.colorScheme)cs=String(wa.colorScheme);
+      else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)cs="dark";
+    }catch(e){}
+    return cs==="dark"?"dark":"light";
+  }
+  return theme==="dark"?"dark":"light";
+}
 function applyTheme(theme,saveLocal){
   if(theme!=="auto"&&theme!=="dark"&&theme!=="light")theme="light";
   state.theme=theme;
   const resolved=resolveTheme(theme);
   document.documentElement.setAttribute("data-theme",resolved);
   if(saveLocal!==false){try{localStorage.setItem("advinced_theme",theme)}catch(e){}}
-  if(tg){try{if(resolved==="dark"){tg.setHeaderColor("#003F8A");tg.setBackgroundColor("#003F8A")}else{tg.setHeaderColor("#006AD2");tg.setBackgroundColor("#F2F5F9")}}catch(e){}}
+  try{
+    const wa=(window.Telegram&&Telegram.WebApp)?Telegram.WebApp:tg;
+    if(wa&&wa.setHeaderColor){
+      if(resolved==="dark"){wa.setHeaderColor("#0B1220");wa.setBackgroundColor("#0B1220")}
+      else{wa.setHeaderColor("#006AD2");wa.setBackgroundColor("#F2F5F9")}
+    }
+  }catch(e){}
   updateThemeTile();
   document.querySelectorAll(".theme-item").forEach(b=>b.classList.toggle("active",b.getAttribute("data-theme-set")===state.theme));
 }
@@ -2389,6 +2407,19 @@ try{bindMainMenu()}catch(e){console.warn(e)}
   else run();
 })();
 
+
+(function bindTelegramTheme(){
+  try{
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    if(!wa||!wa.onEvent)return;
+    wa.onEvent("themeChanged", function(){
+      try{
+        if(state.theme==="auto")applyTheme("auto",false);
+      }catch(e){}
+    });
+  }catch(e){}
+})();
+
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation};
 </script>
 </body>
@@ -2655,6 +2686,26 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 [data-theme="dark"] .role-badge{border-color:rgba(255,255,255,.25);color:#fff;background:rgba(255,255,255,.08)}
 [data-theme="dark"] .carousel-dots button{border-color:#fff}
 [data-theme="dark"] .carousel-dots button.active{background:#fff}
+</style>
+
+
+<style id="logout-theme-fix">
+.profile-logout-row{
+  display:flex;justify-content:flex-end;align-items:center;
+  margin:0 0 10px;min-height:28px;
+}
+.btn-logout{
+  appearance:none;border:none;cursor:pointer;
+  height:28px;padding:0 12px;border-radius:8px;
+  font-size:12px;font-weight:700;line-height:28px;
+  background:#DC2626!important;color:#FFFFFF!important;
+  box-shadow:none;width:auto;min-width:0;max-width:100%;
+  white-space:nowrap;
+}
+.btn-logout:active{opacity:.85;transform:scale(.98)}
+[data-theme="dark"] .btn-logout{
+  background:#DC2626!important;color:#FFFFFF!important;
+}
 </style>
 
 </html>
