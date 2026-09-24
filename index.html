@@ -335,6 +335,160 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   margin-left:10px;
 }
 
+
+/* === Universal menu geometry: same container as Settings === */
+#screen-settings, #screen-support, #screen-panel, #screen-balance, #screen-projects{
+  width:100%;
+  max-width:100%;
+  margin:0 auto;
+  padding:0;
+  box-sizing:border-box;
+}
+
+/* Settings is the reference: no artificial horizontal shifts. */
+#screen-settings .section-title,
+#screen-support .section-title,
+#screen-panel .section-title,
+#screen-balance .section-title,
+#screen-projects .section-title{
+  margin-left:0 !important;
+  margin-right:0 !important;
+  margin-top:0 !important;
+}
+
+#screen-settings .tile-grid{
+  width:100%;
+  margin:0;
+}
+
+/* Support: same tile design, but one clean column because there are more than two items. */
+#screen-support .tile-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:10px;
+  width:100%;
+  margin:0;
+}
+#screen-support .tile{
+  width:100%;
+  min-width:0;
+  min-height:58px;
+  height:auto;
+  aspect-ratio:auto;
+  padding:14px 16px;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+}
+#screen-support .tile .t-title,
+#screen-support .tile .t-sub{
+  text-align:center;
+}
+#screen-support #sup-other{
+  width:100%;
+  margin:10px 0 0 !important;
+}
+
+/* Panel: role card + menu buttons use exactly the same horizontal bounds as Settings. */
+#screen-panel .role-panel,
+#screen-panel .tile-grid{
+  width:100%;
+  max-width:100%;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+#screen-panel .role-panel{
+  padding:12px 10px 12px 14px;
+  margin-bottom:10px;
+}
+#screen-panel .role-panel-row{
+  width:100%;
+  min-width:0;
+}
+#screen-panel .role-panel .role-badge{
+  margin-left:auto;
+  margin-right:0;
+}
+#screen-panel .tile-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:10px;
+}
+#screen-panel .tile{
+  width:100%;
+  min-width:0;
+  min-height:58px;
+  height:auto;
+  aspect-ratio:auto;
+  padding:14px 16px;
+}
+#screen-panel .tile[data-panel="analytics"]{
+  grid-column:auto !important;
+  min-height:58px !important;
+  aspect-ratio:auto !important;
+}
+
+/* Balance and Projects: same clean width and vertical rhythm as Settings. */
+#screen-balance .panel,
+#screen-balance .btn-row,
+#screen-projects .list{
+  width:100%;
+  max-width:100%;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+#screen-balance .btn-row{
+  gap:10px;
+  margin-top:10px;
+}
+#screen-balance > .panel:last-child{
+  margin-top:10px !important;
+}
+#screen-projects .list{
+  margin-top:0;
+}
+
+/* Keep the same responsive container on Mini App, web and iPhone Safari. */
+@media (min-width:481px){
+  .app{
+    width:100%;
+    max-width:480px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+@media (max-width:480px){
+  .content{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+}
+
+/* Support chat: title centered, ETA stays directly above the message field. */
+#screen-support-chat{
+  width:100%;
+  max-width:100%;
+  margin:0 auto;
+}
+#screen-support-chat > .section-title{
+  text-align:center !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  margin-top:0 !important;
+}
+#screen-support-chat .chat-footer{
+  width:100%;
+  margin-top:auto;
+}
+#screen-support-chat .chat-eta{
+  width:100%;
+  text-align:center;
+  margin:0 0 8px;
+}
+#screen-support-chat .chat-input-row{
+  width:100%;
+}
+
 </style>
 </head>
 <body>
