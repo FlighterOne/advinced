@@ -2130,7 +2130,7 @@ function projectNameUrl(p){
   const uname=String(p.bot_username||"").replace(/^@/,"").trim();
   return uname?"https://t.me/"+encodeURIComponent(uname):"";
 }
-async async function openProject(pid){
+async function openProject(pid){
   state.currentProjectId=pid;
   show("project");
   try{setLocationRoute("project",{projectId:pid})}catch(e){}
