@@ -528,6 +528,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   box-shadow:0 0 0 1px rgba(77,163,255,.16) !important;
 }
 </style>
+
+<style id="project-detail-card-styles">
+#screen-project .panel .section-title{display:none !important;}
+#screen-project #pd-body{font-size:14px;line-height:1.48;}
+#screen-project .project-detail-name{font-size:17px;line-height:1.3;margin-bottom:10px;}
+#screen-project .project-detail-link{font-weight:800;color:var(--primary);text-decoration:none;cursor:pointer;}
+#screen-project .project-detail-link:hover{text-decoration:underline;}
+#screen-project .project-detail-link.no-link{cursor:default;}
+#screen-project .project-detail-dash{font-weight:600;}
+</style>
 </head>
 <body>
 
@@ -2095,31 +2105,89 @@ async function loadProjects(){
     });
   }catch(e){list.innerHTML='<div class="empty">err</div>';meta.textContent=String(e.message||e)}
 }
+const PROJECT_DETAIL_I18N={
+  ru:{coop:"Тип сотрудничества",resource:"Тип ресурса",topic:"Тематика канала",admin:"Статус администратора",subs:"Подписчики",cr:"CR подписчиков",price:"Цена за подписчика",themes:"Тематики узконаправленных подписчиков",allThemes:"все тематики",snippet:"Сниппет",subscribed:"Подписавшихся",profit:"Прибыль за одну подписку",myAds:"Реклама моих проектов",unknown:"Неизвестно",installed:"Установлен",notSet:"Не указана",channel:"📣 Канал",bot:"🤖 Бот",buy:"Покупка трафика",sell:"Продажа трафика"},
+  en:{coop:"Cooperation type",resource:"Resource type",topic:"Channel topic",admin:"Administrator status",subs:"Subscribers",cr:"Subscriber CR",price:"Price per subscriber",themes:"Niche subscriber topics",allThemes:"all topics",snippet:"Snippet",subscribed:"Subscribers",profit:"Profit per subscription",myAds:"Advertising my projects",unknown:"Unknown",installed:"Installed",notSet:"Not specified",channel:"📣 Channel",bot:"🤖 Bot",buy:"Traffic purchase",sell:"Traffic sales"},
+  uk:{coop:"Тип співпраці",resource:"Тип ресурсу",topic:"Тематика каналу",admin:"Статус адміністратора",subs:"Підписники",cr:"CR підписників",price:"Ціна за підписника",themes:"Тематики вузькоспрямованих підписників",allThemes:"усі тематики",snippet:"Сніпет",subscribed:"Підписалися",profit:"Прибуток за одну підписку",myAds:"Реклама моїх проєктів",unknown:"Невідомо",installed:"Встановлено",notSet:"Не вказана",channel:"📣 Канал",bot:"🤖 Бот",buy:"Купівля трафіку",sell:"Продаж трафіку"},
+  de:{coop:"Kooperationstyp",resource:"Ressourcentyp",topic:"Kanalthema",admin:"Administratorstatus",subs:"Abonnenten",cr:"Abonnenten-CR",price:"Preis pro Abonnent",themes:"Themen der zielgerichteten Abonnenten",allThemes:"alle Themen",snippet:"Snippet",subscribed:"Abonnenten",profit:"Gewinn pro Abonnent",myAds:"Werbung für meine Projekte",unknown:"Unbekannt",installed:"Installiert",notSet:"Nicht angegeben",channel:"📣 Kanal",bot:"🤖 Bot",buy:"Traffic-Kauf",sell:"Traffic-Verkauf"},
+  fr:{coop:"Type de collaboration",resource:"Type de ressource",topic:"Thématique du canal",admin:"Statut de l’administrateur",subs:"Abonnés",cr:"CR des abonnés",price:"Prix par abonné",themes:"Thématiques des abonnés ciblés",allThemes:"toutes les thématiques",snippet:"Snippet",subscribed:"Abonnés",profit:"Bénéfice par abonnement",myAds:"Publicité de mes projets",unknown:"Inconnu",installed:"Installé",notSet:"Non indiquée",channel:"📣 Canal",bot:"🤖 Bot",buy:"Achat de trafic",sell:"Vente de trafic"},
+  es:{coop:"Tipo de colaboración",resource:"Tipo de recurso",topic:"Temática del canal",admin:"Estado del administrador",subs:"Suscriptores",cr:"CR de suscriptores",price:"Precio por suscriptor",themes:"Temáticas de suscriptores específicos",allThemes:"todas las temáticas",snippet:"Snippet",subscribed:"Suscriptores",profit:"Ganancia por suscripción",myAds:"Publicidad de mis proyectos",unknown:"Desconocido",installed:"Instalado",notSet:"No indicada",channel:"📣 Canal",bot:"🤖 Bot",buy:"Compra de tráfico",sell:"Venta de tráfico"},
+  it:{coop:"Tipo di collaborazione",resource:"Tipo di risorsa",topic:"Argomento del canale",admin:"Stato dell’amministratore",subs:"Iscritti",cr:"CR degli iscritti",price:"Prezzo per iscritto",themes:"Tematiche degli iscritti mirati",allThemes:"tutte le tematiche",snippet:"Snippet",subscribed:"Iscritti",profit:"Guadagno per iscrizione",myAds:"Pubblicità dei miei progetti",unknown:"Sconosciuto",installed:"Installato",notSet:"Non indicata",channel:"📣 Canale",bot:"🤖 Bot",buy:"Acquisto di traffico",sell:"Vendita di traffico"},
+  pt:{coop:"Tipo de colaboração",resource:"Tipo de recurso",topic:"Tema do canal",admin:"Status do administrador",subs:"Inscritos",cr:"CR dos inscritos",price:"Preço por inscrito",themes:"Temas dos inscritos segmentados",allThemes:"todos os temas",snippet:"Snippet",subscribed:"Inscritos",profit:"Lucro por inscrição",myAds:"Publicidade dos meus projetos",unknown:"Desconhecido",installed:"Instalado",notSet:"Não indicado",channel:"📣 Canal",bot:"🤖 Bot",buy:"Compra de tráfego",sell:"Venda de tráfego"},
+  "pt-BR":{coop:"Tipo de colaboração",resource:"Tipo de recurso",topic:"Tema do canal",admin:"Status do administrador",subs:"Inscritos",cr:"CR dos inscritos",price:"Preço por inscrito",themes:"Temas dos inscritos segmentados",allThemes:"todos os temas",snippet:"Snippet",subscribed:"Inscritos",profit:"Lucro por inscrição",myAds:"Publicidade dos meus projetos",unknown:"Desconhecido",installed:"Instalado",notSet:"Não informado",channel:"📣 Canal",bot:"🤖 Bot",buy:"Compra de tráfego",sell:"Venda de tráfego"},
+  tr:{coop:"İş birliği türü",resource:"Kaynak türü",topic:"Kanal konusu",admin:"Yönetici durumu",subs:"Aboneler",cr:"Abone CR",price:"Abone başına fiyat",themes:"Hedeflenen abonelerin konuları",allThemes:"tüm konular",snippet:"Snippet",subscribed:"Aboneler",profit:"Abonelik başına kâr",myAds:"Projelerimin reklamı",unknown:"Bilinmiyor",installed:"Yüklendi",notSet:"Belirtilmedi",channel:"📣 Kanal",bot:"🤖 Bot",buy:"Trafik satın alma",sell:"Trafik satışı"},
+  id:{coop:"Jenis kerja sama",resource:"Jenis sumber daya",topic:"Topik kanal",admin:"Status administrator",subs:"Pelanggan",cr:"CR pelanggan",price:"Harga per pelanggan",themes:"Topik pelanggan tertarget",allThemes:"semua topik",snippet:"Snippet",subscribed:"Pelanggan",profit:"Keuntungan per pelanggan",myAds:"Iklan proyek saya",unknown:"Tidak diketahui",installed:"Terpasang",notSet:"Tidak disebutkan",channel:"📣 Kanal",bot:"🤖 Bot",buy:"Pembelian trafik",sell:"Penjualan trafik"},
+  ar:{coop:"نوع التعاون",resource:"نوع المورد",topic:"موضوع القناة",admin:"حالة المسؤول",subs:"المشتركون",cr:"معدل تحويل المشتركين",price:"السعر لكل مشترك",themes:"مواضيع المشتركين المستهدفين",allThemes:"جميع المواضيع",snippet:"الـSnippet",subscribed:"المشتركون",profit:"الربح لكل اشتراك",myAds:"الإعلان عن مشاريعي",unknown:"غير معروف",installed:"مثبت",notSet:"غير محددة",channel:"📣 قناة",bot:"🤖 بوت",buy:"شراء الزيارات",sell:"بيع الزيارات"},
+  zh:{coop:"合作类型",resource:"资源类型",topic:"频道主题",admin:"管理员状态",subs:"订阅者",cr:"订阅者转化率",price:"每位订阅者价格",themes:"精准订阅者主题",allThemes:"所有主题",snippet:"代码片段",subscribed:"订阅者",profit:"每位订阅者收益",myAds:"我的项目广告",unknown:"未知",installed:"已安装",notSet:"未指定",channel:"📣 频道",bot:"🤖 机器人",buy:"购买流量",sell:"出售流量"},
+  ja:{coop:"協力タイプ",resource:"リソースタイプ",topic:"チャンネルのテーマ",admin:"管理者ステータス",subs:"購読者",cr:"購読者CR",price:"購読者単価",themes:"ターゲット購読者のテーマ",allThemes:"すべてのテーマ",snippet:"スニペット",subscribed:"購読者",profit:"購読1件あたりの利益",myAds:"自分のプロジェクトの広告",unknown:"不明",installed:"インストール済み",notSet:"未指定",channel:"📣 チャンネル",bot:"🤖 ボット",buy:"トラフィック購入",sell:"トラフィック販売"},
+  ko:{coop:"협력 유형",resource:"리소스 유형",topic:"채널 주제",admin:"관리자 상태",subs:"구독자",cr:"구독자 CR",price:"구독자당 가격",themes:"타겟 구독자 주제",allThemes:"모든 주제",snippet:"스니펫",subscribed:"구독자",profit:"구독 1건당 수익",myAds:"내 프로젝트 광고",unknown:"알 수 없음",installed:"설치됨",notSet:"지정되지 않음",channel:"📣 채널",bot:"🤖 봇",buy:"트래픽 구매",sell:"트래픽 판매"}
+};
+function projectDetailText(){return PROJECT_DETAIL_I18N[state.lang]||PROJECT_DETAIL_I18N.en}
+function escProject(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function projectNameUrl(p){
+  const u=String(p.resource_url||"").trim();
+  if(u)return u;
+  const uname=String(p.bot_username||"").replace(/^@/,"").trim();
+  return uname?"https://t.me/"+encodeURIComponent(uname):"";
+}
 async function openProject(pid){
   state.currentProjectId=pid;
   show("project");
   try{setLocationRoute("project",{projectId:pid})}catch(e){}
-  document.getElementById("pd-title").textContent="#"+pid;
+  document.getElementById("pd-title").textContent="";
   document.getElementById("pd-body").textContent="…";
   const act=document.getElementById("pd-actions");
   if(act)act.innerHTML="";
   try{
     const data=await apiGet("/api/miniapp/project/"+pid+"?user_id="+encodeURIComponent(USER_ID||0));
     const p=data.project||{};
-    const role=(p.role||"monetize");
-    document.getElementById("pd-title").textContent=p.name||("#"+p.id);
-    let body="";
-    body+="<b>"+t("status")+":</b> "+(p.status||"—")+"<br/>";
-    body+="<b>"+t("role")+":</b> "+(role==="advertiser"?t("tx_purchase"):(role==="partner"?"Partner":t("tx_monetization")))+"<br/>";
+    const role=String(p.role||"monetize").toLowerCase();
+    const d=projectDetailText();
+    const name=String(p.name||("#"+p.id));
+    const url=projectNameUrl(p);
+    const nameHtml=url
+      ? '<a class="project-detail-link" href="'+escProject(url)+'" data-project-url="'+escProject(url)+'">'+escProject(name)+'</a>'
+      : '<span class="project-detail-link no-link">'+escProject(name)+'</span>' ;
+    let body='<div class="project-detail-name">'+nameHtml+(role!=="advertiser"?' <span class="project-detail-dash">-</span>':'')+'</div>';
+    const topic=p.topic?String(p.topic):d.notSet;
+    const rtype=String(p.resource_type||"channel").toLowerCase()==="bot"?d.bot:d.channel;
+    const coop=role==="advertiser"?d.buy:(role==="partner"?d.sell:d.sell);
+    body+='<div><b>'+d.coop+':</b> '+coop+'</div>';
+    body+='<div><b>'+d.resource+':</b> '+rtype+'</div>';
+    body+='<div><b>'+d.topic+':</b> '+escProject(topic)+'</div>';
+    body+='<br/>';
     if(role==="advertiser"){
-      body+="<b>"+t("tx_type")+":</b> "+(p.current_subs||0)+" / "+(p.target_subs||0)+"<br/>";
-      body+="<b>"+t("fee")+":</b> "+fmt(p.price_per_sub||0)+" ₽";
+      const adm=String(p.admin_status||"unknown").toLowerCase();
+      const admText=adm==="ok"?"✅ OK":adm==="no"?"❌ No":"🔄 "+d.unknown;
+      const current=Number(p.current_subs||0);
+      const target=Number(p.target_subs||1000);
+      const remaining=p.remaining_subs==null?current:Number(p.remaining_subs||0);
+      const cr=current<=0?100:(Math.max(0,Math.min(100,(remaining/current)*100)));
+      const price=Number(p.price_per_sub==null?3:p.price_per_sub);
+      let themes=d.allThemes;
+      try{const arr=JSON.parse(p.themes_json||"[]"); if(Array.isArray(arr)&&arr.length)themes=arr.join(", ");}catch(e){}
+      body+='<div><b>'+d.admin+':</b> '+admText+'</div>';
+      body+='<div><b>'+d.subs+':</b> '+current+'/'+target+'</div>';
+      body+='<div><b>'+d.cr+':</b> '+cr.toFixed(1)+'%</div>';
+      body+='<div><b>'+d.price+':</b> '+price.toFixed(2)+' ₽</div>';
+      body+='<br/><div><b>'+d.themes+':</b> '+escProject(themes)+'</div>';
     }else{
-      body+="<b>Snippet:</b> "+(p.snippet_status||"none")+"<br/>";
-      body+="<b>"+t("tx_monetization")+":</b> "+(p.current_subs||0);
+      const installed=(String(p.snippet_status||"").toLowerCase()==="installed"||Number(p.snippet_installed||0)===1);
+      const count=Number(p.current_subs||p.total_subs||0);
+      const profit=Number(p.profit_per_sub==null?1:p.profit_per_sub);
+      let ads=d.notSet;
+      try{
+        const raw=JSON.parse(p.own_channels_json||"[]");
+        if(Array.isArray(raw)){const names=raw.filter(x=>String(x.status||"active")==="active").map(x=>x.title||x.username||x.url).filter(Boolean); if(names.length)ads=names.join(", ");}
+      }catch(e){}
+      body+='<div><b>'+d.snippet+':</b> '+(installed?'✅ '+d.installed:'❌')+'</div>';
+      body+='<div><b>'+d.subscribed+':</b> '+count+' (0.00 ₽)</div>';
+      body+='<div><b>'+d.profit+':</b> '+profit.toFixed(2)+' ₽</div>';
+      body+='<br/><div><b>'+d.myAds+':</b> '+escProject(ads)+'</div>';
     }
     document.getElementById("pd-body").innerHTML=body;
-    // кнопки как в боте
+    const link=document.querySelector("#pd-body .project-detail-link[href]");
+    if(link){link.addEventListener("click",function(e){e.preventDefault();const u=this.getAttribute("data-project-url");try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(err){window.open(u,"_blank")}});}
     let btns="";
     if(role==="monetize"){
       btns+='<div class="btn-row"><button class="btn" data-pa="settings">'+t("settings")+'</button><button class="btn" data-pa="snippet">Snippet</button></div>';
@@ -2127,8 +2195,8 @@ async function openProject(pid){
       btns+='<div class="btn-row"><button class="btn" data-pa="settings">'+t("settings")+'</button><button class="btn" data-pa="admin">Admin</button></div>';
     }
     const enabled=Number(p.enabled||0)===1 && (p.status||"")==="active";
-    btns+='<button class="btn primary wide" data-pa="'+(enabled?"stop":"start")+'">'+(enabled?t("btn_stop")||"Stop":t("btn_start")||"Start")+"</button>";
-    btns+='<button class="btn wide" data-pa="balance">'+t("balance")+"</button>";
+    btns+='<button class="btn primary wide" data-pa="'+(enabled?"stop":"start")+'">'+(enabled?t("btn_stop")||"Stop":t("btn_start")||"Start")+'</button>';
+    btns+='<button class="btn wide" data-pa="balance">'+t("balance")+'</button>';
     btns+='<div class="btn-row"><button class="btn" data-pa="analytics">'+t("analytics")+'</button><button class="btn" data-pa="delete">'+t("close")+'</button></div>';
     if(act){
       act.innerHTML=btns;
@@ -2136,23 +2204,10 @@ async function openProject(pid){
         b.onclick=async()=>{
           const a=b.getAttribute("data-pa");
           if(a==="start"||a==="stop"){
-            try{
-              const r=await apiPost("/api/miniapp/project/"+pid+"/toggle",{user_id:USER_ID,enabled:a==="start"?1:0});
-              if(r.ok)openProject(pid);
-              else alert(r.message||r.error||"error");
-            }catch(err){alert(String(err.message||err))}
-            return;
+            try{const r=await apiPost("/api/miniapp/project/"+pid+"/toggle",{user_id:USER_ID,enabled:a==="start"?1:0});if(r.ok)openProject(pid);else alert(r.message||r.error||"error")}catch(err){alert(String(err.message||err))}return;
           }
-          if(a==="balance"){
-            show("balance");loadMe();loadRequests();
-            return;
-          }
-          if(a==="delete"){
-            // подтверждение удаления через API если есть — иначе назад к списку
-            show("projects");loadProjects();
-            return;
-          }
-          // settings / snippet / analytics — открываем детали обновлёнными
+          if(a==="balance"){show("balance");loadMe();loadRequests();return;}
+          if(a==="delete"){show("projects");loadProjects();return;}
           openProject(pid);
         };
       });
