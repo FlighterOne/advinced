@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light" data-build="v20260918e">
+<html lang="ru" data-traffic="web" data-theme="light" data-build="v20260918e">
 <head>
 <meta charset="UTF-8"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Advinced Management</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -611,34 +614,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-support" class="screen">
       <div class="section-title" data-i18n="support">Поддержка</div>
-      <div class="support-grid">
-        <button type="button" class="support-tile" id="sup-chat">
-          <div class="support-tile-title" data-i18n="support_ticket">Написать обращение</div>
-          <div class="support-tile-sub" data-i18n="support_chat_manager">Чат с менеджером</div>
+      <div class="tile-grid">
+        <button type="button" class="tile" id="sup-chat">
+          <div class="t-title" data-i18n="support_ticket">Написать обращение</div>
+          <div class="t-sub" data-i18n="support_chat_manager">Чат с менеджером</div>
         </button>
-        <button type="button" class="support-tile" id="sup-manager">
-          <div class="support-tile-title" data-i18n="support_manager">Менеджер в Telegram</div>
-          <div class="support-tile-sub">@mediamanagering</div>
+        <button type="button" class="tile" id="sup-manager">
+          <div class="t-title" data-i18n="support_manager">Менеджер в Telegram</div>
+          <div class="t-sub">@mediamanagering</div>
         </button>
-        <button type="button" class="support-tile" id="sup-bot">
-          <div class="support-tile-title" data-i18n="support_bot">Бот поддержки</div>
-          <div class="support-tile-sub">@clossrsuppbot</div>
+        <button type="button" class="tile" id="sup-bot">
+          <div class="t-title" data-i18n="support_bot">Бот поддержки</div>
+          <div class="t-sub">@clossrsuppbot</div>
         </button>
-        <button type="button" class="support-tile" id="sup-mail">
-          <div class="support-tile-title" data-i18n="support_mail">Написать на почту</div>
-          <div class="support-tile-sub">clossr.support@gmail.com</div>
+        <button type="button" class="tile" id="sup-mail">
+          <div class="t-title" data-i18n="support_mail">Написать на почту</div>
+          <div class="t-sub">clossr.support@gmail.com</div>
         </button>
-        <button type="button" class="support-tile no-sub" id="sup-hire">
-          <div class="support-tile-title" data-i18n="support_hire">Сотрудничать</div>
+        <button type="button" class="tile" id="sup-hire">
+          <div class="t-title" data-i18n="support_hire">Сотрудничать</div>
         </button>
-        <button type="button" class="support-tile no-sub" id="sup-faq">
-          <div class="support-tile-title" data-i18n="support_faq">FAQ</div>
+        <button type="button" class="tile" id="sup-faq">
+          <div class="t-title" data-i18n="support_faq">FAQ</div>
         </button>
-        <button type="button" class="support-tile no-sub" id="sup-privacy">
-          <div class="support-tile-title" data-i18n="support_privacy">Политика конфиденциальности</div>
+        <button type="button" class="tile" id="sup-privacy">
+          <div class="t-title" data-i18n="support_privacy">Политика конфиденциальности</div>
         </button>
-        <button type="button" class="support-tile no-sub" id="sup-terms">
-          <div class="support-tile-title" data-i18n="support_terms">Пользовательское соглашение</div>
+        <button type="button" class="tile" id="sup-terms">
+          <div class="t-title" data-i18n="support_terms">Пользовательское соглашение</div>
         </button>
       </div>
       <button type="button" class="btn wide" id="sup-other" data-i18n="support_other_info" style="margin-top:12px">Другая информация</button>
@@ -1029,19 +1032,51 @@ let __webSessionToken=null;
 let __isMiniApp=false;
 let USER_ID=null;
 
-function isTelegramMiniApp(){
+/** iOS/Android «Добавить на экран Домой» (standalone PWA) — единственный поддерживаемый app-трафик */
+function isStandaloneApp(){
   try{
-    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-    if(!wa)return false;
-    // Только реальный Mini App: подписанный initData, не заглушка скрипта
-    if(wa.initData&&String(wa.initData).length>20)return true;
-    // platform mobile/desktop + user — но без initData на сайте не считаем миниаппом
-    const plat=String(wa.platform||"");
-    if((plat==="ios"||plat==="android"||plat==="android_x"||plat==="tdesktop"||plat==="macos"||plat==="weba"||plat==="webk")
-      && wa.initData&&String(wa.initData).length>10)return true;
+    if(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+    if(window.matchMedia && window.matchMedia("(display-mode: fullscreen)").matches) return true;
+    // iOS Safari
+    if(typeof navigator!=="undefined" && navigator.standalone===true) return true;
+    // Android TWA / related
+    if(document.referrer && /android-app:\/\//i.test(document.referrer)) return true;
   }catch(e){}
   return false;
 }
+/**
+ * Виды трафика:
+ *  - miniapp  — открыто внутри Telegram (initData)
+ *  - app      — iOS/Android home-screen PWA (как сайт: Login Widget)
+ *  - web      — обычный браузер (Login Widget)
+ */
+function getTrafficKind(){
+  if(isStandaloneApp()) return "app";
+  try{
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    if(wa&&wa.initData&&String(wa.initData).length>20) return "miniapp";
+  }catch(e){}
+  return "web";
+}
+function isTelegramMiniApp(){
+  // PWA с домашнего экрана — НЕ миниапп, даже если подгружен telegram-web-app.js
+  if(isStandaloneApp()) return false;
+  try{
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    if(!wa)return false;
+    if(wa.initData&&String(wa.initData).length>20)return true;
+  }catch(e){}
+  return false;
+}
+
+(function setTrafficAttr(){
+  try{
+    const k=(typeof getTrafficKind==="function")?getTrafficKind():"web";
+    document.documentElement.setAttribute("data-traffic", k);
+  }catch(e){}
+})();
+
+
 function loadWebSession(){
   try{const raw=localStorage.getItem(WEB_SESSION_KEY);if(!raw)return null;return JSON.parse(raw)}catch(e){return null}
 }
@@ -2027,13 +2062,10 @@ try{wireSupport()}catch(e){console.warn(e)}
   try{
     tgUser=getTgUser();
 
-    // Telegram Mini App — вход автоматический, как в рабочем index(1).
-    let wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-    let hasInit=!!(wa&&wa.initData&&String(wa.initData).length>10);
-    let hasUser=!!(tgUser&&tgUser.id);
-
-    // Сайт не должен попадать в ветку миниаппа только из-за пустого user
-    if(hasInit){
+    // Трафик: miniapp | app (PWA home screen) | web
+    const traffic=getTrafficKind();
+    // Mini App — только внутри Telegram с initData. PWA и сайт → Login Widget.
+    if(traffic==="miniapp" && isTelegramMiniApp()){
       __isMiniApp=true;
 
       // Иногда Telegram отдаёт initDataUnsafe.user с небольшой задержкой.
@@ -2061,7 +2093,7 @@ try{wireSupport()}catch(e){console.warn(e)}
       return;
     }
 
-    // Обычный сайт — восстановление Telegram-сессии.
+    // Сайт или PWA (экран Домой) — одинаковая авторизация через Telegram Login.
     __isMiniApp=false;
     const sess=loadWebSession();
 
@@ -2420,7 +2452,7 @@ try{bindMainMenu()}catch(e){console.warn(e)}
   }catch(e){}
 })();
 
-window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation};
+window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation,getTrafficKind,isStandaloneApp,isTelegramMiniApp};
 </script>
 </body>
 
@@ -2474,41 +2506,33 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 
 
 <style id="support-panel-nudge">
-/* Exact square tiles + side gaps like Exchange; titles not glued to tiles */
+/* Support + Panel = same layout as Settings (tile-grid). No full-screen stretch. */
 .content{
-  padding-left:16px!important;
-  padding-right:16px!important;
+  padding:12px 16px 20px!important;
   box-sizing:border-box!important;
+  max-width:480px;
+  margin:0 auto;
 }
-.content.has-back{padding-top:2px!important}
+.content.has-back{padding-top:8px!important}
+
+.menu-back-bar.show{
+  margin:6px 0 10px!important;
+  min-height:32px!important;
+}
 
 .section-title{
-  font-size:20px!important;
+  font-size:18px!important;
   font-weight:700!important;
-  margin:0 0 14px!important;
+  margin:0 0 12px!important;
   padding:0!important;
   line-height:1.25!important;
   text-align:left!important;
 }
 
-/* Settings: extra gap under title so tiles don't merge with heading */
-#screen-settings .section-title{
-  margin:0 0 18px!important;
-}
-
-#screen-support .section-title,
-#screen-panel .section-title,
-#screen-support-chat .section-title,
-#screen-balance .section-title{
-  margin:0 0 14px!important;
-}
-
-/* Grids: Exchange-like 2 columns, gap 10, full width inside content padding */
 #screen-settings .tile-grid,
+#screen-support .tile-grid,
 #screen-panel .tile-grid,
-#screen-support .support-grid,
-.tile-grid,
-.support-grid{
+.tile-grid{
   display:grid!important;
   grid-template-columns:1fr 1fr!important;
   gap:10px!important;
@@ -2519,12 +2543,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   box-sizing:border-box!important;
 }
 
-/* Square tiles — size/padding as Exchange support-tile */
 #screen-settings .tile,
+#screen-support .tile,
 #screen-panel .tile,
-#screen-support .support-tile,
-.tile,
-.support-tile{
+.tile{
   aspect-ratio:1 / 1!important;
   width:100%!important;
   max-width:100%!important;
@@ -2544,12 +2566,11 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 }
 
 #screen-settings .tile .t-title,
+#screen-support .tile .t-title,
 #screen-panel .tile .t-title,
-#screen-support .support-tile-title,
-.tile .t-title,
-.support-tile-title{
-  font-size:13px!important;
-  font-weight:600!important;
+.tile .t-title{
+  font-size:15px!important;
+  font-weight:700!important;
   line-height:1.25!important;
   text-align:center!important;
   width:100%!important;
@@ -2558,31 +2579,53 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 }
 
 #screen-settings .tile .t-sub,
-#screen-support .support-tile-sub,
-.tile .t-sub,
-.support-tile-sub{
+#screen-support .tile .t-sub,
+#screen-panel .tile .t-sub,
+.tile .t-sub{
   font-size:12px!important;
-  line-height:1.2!important;
+  font-weight:500!important;
+  line-height:1.3!important;
   text-align:center!important;
   width:100%!important;
+  color:var(--hint)!important;
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
 }
 
-/* Panel role card full width inside content */
+/* Panel role card — same width as settings tiles row */
 #screen-panel .role-panel{
   width:100%!important;
   max-width:100%!important;
   margin:0 0 12px!important;
+  padding:12px 14px!important;
   box-sizing:border-box!important;
 }
 
-/* Wide analytics tile stays full width, not forced square */
+/* Wide analytics tile in panel */
 #screen-panel .tile[style*="grid-column"]{
   grid-column:1 / -1!important;
   aspect-ratio:auto!important;
   min-height:72px!important;
   height:auto!important;
+}
+
+/* Balance / projects — same content padding, not stretched */
+#screen-balance,
+#screen-projects,
+#screen-support,
+#screen-panel,
+#screen-settings{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+#screen-balance .panel,
+#screen-projects .list,
+#screen-projects .item{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
 }
 </style>
 
