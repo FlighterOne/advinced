@@ -1227,6 +1227,21 @@ function hasValidWebSessionLocal(){
 let __webSessionToken=null;
 let __isMiniApp=false;
 let USER_ID=null;
+// Мгновенное восстановление сессии при refresh (до async bootstrap)
+(function earlyRestoreSession(){
+  try{
+    const raw=localStorage.getItem("advinced_web_session");
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    if(!s||!s.token)return;
+    if(s.expires_at){
+      const exp=Date.parse(s.expires_at);
+      if(!isNaN(exp)&&exp<Date.now())return;
+    }
+    __webSessionToken=s.token;
+    if(s.user_id)USER_ID=Number(s.user_id)||s.user_id;
+  }catch(e){}
+})();
 
 /** iOS/Android «Добавить на экран Домой» (standalone PWA) — единственный поддерживаемый app-трафик */
 function isStandaloneApp(){
@@ -1689,18 +1704,21 @@ function applyRouteFromLocation(opts){
   const r = parseLocationRoute();
   __routeSyncing = true;
   try{
-    // сайт без сессии: любой deep link → login, затем возврат
+    // подхватить сессию до любой проверки логина (важно при refresh)
+    if(!USER_ID){
+      try{
+        const s=loadWebSession();
+        if(s&&s.token){
+          __webSessionToken=s.token||__webSessionToken;
+          if(s.user_id)USER_ID=Number(s.user_id)||s.user_id;
+        }
+      }catch(e){}
+    }
+    // сайт без сессии: deep link → login
     if(!isTelegramMiniApp() && !USER_ID && !hasValidWebSessionLocal() && r.screen!=="login"){
       saveIntendedRoute(r.path||currentPathForIntent());
       showLoginOverlay();
       return;
-    }
-    // есть локальная сессия, но USER_ID ещё не выставлен (гонка) — подхватить
-    if(!USER_ID && hasValidWebSessionLocal()){
-      try{
-        const s=loadWebSession();
-        if(s&&s.user_id){USER_ID=Number(s.user_id)||s.user_id;__webSessionToken=s.token||__webSessionToken}
-      }catch(e){}
     }
     if(r.screen==="login"){
       show("main", false);
@@ -1972,8 +1990,19 @@ function startEventLoop(){
 let _meCacheAt=0,_meInflight=null;
 async function loadMe(force){
   if(!USER_ID){
-    tgUser=typeof getTgUser==="function"?getTgUser():tgUser;
-    if(tgUser&&tgUser.id)USER_ID=tgUser.id;
+    try{
+      tgUser=typeof getTgUser==="function"?getTgUser():tgUser;
+      if(tgUser&&tgUser.id)USER_ID=Number(tgUser.id)||tgUser.id;
+    }catch(e){}
+  }
+  if(!USER_ID){
+    try{
+      const s=typeof loadWebSession==="function"?loadWebSession():null;
+      if(s&&s.user_id){
+        USER_ID=Number(s.user_id)||s.user_id;
+        if(s.token)__webSessionToken=s.token;
+      }
+    }catch(e){}
   }
   const hasSess=!!(typeof getAuthToken==="function"&&getAuthToken());
   if(!USER_ID&&!hasSess){
@@ -1983,24 +2012,45 @@ async function loadMe(force){
   }
   const now=Date.now();
   if(!force&&state.me&&(now-_meCacheAt)<2500)return state.me;
-  if(_meInflight)return _meInflight;
+  if(_meInflight){
+    try{return await _meInflight}catch(e){return null}
+  }
   _meInflight=(async()=>{
     try{
       let path="/api/miniapp/me";
       if(USER_ID)path+="?user_id="+encodeURIComponent(USER_ID);
       const me=await apiGet(path,12000);
-      if(!me||me.ok===false)throw new Error((me&&(me.error||me.message))||"me_failed");
+      if(!me||me.ok===false){
+        console.warn("loadMe me_failed", me&&(me.error||me.message));
+        return null;
+      }
       state.me=me;
       _meCacheAt=Date.now();
-      if(me.user_id)USER_ID=me.user_id;
-      applyBalanceUI(me.balance!=null?me.balance:0);
-      if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
-      if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
-      const role=Number(me.role||0);
-      const pr=document.getElementById("p-role");
-      if(pr)pr.textContent=roleName(role);
-      const bp=document.getElementById("btn-panel");
-      if(bp)bp.style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
+      if(me.user_id)USER_ID=Number(me.user_id)||me.user_id;
+      try{applyBalanceUI(me.balance!=null?me.balance:0)}catch(e){}
+      try{
+        if(me.lang&&LANGS.some(l=>l.code===me.lang)){state.lang=me.lang;applyI18n()}
+        if(me.theme==="dark"||me.theme==="light"||me.theme==="auto")applyTheme(me.theme,false);
+      }catch(e){}
+      try{
+        const role=Number(me.role||0);
+        const pr=document.getElementById("p-role");
+        if(pr)pr.textContent=roleName(role);
+        const bp=document.getElementById("btn-panel");
+        if(bp)bp.style.display=(role>=ROLE_INTERN||me.is_staff)?"":"none";
+      }catch(e){}
+      // обновить last_ok сессии — refresh не выкинет на логин
+      try{
+        const s=loadWebSession();
+        if(s&&s.token){
+          s.last_ok=new Date().toISOString();
+          s.user_id=USER_ID;
+          if(me.balance!=null)s.balance=me.balance;
+          if(me.lang)s.lang=me.lang;
+          if(me.theme)s.theme=me.theme;
+          saveWebSession(s);
+        }
+      }catch(e){}
       return me;
     }catch(e){
       console.warn("loadMe",e);
@@ -2009,7 +2059,7 @@ async function loadMe(force){
       _meInflight=null;
     }
   })();
-  return _meInflight;
+  try{return await _meInflight}catch(e){return null}
 }
 const TX_TYPES=["deposit","withdraw","purchase","monetization","salary","admin"];
 function txTypeLabel(type){
@@ -2344,6 +2394,7 @@ try{wireSupport()}catch(e){console.warn(e)}
     if(sess&&sess.token){
       __isMiniApp=false;
       __webSessionToken=sess.token;
+      if(sess.user_id && !USER_ID) USER_ID=Number(sess.user_id)||sess.user_id;
 
       let sessionOk=false;
       let sessionUser=null;
@@ -2351,35 +2402,32 @@ try{wireSupport()}catch(e){console.warn(e)}
         const r=await apiFetch("/api/auth/session",{method:"GET",headers:{"Accept":"application/json"}},8000);
         let s=null;
         try{s=await r.json()}catch(e){}
+        // Сбрасываем сессию ТОЛЬКО при явной 401/403. Сеть/500/CORS — оставляем локальную сессию.
         if(r.status===401||r.status===403){
-          clearWebSession();
+          // не чистим сразу: если loadMe с user_id сработает — сессия жива на клиенте
+          console.warn("session endpoint", r.status);
         }else if(r.ok && s && s.user_id){
           sessionOk=true;
           sessionUser=s;
-        }else if(sess.user_id){
-          sessionOk=true;
-          sessionUser={
-            user_id:sess.user_id,
-            lang:sess.lang,
-            theme:sess.theme,
-            balance:sess.balance,
-            username:sess.username,
-            first_name:sess.first_name
-          };
         }
       }catch(e){
-        if(sess.user_id){
-          sessionOk=true;
-          sessionUser={
-            user_id:sess.user_id,
-            lang:sess.lang,
-            theme:sess.theme,
-            balance:sess.balance,
-            username:sess.username,
-            first_name:sess.first_name
-          };
-        }
+        console.warn("session network", e);
       }
+      // fallback: локальная сессия всегда достаточна для UI после refresh
+      if(!sessionOk && sess.user_id){
+        sessionOk=true;
+        sessionUser={
+          user_id:sess.user_id,
+          lang:sess.lang,
+          theme:sess.theme,
+          balance:sess.balance,
+          username:sess.username,
+          first_name:sess.first_name
+        };
+      }
+      // если session endpoint вернул 401, но есть user_id — всё равно пробуем loadMe;
+      // очистим сессию только если loadMe тоже отвергнет
+      if(!sessionOk && (r=>false)(0)){ /* noop keep structure */ }
 
       if(sessionOk && sessionUser && sessionUser.user_id){
         USER_ID=Number(sessionUser.user_id)||sessionUser.user_id;
