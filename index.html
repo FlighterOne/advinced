@@ -533,7 +533,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 #screen-project .panel .section-title{display:none !important;}
 #screen-project #pd-body{font-size:14px;line-height:1.48;}
 #screen-project .project-detail-name{font-size:17px;line-height:1.3;margin-bottom:10px;}
-#screen-project .project-detail-link{font-weight:800;color:var(--primary);text-decoration:none;cursor:pointer;}
+#screen-project .project-detail-link{font-weight:800;color:var(--text);text-decoration:none;cursor:pointer;}
 #screen-project .project-detail-link:hover{text-decoration:underline;}
 #screen-project .project-detail-link.no-link{cursor:default;}
 #screen-project .project-detail-dash{font-weight:600;}
@@ -2207,7 +2207,11 @@ async function openProject(pid){
             try{const r=await apiPost("/api/miniapp/project/"+pid+"/toggle",{user_id:USER_ID,enabled:a==="start"?1:0});if(r.ok)openProject(pid);else alert(r.message||r.error||"error")}catch(err){alert(String(err.message||err))}return;
           }
           if(a==="balance"){show("balance");loadMe();loadRequests();return;}
+          if(a==="settings"){openProjectSettings(pid);return;}
+          if(a==="analytics"){openProjectAnalytics(pid);return;}
           if(a==="delete"){show("projects");loadProjects();return;}
+          if(a==="admin"){openProject(pid);return;}
+          if(a==="snippet"){openProject(pid);return;}
           openProject(pid);
         };
       });
@@ -2694,6 +2698,123 @@ try{bindMainMenu()}catch(e){console.warn(e)}
 })();
 
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation,getTrafficKind,isStandaloneApp,isTelegramMiniApp};
+</script>
+
+<div id="screen-project-settings" class="screen">
+  <div class="section-title" id="pps-title">Настройки</div>
+  <div class="panel" id="pps-content"></div>
+  <div class="btn-row" style="margin-top:10px">
+    <button class="btn" id="pps-back">Назад</button>
+    <button class="btn" id="pps-menu">В меню</button>
+  </div>
+</div>
+<div id="screen-project-analytics" class="screen">
+  <div class="section-title" id="ppa-title">📊 Аналитика</div>
+  <div class="panel" id="ppa-content"></div>
+  <button class="btn wide" id="ppa-back" style="margin-top:10px">Назад</button>
+</div>
+<style id="project-settings-analytics-ui">
+#screen-project-settings .panel,#screen-project-analytics .panel{font-size:14px;line-height:1.48}
+#screen-project-settings .setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#screen-project-settings .setting-grid .btn{min-height:58px;white-space:normal}
+#screen-project-settings .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#screen-project-settings .theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-project-settings .channel-list{display:grid;gap:8px}
+#screen-project-settings .settings-block{display:grid;gap:10px}
+#screen-project-settings .settings-note{font-size:13px;color:var(--muted);margin-bottom:2px}
+#screen-project-settings .settings-input-row{display:flex;gap:8px}
+#screen-project-settings .settings-input-row .form-input{flex:1;min-width:0}
+</style>
+<script>
+(function(){
+  const PS_I18N={
+    ru:{settings:"Настройки",back:"Назад",menu:"В меню",subs:"Подписчики",price:"Цена",daily:"Лимит в день",hourly:"Скорость в час",unsubs:"Отписки",relink:"Изменить ссылку",themes:"Тематики",subcount:"Количество каналов",mychannels:"Мои каналы",addchannel:"Добавить канал",analytics:"Аналитика",save:"Сохранить",enter:"Введите значение",all:"Все тематики",required:"Обязательный",notrequired:"Необязательный",pending:"На проверке",active:"Активен",noaccess:"Нет доступа",saved:"Сохранено",starts:"Запуски",confirmed:"Подтвержденные подписки",total:"Всего подписалось",remain:"Осталось",cr:"CR пользователей",premium:"Пользователи с TG Premium",avatar:"Коэффициент аватаров",nodata:"Данных пока нет"},
+    en:{settings:"Settings",back:"Back",menu:"Main menu",subs:"Subscribers",price:"Price",daily:"Daily limit",hourly:"Hourly speed",unsubs:"Unsubs",relink:"Change link",themes:"Themes",subcount:"Channel count",mychannels:"My channels",addchannel:"Add channel",analytics:"Analytics",save:"Save",enter:"Enter value",all:"All themes",required:"Required",notrequired:"Optional",pending:"Pending",active:"Active",noaccess:"No access",saved:"Saved",starts:"Starts",confirmed:"Confirmed subscribers",total:"Subscribed all time",remain:"Remaining",cr:"User CR",premium:"Users with TG Premium",avatar:"Avatar coefficient",nodata:"No data yet"},
+    uk:{settings:"Налаштування",back:"Назад",menu:"Головне меню",subs:"Підписники",price:"Ціна",daily:"Ліміт на день",hourly:"Швидкість на годину",unsubs:"Відписки",relink:"Змінити посилання",themes:"Тематики",subcount:"Кількість каналів",mychannels:"Мої канали",addchannel:"Додати канал",analytics:"Аналітика",save:"Зберегти",enter:"Введіть значення",all:"Усі тематики",required:"Обов'язковий",notrequired:"Необов'язковий",pending:"На перевірці",active:"Активний",noaccess:"Немає доступу",saved:"Збережено",starts:"Запуски",confirmed:"Підтверджені підписники",total:"Всього підписалося",remain:"Залишилось",cr:"CR користувачів",premium:"Користувачі з TG Premium",avatar:"Коефіцієнт аватарів",nodata:"Даних поки немає"},
+    de:{settings:"Einstellungen",back:"Zurück",menu:"Hauptmenü",subs:"Abonnenten",price:"Preis",daily:"Tageslimit",hourly:"Geschwindigkeit pro Stunde",unsubs:"Abmeldungen",relink:"Link ändern",themes:"Themen",subcount:"Kanalanzahl",mychannels:"Meine Kanäle",addchannel:"Kanal hinzufügen",analytics:"Analyse",save:"Speichern",enter:"Wert eingeben",all:"Alle Themen",required:"Erforderlich",notrequired:"Optional",pending:"Ausstehend",active:"Aktiv",noaccess:"Kein Zugriff",saved:"Gespeichert",starts:"Starts",confirmed:"Bestätigte Abonnenten",total:"Insgesamt abonniert",remain:"Verbleibend",cr:"Nutzer-CR",premium:"Nutzer mit TG Premium",avatar:"Avatar-Koeffizient",nodata:"Noch keine Daten"},
+    fr:{settings:"Paramètres",back:"Retour",menu:"Menu principal",subs:"Abonnés",price:"Prix",daily:"Limite quotidienne",hourly:"Vitesse horaire",unsubs:"Désabonnements",relink:"Modifier le lien",themes:"Thématiques",subcount:"Nombre de canaux",mychannels:"Mes canaux",addchannel:"Ajouter un canal",analytics:"Analytique",save:"Enregistrer",enter:"Saisissez une valeur",all:"Toutes les thématiques",required:"Obligatoire",notrequired:"Optionnel",pending:"En attente",active:"Actif",noaccess:"Accès refusé",saved:"Enregistré",starts:"Démarrages",confirmed:"Abonnés confirmés",total:"Abonnements totaux",remain:"Restant",cr:"CR utilisateur",premium:"Utilisateurs avec TG Premium",avatar:"Coefficient avatar",nodata:"Aucune donnée"},
+    es:{settings:"Ajustes",back:"Atrás",menu:"Menú principal",subs:"Suscriptores",price:"Precio",daily:"Límite diario",hourly:"Velocidad por hora",unsubs:"Bajas",relink:"Cambiar enlace",themes:"Temáticas",subcount:"Cantidad de canales",mychannels:"Mis canales",addchannel:"Añadir canal",analytics:"Analítica",save:"Guardar",enter:"Introduce un valor",all:"Todas las temáticas",required:"Obligatorio",notrequired:"Opcional",pending:"Pendiente",active:"Activo",noaccess:"Sin acceso",saved:"Guardado",starts:"Inicios",confirmed:"Suscriptores confirmados",total:"Suscripciones totales",remain:"Restantes",cr:"CR de usuarios",premium:"Usuarios con TG Premium",avatar:"Coeficiente de avatar",nodata:"Sin datos todavía"},
+    it:{settings:"Impostazioni",back:"Indietro",menu:"Menu principale",subs:"Iscritti",price:"Prezzo",daily:"Limite giornaliero",hourly:"Velocità oraria",unsubs:"Disiscrizioni",relink:"Modifica link",themes:"Tematiche",subcount:"Numero canali",mychannels:"I miei canali",addchannel:"Aggiungi canale",analytics:"Analisi",save:"Salva",enter:"Inserisci valore",all:"Tutte le tematiche",required:"Obbligatorio",notrequired:"Opzionale",pending:"In attesa",active:"Attivo",noaccess:"Accesso negato",saved:"Salvato",starts:"Avvii",confirmed:"Iscritti confermati",total:"Iscritti totali",remain:"Rimanenti",cr:"CR utenti",premium:"Utenti con TG Premium",avatar:"Coefficiente avatar",nodata:"Nessun dato"},
+    pt:{settings:"Configurações",back:"Voltar",menu:"Menu principal",subs:"Inscritos",price:"Preço",daily:"Limite diário",hourly:"Velocidade por hora",unsubs:"Cancelamentos",relink:"Alterar link",themes:"Temas",subcount:"Número de canais",mychannels:"Meus canais",addchannel:"Adicionar canal",analytics:"Análise",save:"Salvar",enter:"Digite o valor",all:"Todos os temas",required:"Obrigatório",notrequired:"Opcional",pending:"Pendente",active:"Ativo",noaccess:"Sem acesso",saved:"Salvo",starts:"Inícios",confirmed:"Inscritos confirmados",total:"Inscritos no total",remain:"Restantes",cr:"CR do usuário",premium:"Usuários com TG Premium",avatar:"Coeficiente de avatar",nodata:"Sem dados"},
+    "pt-BR":{settings:"Configurações",back:"Voltar",menu:"Menu principal",subs:"Inscritos",price:"Preço",daily:"Limite diário",hourly:"Velocidade por hora",unsubs:"Cancelamentos",relink:"Alterar link",themes:"Temas",subcount:"Número de canais",mychannels:"Meus canais",addchannel:"Adicionar canal",analytics:"Análise",save:"Salvar",enter:"Digite o valor",all:"Todos os temas",required:"Obrigatório",notrequired:"Opcional",pending:"Pendente",active:"Ativo",noaccess:"Sem acesso",saved:"Salvo",starts:"Inícios",confirmed:"Inscritos confirmados",total:"Inscritos no total",remain:"Restantes",cr:"CR do usuário",premium:"Usuários com TG Premium",avatar:"Coeficiente de avatar",nodata:"Sem dados"},
+    tr:{settings:"Ayarlar",back:"Geri",menu:"Ana menü",subs:"Aboneler",price:"Fiyat",daily:"Günlük limit",hourly:"Saatlik hız",unsubs:"Çıkışlar",relink:"Bağlantıyı değiştir",themes:"Konular",subcount:"Kanal sayısı",mychannels:"Kanallarım",addchannel:"Kanal ekle",analytics:"Analitik",save:"Kaydet",enter:"Değer girin",all:"Tüm konular",required:"Zorunlu",notrequired:"İsteğe bağlı",pending:"Beklemede",active:"Aktif",noaccess:"Erişim yok",saved:"Kaydedildi",starts:"Başlangıçlar",confirmed:"Onaylı aboneler",total:"Tüm abonelikler",remain:"Kalan",cr:"Kullanıcı CR",premium:"TG Premium kullanıcıları",avatar:"Avatar katsayısı",nodata:"Henüz veri yok"},
+    id:{settings:"Pengaturan",back:"Kembali",menu:"Menu utama",subs:"Pelanggan",price:"Harga",daily:"Batas harian",hourly:"Kecepatan per jam",unsubs:"Berhenti berlangganan",relink:"Ubah tautan",themes:"Topik",subcount:"Jumlah kanal",mychannels:"Kanal saya",addchannel:"Tambah kanal",analytics:"Analitik",save:"Simpan",enter:"Masukkan nilai",all:"Semua topik",required:"Wajib",notrequired:"Opsional",pending:"Menunggu",active:"Aktif",noaccess:"Tidak ada akses",saved:"Tersimpan",starts:"Mulai",confirmed:"Pelanggan terkonfirmasi",total:"Total berlangganan",remain:"Tersisa",cr:"CR pengguna",premium:"Pengguna TG Premium",avatar:"Koefisien avatar",nodata:"Belum ada data"},
+    ar:{settings:"الإعدادات",back:"رجوع",menu:"القائمة الرئيسية",subs:"المشتركون",price:"السعر",daily:"الحد اليومي",hourly:"السرعة بالساعة",unsubs:"إلغاء الاشتراك",relink:"تغيير الرابط",themes:"المواضيع",subcount:"عدد القنوات",mychannels:"قنواتي",addchannel:"إضافة قناة",analytics:"التحليلات",save:"حفظ",enter:"أدخل القيمة",all:"جميع المواضيع",required:"مطلوب",notrequired:"اختياري",pending:"قيد الانتظار",active:"نشط",noaccess:"لا يوجد وصول",saved:"تم الحفظ",starts:"مرات البدء",confirmed:"المشتركون المؤكدون",total:"إجمالي الاشتراكات",remain:"المتبقي",cr:"معدل المستخدم",premium:"مستخدمو TG Premium",avatar:"معامل الصورة",nodata:"لا توجد بيانات بعد"},
+    zh:{settings:"设置",back:"返回",menu:"主菜单",subs:"订阅者",price:"价格",daily:"每日上限",hourly:"每小时速度",unsubs:"取消订阅",relink:"修改链接",themes:"主题",subcount:"频道数量",mychannels:"我的频道",addchannel:"添加频道",analytics:"分析",save:"保存",enter:"输入数值",all:"所有主题",required:"必选",notrequired:"可选",pending:"审核中",active:"已启用",noaccess:"无权限",saved:"已保存",starts:"启动次数",confirmed:"已确认订阅",total:"累计订阅",remain:"剩余",cr:"用户转化率",premium:"TG Premium 用户",avatar:"头像系数",nodata:"暂无数据"},
+    ja:{settings:"設定",back:"戻る",menu:"メインメニュー",subs:"購読者",price:"価格",daily:"1日の上限",hourly:"1時間あたりの速度",unsubs:"登録解除",relink:"リンクを変更",themes:"テーマ",subcount:"チャンネル数",mychannels:"自分のチャンネル",addchannel:"チャンネルを追加",analytics:"分析",save:"保存",enter:"値を入力",all:"すべてのテーマ",required:"必須",notrequired:"任意",pending:"確認待ち",active:"有効",noaccess:"アクセスなし",saved:"保存しました",starts:"開始数",confirmed:"確認済み購読",total:"累計購読",remain:"残り",cr:"ユーザーCR",premium:"TG Premiumユーザー",avatar:"アバター係数",nodata:"データはまだありません"},
+    ko:{settings:"설정",back:"뒤로",menu:"메인 메뉴",subs:"구독자",price:"가격",daily:"일일 한도",hourly:"시간당 속도",unsubs:"구독 취소",relink:"링크 변경",themes:"주제",subcount:"채널 수",mychannels:"내 채널",addchannel:"채널 추가",analytics:"분석",save:"저장",enter:"값 입력",all:"모든 주제",required:"필수",notrequired:"선택",pending:"대기 중",active:"활성",noaccess:"접근 권한 없음",saved:"저장됨",starts:"시작",confirmed:"확인된 구독자",total:"전체 구독",remain:"남음",cr:"사용자 CR",premium:"TG Premium 사용자",avatar:"아바타 계수",nodata:"아직 데이터 없음"}
+  };
+  function psT(k){return (PS_I18N[state.lang]||PS_I18N.en)[k]||PS_I18N.en[k]||k}
+  function psEsc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+  async function psApi(pid,action,payload={}){return await apiPost("/api/miniapp/project/"+pid+"/settings",Object.assign({user_id:USER_ID,action},payload))}
+  async function openProjectSettings(pid){
+    state.currentProjectId=pid; show("project-settings");
+    const box=document.getElementById("pps-content"); box.innerHTML="…";
+    document.getElementById("pps-title").textContent=psT("settings");
+    try{
+      const r=await apiGet("/api/miniapp/project/"+pid+"/settings?user_id="+encodeURIComponent(USER_ID));
+      if(!r.ok)throw new Error(r.message||r.error||psT("noaccess"));
+      renderProjectSettings(pid,r.settings||{});
+    }catch(e){box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>'}
+  }
+  function renderProjectSettings(pid,s){
+    const role=String(s.role||"monetize").toLowerCase();
+    const box=document.getElementById("pps-content"); let html='<div class="settings-block">';
+    if(role==="advertiser"){
+      html+='<div class="setting-grid"><button class="btn" data-set="subs">'+psT("subs")+': '+Number(s.target_subs||0)+'</button><button class="btn" data-set="price">'+psT("price")+': '+Number(s.price||0).toFixed(2)+' ₽</button>';
+      html+='<button class="btn" data-set="daily">'+psT("daily")+': '+Number(s.daily_limit||0)+'</button><button class="btn" data-set="hourly">'+psT("hourly")+': '+Number(s.hourly_speed||0)+'</button>';
+      html+='<button class="btn" data-set="unsubs">'+psT("unsubs")+': '+(Number(s.track_unsubs||0)?"✅":"❌")+'</button><button class="btn" data-set="relink">'+psT("relink")+'</button></div>';
+      html+='<button class="btn wide" data-set="themes">'+psT("themes")+'</button>';
+    }else{
+      html+='<div class="setting-grid"><button class="btn" data-set="subcount">'+psT("subcount")+': '+Number(s.sub_count||1)+'</button><button class="btn" data-set="price">'+psT("price")+': '+Number(s.price||1).toFixed(2)+' ₽</button></div>';
+      html+='<button class="btn wide" data-set="mychannels">'+psT("mychannels")+'</button><button class="btn wide" data-set="relink">'+psT("relink")+'</button>';
+    }
+    html+='</div>'; box.innerHTML=html;
+    box.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>psHandle(pid,s,b.getAttribute("data-set")));
+  }
+  async function psHandle(pid,s,a){
+    if(a==="price")return psPrice(pid,s);
+    if(a==="themes")return psThemes(pid,s);
+    if(a==="mychannels")return psChannels(pid);
+    if(a==="relink")return psInput(pid,"set_relink",psT("relink"),"https://t.me/username");
+    if(a==="unsubs"){
+      const r=await psApi(pid,"toggle_unsubs"); if(r.ok)openProjectSettings(pid); else alert(r.message||r.error); return;
+    }
+    const title=a==="subs"?psT("subs"):a==="daily"?psT("daily"):a==="hourly"?psT("hourly"):psT("subcount");
+    return psInput(pid,a==="subs"?"set_subs":a==="daily"?"set_daily":a==="hourly"?"set_hourly":"set_subcount",title,"");
+  }
+  async function psInput(pid,action,title,placeholder){
+    const box=document.getElementById("pps-content"); box.innerHTML='<div class="settings-block"><div><b>'+psEsc(title)+'</b></div><div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"><button class="btn primary" id="ps-save">'+psT("save")+'</button></div></div>';
+    document.getElementById("ps-save").onclick=async()=>{const v=document.getElementById("ps-input").value.trim();if(!v)return;const r=await psApi(pid,action,{value:v});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+  }
+  async function psPrice(pid,s){
+    const box=document.getElementById("pps-content"); const prices=Array.isArray(s.price_options)?s.price_options:[];
+    box.innerHTML='<div class="settings-note">'+psEsc(psT("price"))+'</div><div class="price-grid">'+prices.map(x=>'<button class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>';
+    box.querySelectorAll("[data-price]").forEach(b=>b.onclick=async()=>{const r=await psApi(pid,"set_price",{value:b.getAttribute("data-price")});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)});
+  }
+  async function psThemes(pid,s){
+    const selected=new Set((s.themes_mode==="all"||!Array.isArray(s.selected_themes)||!s.selected_themes.length)?(s.themes||[]):s.selected_themes);
+    const box=document.getElementById("pps-content");
+    box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div><button class="btn wide" id="ps-themes-save" style="margin-top:10px">'+psT("save")+'</button>';
+    box.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{const x=b.getAttribute("data-theme");if(selected.has(x))selected.delete(x);else selected.add(x);b.textContent=(selected.has(x)?'✅ ':'❌ ')+x});
+    document.getElementById("ps-themes-save").onclick=async()=>{const r=await psApi(pid,"set_themes",{themes:Array.from(selected)});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+  }
+  async function psChannels(pid){
+    const r=await apiGet("/api/miniapp/project/"+pid+"/settings?user_id="+encodeURIComponent(USER_ID)); const s=r.settings||{}; const box=document.getElementById("pps-content");
+    let html='<div class="channel-list">';
+    (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button class="btn" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
+    html+='<button class="btn wide" id="ps-add-channel">'+psT("addchannel")+'</button></div>'; box.innerHTML=html;
+    box.querySelectorAll("[data-ch]").forEach(b=>b.onclick=async()=>{const rr=await psApi(pid,"toggle_channel",{index:Number(b.getAttribute("data-ch"))});if(rr.ok)psChannels(pid);else alert(rr.message||rr.error)});
+    document.getElementById("ps-add-channel").onclick=()=>psInput(pid,"add_channel",psT("addchannel"),"@username or t.me/...");
+  }
+  async function openProjectAnalytics(pid){
+    state.currentProjectId=pid; show("project-analytics"); document.getElementById("ppa-title").textContent=psT("analytics"); const box=document.getElementById("ppa-content");box.innerHTML="…";
+    try{const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID));const a=r.analytics||{};let html='';if(a.themes&&Object.keys(a.themes).length){html+='<div><b>'+psT("themes")+'</b></div>';for(const [k,v] of Object.entries(a.themes))html+='<div>'+psEsc(k)+' — '+psEsc(v)+'</div>'}html+='<br/><div><b>'+psT("total")+':</b> '+Number(a.total||0)+'</div><div><b>'+psT("remain")+':</b> '+Number(a.remain||0)+'</div><div><b>'+psT("cr")+':</b> '+Number(a.cr||0)+'%</div><div><b>'+psT("premium")+':</b> '+Number(a.premium_pct||0)+'%</div><div><b>'+psT("avatar")+':</b> '+psEsc(a.avatar_coef==null?0:a.avatar_coef)+'</div>';box.innerHTML=html||'<div class="muted">'+psT("nodata")+'</div>'}catch(e){box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>'}
+  }
+  document.getElementById("pps-back").onclick=()=>openProject(state.currentProjectId);
+  document.getElementById("pps-menu").onclick=()=>show("home");
+  document.getElementById("ppa-back").onclick=()=>openProject(state.currentProjectId);
+})();
 </script>
 </body>
 
