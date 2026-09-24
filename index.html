@@ -2130,7 +2130,7 @@ function projectNameUrl(p){
   const uname=String(p.bot_username||"").replace(/^@/,"").trim();
   return uname?"https://t.me/"+encodeURIComponent(uname):"";
 }
-async function openProject(pid){
+async async function openProject(pid){
   state.currentProjectId=pid;
   show("project");
   try{setLocationRoute("project",{projectId:pid})}catch(e){}
@@ -2197,7 +2197,7 @@ async function openProject(pid){
     const enabled=Number(p.enabled||0)===1 && (p.status||"")==="active";
     btns+='<button class="btn primary wide" data-pa="'+(enabled?"stop":"start")+'">'+(enabled?t("btn_stop")||"Stop":t("btn_start")||"Start")+'</button>';
     btns+='<button class="btn wide" data-pa="balance">'+t("balance")+'</button>';
-    btns+='<div class="btn-row"><button class="btn" data-pa="analytics">'+t("analytics")+'</button><button class="btn" data-pa="delete">'+t("close")+'</button></div>';
+    btns+='<button class="btn wide" data-pa="analytics">'+t("analytics")+'</button>';
     if(act){
       act.innerHTML=btns;
       act.querySelectorAll("[data-pa]").forEach(b=>{
@@ -2209,7 +2209,6 @@ async function openProject(pid){
           if(a==="balance"){show("balance");loadMe();loadRequests();return;}
           if(a==="settings"){openProjectSettings(pid);return;}
           if(a==="analytics"){openProjectAnalytics(pid);return;}
-          if(a==="delete"){show("projects");loadProjects();return;}
           if(a==="admin"){openProject(pid);return;}
           if(a==="snippet"){openProject(pid);return;}
           openProject(pid);
@@ -2814,6 +2813,29 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   document.getElementById("pps-back").onclick=()=>openProject(state.currentProjectId);
   document.getElementById("pps-menu").onclick=()=>show("home");
   document.getElementById("ppa-back").onclick=()=>openProject(state.currentProjectId);
+})();
+</script>
+
+<style id="project-actions-final-fix">
+#screen-project .project-actions .btn,
+#pd-actions .btn{cursor:pointer}
+</style>
+<script id="project-actions-final-fix-script">
+(function(){
+  // Final safety layer: the project detail function must remain callable after all UI scripts load.
+  // The actual handlers are attached by openProject() after the project data is rendered.
+  document.addEventListener("click", function(e){
+    const b=e.target.closest("#pd-actions [data-pa]");
+    if(!b) return;
+    const pid=state.currentProjectId;
+    if(!pid) return;
+    const action=b.getAttribute("data-pa");
+    if(action==="settings" && typeof openProjectSettings==="function"){
+      e.preventDefault(); e.stopImmediatePropagation(); openProjectSettings(pid);
+    }else if(action==="analytics" && typeof openProjectAnalytics==="function"){
+      e.preventDefault(); e.stopImmediatePropagation(); openProjectAnalytics(pid);
+    }
+  }, true);
 })();
 </script>
 </body>
