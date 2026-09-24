@@ -38,8 +38,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
 .content{flex:1;display:flex;flex-direction:column;padding:12px 16px 20px;min-height:0}
-.screen{display:none;flex:1;flex-direction:column;min-height:0;justify-content:flex-start;align-items:stretch}
-.screen.active{display:block}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.active{display:flex;flex-direction:column}
 #screen-main.active{display:flex;flex-direction:column}
 .spacer{flex:1;min-height:8px}
 
@@ -153,11 +153,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
 
 .topbar{align-items:center;padding-top:0;padding-bottom:0;height:var(--header-h);min-height:var(--header-h)}
-.menu-back-bar{display:none!important;justify-content:flex-start;margin:0 0 8px;min-height:0;height:0;overflow:hidden;pointer-events:none}
-.menu-back-bar.show{display:flex!important;min-height:32px;height:auto;overflow:visible}
+.menu-back-bar{display:none;justify-content:flex-start;margin:0 0 12px;min-height:34px;pointer-events:none}
+.menu-back-bar.show{display:flex}
 .menu-back-btn{pointer-events:auto;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
 .menu-back-btn:active{opacity:.8}
-.content.has-back{padding-top:4px}
+.content.has-back{padding-top:6px}
 
 
 .main-menu{grid-template-columns:1fr 1fr}
@@ -1581,7 +1581,7 @@ function show(id,push){
   const el=document.getElementById("screen-"+id);
   if(el){
     el.classList.add("active");
-    el.style.display="block";
+    el.style.display="";
   }else{
     console.warn("show: screen not found", id);
   }
@@ -2457,11 +2457,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 </body>
 
 
-<style id="layout-edge-fix">
-/* keep base; detailed tile sizing in support-panel-nudge */
-html,body{width:100%;max-width:100%;overflow-x:hidden}
-.app{width:100%;max-width:480px;margin:0 auto;box-sizing:border-box}
-</style>
+<style id="layout-edge-fix"></style>
 
 
 <style id="collab-chat-fix">
@@ -2506,126 +2502,132 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 
 
 <style id="support-panel-nudge">
-/* Support + Panel = same layout as Settings (tile-grid). No full-screen stretch. */
+/* Как в начальной версии index(1): плитки настроек — эталон.
+   Support/Panel: то же оформление, своё наполнение. */
 .content{
-  padding:12px 16px 20px!important;
-  box-sizing:border-box!important;
-  max-width:480px;
-  margin:0 auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:12px 16px 20px;
+  min-height:0;
+  box-sizing:border-box;
 }
-.content.has-back{padding-top:8px!important}
+.content.has-back{padding-top:6px}
 
-.menu-back-bar.show{
-  margin:6px 0 10px!important;
-  min-height:32px!important;
+.menu-back-bar{
+  display:none;
+  justify-content:flex-start;
+  margin:0 0 12px;
+  min-height:34px;
+  pointer-events:none;
+}
+.menu-back-bar.show{display:flex}
+.menu-back-btn{
+  pointer-events:auto;
+  height:32px;
+  padding:0 14px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--text);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:var(--shadow);
 }
 
 .section-title{
-  font-size:18px!important;
-  font-weight:700!important;
-  margin:0 0 12px!important;
-  padding:0!important;
-  line-height:1.25!important;
-  text-align:left!important;
+  font-size:18px;
+  font-weight:700;
+  margin:0 0 12px;
+  padding:0;
+  line-height:1.25;
+  text-align:left;
+  color:var(--text);
 }
 
+/* Единая сетка как в настройках */
 #screen-settings .tile-grid,
 #screen-support .tile-grid,
 #screen-panel .tile-grid,
 .tile-grid{
-  display:grid!important;
-  grid-template-columns:1fr 1fr!important;
-  gap:10px!important;
-  width:100%!important;
-  max-width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  width:100%;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
 #screen-settings .tile,
 #screen-support .tile,
 #screen-panel .tile,
 .tile{
-  aspect-ratio:1 / 1!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  height:auto!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:16px 12px!important;
-  border-radius:16px!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:6px!important;
-  overflow:hidden!important;
+  aspect-ratio:1;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  gap:6px;
+  width:100%;
+  min-width:0;
+  height:auto;
+  box-sizing:border-box;
 }
 
 #screen-settings .tile .t-title,
 #screen-support .tile .t-title,
 #screen-panel .tile .t-title,
 .tile .t-title{
-  font-size:15px!important;
-  font-weight:700!important;
-  line-height:1.25!important;
-  text-align:center!important;
-  width:100%!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  line-height:1.25;
+  width:100%;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 
 #screen-settings .tile .t-sub,
 #screen-support .tile .t-sub,
 #screen-panel .tile .t-sub,
 .tile .t-sub{
-  font-size:12px!important;
-  font-weight:500!important;
-  line-height:1.3!important;
-  text-align:center!important;
-  width:100%!important;
-  color:var(--hint)!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
+  font-size:12px;
+  font-weight:500;
+  color:var(--hint);
+  line-height:1.3;
+  width:100%;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 
-/* Panel role card — same width as settings tiles row */
 #screen-panel .role-panel{
-  width:100%!important;
-  max-width:100%!important;
-  margin:0 0 12px!important;
-  padding:12px 14px!important;
-  box-sizing:border-box!important;
+  margin:0 0 12px;
+  padding:12px 14px;
+  box-sizing:border-box;
+  width:100%;
 }
 
-/* Wide analytics tile in panel */
+/* широкая кнопка аналитики в панели */
 #screen-panel .tile[style*="grid-column"]{
-  grid-column:1 / -1!important;
-  aspect-ratio:auto!important;
-  min-height:72px!important;
-  height:auto!important;
+  grid-column:1 / -1;
+  aspect-ratio:auto;
+  min-height:72px;
 }
 
-/* Balance / projects — same content padding, not stretched */
-#screen-balance,
-#screen-projects,
-#screen-support,
-#screen-panel,
-#screen-settings{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-
+/* баланс / проекты — обычный поток, не на весь viewport */
 #screen-balance .panel,
-#screen-projects .list,
-#screen-projects .item{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
+#screen-projects .list{
+  width:100%;
+  box-sizing:border-box;
 }
 </style>
 
@@ -2670,37 +2672,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 </style>
 
 
-<style id="collab-top-nudge">
-/* Collaborate: title + segment closer to Back */
-#screen-collaborate .section-title{
-  margin:0 0 8px!important;
-  padding:0!important;
-  line-height:1.2!important;
-  transform:translateY(-2px);
-}
-.content.has-back #screen-collaborate .section-title{
-  margin-top:-2px!important;
-}
-#screen-collaborate .seg-toggle{
-  margin:0 0 10px!important;
-  gap:6px!important;
-}
-#screen-collaborate .seg-toggle button{
-  min-height:40px!important;
-}
-#screen-collaborate .panel{
-  margin-bottom:10px!important;
-}
-</style>
+<style id="collab-top-nudge"></style>
 
 
-<style id="screen-nav-fix">
-.screen{display:none!important}
-.screen.active{display:block!important}
-#screen-main.active{display:flex!important;flex-direction:column!important}
-#screen-support-chat.active{display:flex!important;flex-direction:column!important}
-#main-actions .btn{pointer-events:auto!important;position:relative;z-index:2}
-</style>
+<style id="screen-nav-fix"></style>
 
 
 <style id="dark-theme-true">
