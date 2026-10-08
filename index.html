@@ -608,6 +608,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 #screen-panel-analytics-view .an-emph{
   margin:10px 0 4px;font-size:14px;font-weight:800;color:var(--text);
 }
+</style><style id="snippet-ui">
+#screen-panel-analytics .panel-an-actions{margin-top:4px}
+#screen-panel-analytics .panel-an-actions .btn-row{margin-top:0}
+#screen-panel-analytics .panel-an-actions .btn{min-height:48px;font-size:14px}
+.snip-file-card{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:16px;border:1px solid var(--line);border-radius:14px;
+  background:var(--surface);box-shadow:var(--shadow);margin-bottom:12px;
+}
+.snip-file-name{font-size:14px;font-weight:700;color:var(--text);word-break:break-all;text-align:center}
+.snip-dl-btn{width:100%;max-width:280px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.snip-dl-ico{font-size:18px;line-height:1}
+.snip-instr{
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  background:var(--bg);margin-bottom:4px;
+}
+.snip-instr-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
+.snip-instr-body{font-size:13px;line-height:1.45;color:var(--text2);white-space:pre-wrap}
 </style></head>
 <body>
 
@@ -1143,11 +1161,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         </div>
         <div class="period-dropdown" id="panel-period-dd" hidden></div>
       </div>
-      <div class="tile-grid">
-        <button type="button" class="tile" data-pan-an="expenses"><div class="t-title" data-i18n="an_expenses">Расходы</div></button>
-        <button type="button" class="tile" data-pan-an="income"><div class="t-title" data-i18n="an_income">Доходы</div></button>
-        <button type="button" class="tile" data-pan-an="revenue"><div class="t-title" data-i18n="an_revenue">Оборот и выручка</div></button>
-        <button type="button" class="tile" data-pan-an="other"><div class="t-title" data-i18n="an_other">Другое</div></button>
+      <div class="btn-stack panel-an-actions">
+        <div class="btn-row">
+          <button type="button" class="btn" data-pan-an="expenses" data-i18n="an_expenses">Расходы</button>
+          <button type="button" class="btn" data-pan-an="income" data-i18n="an_income">Доходы</button>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn" data-pan-an="revenue" data-i18n="an_revenue">Оборот и выручка</button>
+          <button type="button" class="btn" data-pan-an="other" data-i18n="an_other">Другое</button>
+        </div>
       </div>
     </div>
 
@@ -1226,7 +1248,7 @@ const LANGS=[
 
 function baseI18n(o){return o}
 const I18N={
-ru:baseI18n({an_all_period:"За весь период",an_period:"Период",an_revenue:"Оборот и выручка",an_other:"Другое",an_total:"всего",an_rev_detail:"Пополнения и выводы",an_net:"Итого",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль (−20%)",an_net_usn:"Чистая прибыль (−15% УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
+ru:baseI18n({snippet_pick_lang:"Выберите язык бота",snippet_pick_lib:"Выберите библиотеку",snippet_download:"Скачать файл",snippet_instruction:"Инструкция",cancel:"Отмена",an_all_period:"За весь период",an_period:"Период",an_revenue:"Оборот и выручка",an_other:"Другое",an_total:"всего",an_rev_detail:"Пополнения и выводы",an_net:"Итого",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль (−20%)",an_net_usn:"Чистая прибыль (−15% УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
 language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
@@ -1239,7 +1261,7 @@ support_manager:"Менеджер",support_bot:"Бот",support_email:"Почт�
 staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",staff_mandatory:"Обязательный пользователь",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",empty:"Нет данных",
 prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 ч</strong><br>• Требуется: <strong>3 смены в неделю</strong><br><br><strong>Стажировка</strong><br><br>• Период: <strong>1 месяц</strong><br>• Смена стажёра: <strong>6 ч</strong><br>• Оплата за смену стажёра: <strong>10$</strong><br><br><strong>Обязанности</strong><br><br>• Модерация объявлений<br>• Модерация жалоб<br>• Модерация обращений в поддержку<br>• Аналитика (просмотр)<br>• Рабочий центр / смены<br>• Контроль смен (только просмотр)"}),
-en:baseI18n({an_all_period:"All time",an_period:"Period",an_revenue:"Turnover & revenue",an_other:"Other",an_total:"total",an_rev_detail:"Deposits and withdrawals",an_net:"Net",an_gross:"Gross profit",an_operating:"Operating profit (−20%)",an_net_usn:"Net profit (−15% STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
+en:baseI18n({snippet_pick_lang:"Choose bot language",snippet_pick_lib:"Choose library",snippet_download:"Download file",snippet_instruction:"Instructions",cancel:"Cancel",an_all_period:"All time",an_period:"Period",an_revenue:"Turnover & revenue",an_other:"Other",an_total:"total",an_rev_detail:"Deposits and withdrawals",an_net:"Net",an_gross:"Gross profit",an_operating:"Operating profit (−20%)",an_net_usn:"Net profit (−15% STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
@@ -2522,54 +2544,127 @@ function projectNameUrl(p){
   return uname?"https://t.me/"+encodeURIComponent(uname):"";
 }
 
+
 async function openProjectSnippetMenu(pid){
   state.currentProjectId=pid;
-  // отдельный лёгкий экран на базе project-settings контейнера или alert-flow с понятным меню
-  let host=document.getElementById("screen-project-snippet");
-  if(!host){
-    // используем project-analytics-like simple panel via project screen body
-    show("project");
-  }
-  const r=await apiGet("/api/miniapp/project/"+pid+"/snippet?user_id="+encodeURIComponent(USER_ID));
-  const installed=!!(r&&r.installed);
-  const title=t("btn_snippet")||t("snippet")||"Сниппет";
-  const statusTxt=installed?(t("snippet_installed")||"Сниппет установлен"):(t("snippet_not_installed")||"Сниппет не установлен");
+  state.snippetFlow={step:"lang", lang:null, library:null, stacks:[], file:null};
+  show("project");
+  document.getElementById("pd-title").textContent=t("btn_snippet")||t("snippet")||"Сниппет";
   const body=document.getElementById("pd-body");
   const act=document.getElementById("pd-actions");
-  document.getElementById("pd-title").textContent=title;
-  if(body){
-    body.innerHTML='<div class="field"><div class="label">'+(t("status")||"Статус")+'</div><div class="value">'+statusTxt+'</div></div>'
-      +'<div class="muted" style="margin-top:10px">'+(installed
-        ?(t("snippet_hint_ok")||"Файл сниппета уже отмечен как установленный.")
-        :(t("snippet_hint_get")||"Получите файл сниппета в Telegram-боте (кнопка «Сниппет»), вставьте в своего бота, затем отметьте установку."))+'</div>';
-  }
-  if(act){
-    let btns='';
-    if(installed){
-      btns+='<button class="btn wide" id="snip-reset">'+(t("snippet_reset")||"Сбросить статус")+'</button>';
-    }else{
-      btns+='<button class="btn primary wide" id="snip-install">'+(t("snippet_mark")||"Отметить установленным")+'</button>';
+  body.innerHTML="…";
+  act.innerHTML="";
+  try{
+    const r=await apiGet("/api/miniapp/project/"+pid+"/snippet?user_id="+encodeURIComponent(USER_ID));
+    if(r&&r.installed){
+      body.innerHTML='<div class="field"><div class="label">'+(t("status")||"Статус")+'</div><div class="value">'+(t("snippet_installed")||"Сниппет установлен")+'</div></div>';
+      act.innerHTML='<button type="button" class="btn wide" id="snip-reset">'+(t("snippet_reset")||"Сбросить статус")+'</button>'
+        +'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+      document.getElementById("snip-reset").onclick=async()=>{
+        await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"reset"});
+        openProjectSnippetMenu(pid);
+      };
+      document.getElementById("snip-back").onclick=()=>openProject(pid);
+      return;
     }
-    btns+='<button class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
-    act.innerHTML=btns;
-    const back=document.getElementById("snip-back");
-    if(back) back.onclick=()=>openProject(pid);
-    const inst=document.getElementById("snip-install");
-    if(inst) inst.onclick=async()=>{
-      try{
-        const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"install"});
-        if(rr&&rr.ok) openProjectSnippetMenu(pid);
-        else alert((rr&&(rr.message||rr.error))||"error");
-      }catch(e){alert(String(e.message||e))}
+    state.snippetFlow.stacks=r.stacks||[];
+    renderSnippetLangStep(pid);
+  }catch(e){
+    body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>';
+    act.innerHTML='<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+    document.getElementById("snip-back").onclick=()=>openProject(pid);
+  }
+}
+function renderSnippetLangStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  const stacks=state.snippetFlow.stacks||[];
+  body.innerHTML='<div class="muted" style="margin-bottom:8px">'+(t("snippet_pick_lang")||"Выберите язык бота")+'</div>';
+  let html='';
+  stacks.forEach(s=>{
+    html+='<button type="button" class="btn wide" data-slang="'+panelEsc(s.id)+'">'+panelEsc(s.title||s.id)+'</button>';
+  });
+  if(!stacks.length){
+    html+='<button type="button" class="btn wide" data-slang="python">Python</button>';
+  }
+  act.innerHTML=html+'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+  act.querySelectorAll("[data-slang]").forEach(b=>{
+    b.onclick=()=>{
+      state.snippetFlow.lang=b.getAttribute("data-slang");
+      renderSnippetLibStep(pid);
     };
-    const rst=document.getElementById("snip-reset");
-    if(rst) rst.onclick=async()=>{
-      try{
-        const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"reset"});
-        if(rr&&rr.ok) openProjectSnippetMenu(pid);
-        else alert((rr&&(rr.message||rr.error))||"error");
-      }catch(e){alert(String(e.message||e))}
+  });
+  document.getElementById("snip-back").onclick=()=>openProject(pid);
+}
+function renderSnippetLibStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  const stacks=state.snippetFlow.stacks||[];
+  const stack=stacks.find(s=>s.id===state.snippetFlow.lang)||{libs:[{id:"telebot",title:"telebot"}]};
+  body.innerHTML='<div class="muted" style="margin-bottom:8px">'+(t("snippet_pick_lib")||"Выберите библиотеку")+'</div>';
+  let html='';
+  (stack.libs||[]).forEach(l=>{
+    html+='<button type="button" class="btn wide" data-slib="'+panelEsc(l.id)+'">'+panelEsc(l.title||l.id)+'</button>';
+  });
+  act.innerHTML=html+'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+  act.querySelectorAll("[data-slib]").forEach(b=>{
+    b.onclick=async()=>{
+      state.snippetFlow.library=b.getAttribute("data-slib");
+      await renderSnippetFileStep(pid);
     };
+  });
+  document.getElementById("snip-back").onclick=()=>renderSnippetLangStep(pid);
+}
+async function renderSnippetFileStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  body.innerHTML="…";
+  act.innerHTML="";
+  try{
+    const r=await apiPost("/api/miniapp/project/"+pid+"/snippet",{
+      user_id:USER_ID, action:"generate",
+      lang:state.snippetFlow.lang, library:state.snippetFlow.library
+    });
+    if(!r||!r.ok){ body.innerHTML='<div class="muted">'+panelEsc((r&&(r.error||r.message))||"error")+'</div>'; return; }
+    state.snippetFlow.file=r;
+    const fname=r.filename||"snippet.py";
+    const instr=r.instruction||"";
+    body.innerHTML=
+      '<div class="snip-file-card">'
+      +'<div class="snip-file-icon" aria-hidden="true">'
+      +'<svg viewBox="0 0 48 48" width="48" height="48">'
+      +'<rect x="10" y="6" width="28" height="36" rx="4" fill="var(--brand-soft)" stroke="var(--brand)" stroke-width="2"/>'
+      +'<path d="M18 20h12M18 26h12M18 32h8" stroke="var(--brand)" stroke-width="2" stroke-linecap="round"/>'
+      +'</svg></div>'
+      +'<div class="snip-file-name">'+panelEsc(fname)+'</div>'
+      +'<button type="button" class="btn primary snip-dl-btn" id="snip-download">'
+      +'<span class="snip-dl-ico" aria-hidden="true">⬇</span> '
+      +(t("snippet_download")||"Скачать файл")
+      +'</button>'
+      +'</div>'
+      +'<div class="snip-instr"><div class="snip-instr-title">'+(t("snippet_instruction")||"Инструкция")+'</div>'
+      +'<div class="snip-instr-body">'+panelEsc(instr).replace(/\\n/g,"<br>")+'</div></div>';
+    act.innerHTML=
+      '<button type="button" class="btn primary wide" id="snip-installed">'+(t("snippet_mark")||"Я установил сниппет")+'</button>'
+      +'<button type="button" class="btn wide" id="snip-cancel">'+(t("cancel")||"Отмена")+'</button>';
+    document.getElementById("snip-download").onclick=()=>{
+      try{
+        const blob=new Blob([r.content||""],{type:"text/plain;charset=utf-8"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=url; a.download=fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),2000);
+      }catch(e){ alert(String(e.message||e)); }
+    };
+    document.getElementById("snip-installed").onclick=async()=>{
+      const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"install"});
+      if(rr&&rr.ok) openProject(pid);
+      else alert((rr&&(rr.message||rr.error))||"error");
+    };
+    document.getElementById("snip-cancel").onclick=()=>openProject(pid);
+  }catch(e){
+    body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>';
   }
 }
 
