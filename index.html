@@ -583,6 +583,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .period-label:active{opacity:.85}
+</style><style id="an-other-styles">
+#screen-panel-analytics-view .an-h{
+  margin:12px 0 6px;font-size:14px;font-weight:800;color:var(--text);
+}
+#screen-panel-analytics-view .an-line{
+  margin:5px 0;font-size:14px;line-height:1.4;color:var(--text2);
+}
+#screen-panel-analytics-view .an-emph{
+  margin:10px 0 4px;font-size:14px;font-weight:800;color:var(--text);
+}
 </style></head>
 <body>
 
@@ -3246,29 +3256,33 @@ async function ensureQuarters(target){
   }catch(e){ return target.quarters||[]; }
 }
 function shiftPeriod(target, dir){
-  // dir -1 prev, +1 next; among all + quarters
+  // list ascending: 1,2,3… ; dir -1 = назад (меньший номер), +1 = вперёд (больший)
   const list=target.quarters||[];
   if(!list.length) return;
   if(target.mode==="all"){
-    if(dir<0){
-      // go to current (newest) quarter
+    if(dir>0){
+      // с «весь период» вперёд → 1-й квартал
       const q=list[0];
+      target.mode="quarter"; target.q=q.index; target.label=q.label;
+    }else if(dir<0){
+      // назад с «весь период» → последний (текущий) квартал
+      const q=list[list.length-1];
       target.mode="quarter"; target.q=q.index; target.label=q.label;
     }
     return;
   }
-  const idx=list.findIndex(x=>x.index===target.q);
+  const idx=list.findIndex(x=>Number(x.index)===Number(target.q));
   if(idx<0){ target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период"; return; }
-  const n=idx - dir; // list is newest-first; next(dir+1) goes to older = higher index in list
-  // prev arrow = older = higher index in list; next arrow = newer
-  // dir -1 = prev (older), dir +1 = next (newer)
-  const ni = idx - dir;
-  if(ni < 0){
-    // newer than newest → all period
+  const ni=idx+dir;
+  if(ni<0){
     target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
     return;
   }
-  if(ni >= list.length) return;
+  if(ni>=list.length){
+    // дальше текущего нет — «весь период»
+    target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
+    return;
+  }
   const q=list[ni];
   target.mode="quarter"; target.q=q.index; target.label=q.label;
 }
@@ -3417,8 +3431,15 @@ async function openPanelAnalyticsView(kind){
     const lines=(r.lines)||[];
     if(!lines.length){ body.innerHTML='<div class="muted">'+(t("empty")||"Нет данных")+'</div>'; return; }
     body.innerHTML=lines.map(l=>{
-      if(!l) return '<div style="height:8px"></div>';
-      return '<div style="margin:6px 0;font-size:14px;line-height:1.4">'+panelEsc(l)+'</div>';
+      if(l==null || l==="") return '<div style="height:8px"></div>';
+      const s=String(l);
+      if(s.indexOf("##")===0){
+        return '<div class="an-h">'+panelEsc(s.slice(2))+'</div>';
+      }
+      if(s.indexOf("!!")===0){
+        return '<div class="an-emph">'+panelEsc(s.slice(2))+'</div>';
+      }
+      return '<div class="an-line">'+panelEsc(s)+'</div>';
     }).join("");
   }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
 }
