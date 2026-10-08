@@ -538,9 +538,94 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 #screen-project .project-detail-link.no-link{cursor:default;}
 #screen-project .project-detail-dash{font-weight:600;}
 </style>
-<style id="panel-an-btn">
-#screen-panel-analytics .panel-an-actions{gap:10px;margin-top:4px}
-#screen-panel-analytics .panel-an-actions .btn{min-height:48px;width:100%;font-size:14px}
+<style id="panel-analytics-charts">
+#screen-panel-analytics-view .pa-block{display:flex;flex-direction:column;align-items:center;margin-bottom:12px}
+#screen-panel-analytics-view .pa-donut-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#screen-panel-analytics-view .pa-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:20px}
+#screen-panel-analytics-view .pa-cr-label{font-size:11px;font-weight:600;color:var(--hint);letter-spacing:.04em;text-transform:uppercase}
+#screen-panel-analytics-view .pa-cr-val{font-size:18px;font-weight:800;color:var(--text);margin-top:2px}
+#screen-panel-analytics-view .pa-total-line{margin:8px 0 6px;font-size:12px;font-weight:600;color:var(--hint);text-align:center}
+#screen-panel-analytics-view .pa-legend{width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px}
+#screen-panel-analytics-view .pa-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+#screen-panel-analytics-view .pa-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+#screen-panel-analytics-view .pa-legend-label{flex:1;min-width:0}
+#screen-panel-analytics-view .pa-legend-val{color:var(--hint);font-weight:700;white-space:nowrap}
+#screen-panel-analytics-view .pa-meta{width:100%;border-top:1px solid var(--line);padding:10px 0;margin-top:8px}
+#screen-panel-analytics-view .pa-meta-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:6px 0;color:var(--text2)}
+#screen-panel-analytics-view .pa-meta-row b{color:var(--text);font-weight:700;text-align:right}
+#screen-panel-analytics-view .pa-section-label{width:100%;font-size:13px;font-weight:700;margin-bottom:8px;text-align:left}
+</style><style id="period-bar-ui">
+.period-wrap{position:relative;width:100%;margin:0 0 12px;z-index:20}
+.period-bar{
+  display:grid;
+  grid-template-columns:40px 1fr 40px;
+  gap:8px;
+  align-items:center;
+  margin:0;
+  width:100%;
+  box-sizing:border-box;
+}
+.period-dropdown{
+  position:absolute;left:40px;right:40px;top:calc(100% + 4px);
+  max-height:240px;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);padding:6px;z-index:30;
+}
+.period-dropdown[hidden]{display:none!important}
+.period-dropdown .pd-item{
+  display:block;width:100%;text-align:left;padding:10px 12px;
+  border:none;background:transparent;color:var(--text);
+  font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;
+}
+.period-dropdown .pd-item:hover,.period-dropdown .pd-item.active{background:var(--brand-soft);color:var(--brand)}
+
+.period-arrow{
+  width:40px;height:40px;min-height:40px;padding:0;
+  border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);
+  font-size:22px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:var(--shadow);
+}
+.period-arrow:active{opacity:.85}
+.period-label{
+  min-height:40px;height:40px;padding:0 12px;
+  border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;cursor:pointer;box-shadow:var(--shadow);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.period-label:active{opacity:.85}
+</style><style id="an-other-styles">
+#screen-panel-analytics-view .an-h{
+  margin:12px 0 6px;font-size:14px;font-weight:800;color:var(--text);
+}
+#screen-panel-analytics-view .an-line{
+  margin:5px 0;font-size:14px;line-height:1.4;color:var(--text2);
+}
+#screen-panel-analytics-view .an-emph{
+  margin:10px 0 4px;font-size:14px;font-weight:800;color:var(--text);
+}
+</style><style id="snippet-ui">
+#screen-panel-analytics .panel-an-actions{margin-top:4px}
+#screen-panel-analytics .panel-an-actions .btn-row{margin-top:0}
+#screen-panel-analytics .panel-an-actions .btn{min-height:48px;font-size:14px}
+.snip-file-card{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:16px;border:1px solid var(--line);border-radius:14px;
+  background:var(--surface);box-shadow:var(--shadow);margin-bottom:12px;
+}
+.snip-file-name{font-size:14px;font-weight:700;color:var(--text);word-break:break-all;text-align:center}
+.snip-dl-btn{width:100%;max-width:280px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.snip-dl-ico{font-size:18px;line-height:1}
+.snip-instr{
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  background:var(--bg);margin-bottom:4px;
+}
+.snip-instr-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
+.snip-instr-body{font-size:13px;line-height:1.45;color:var(--text2);white-space:pre-wrap}
 </style></head>
 <body>
 
@@ -812,19 +897,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-project-settings" class="screen">
       <div class="section-title" id="pps-title">Настройки</div>
-      <div class="panel" id="pps-content"></div>
-      <div class="btn-row" style="margin-top:12px">
-        <button type="button" class="btn" id="pps-back">Назад</button>
-        <button type="button" class="btn" id="pps-menu">В меню</button>
-      </div>
+      <div class="btn-stack" id="pps-content"></div>
     </div>
 
     <div id="screen-project-analytics" class="screen">
       <div class="section-title" id="ppa-title">Аналитика</div>
-      <div class="panel" id="ppa-content"></div>
-      <div class="btn-stack" style="margin-top:12px">
-        <button type="button" class="btn wide" id="ppa-back">Назад</button>
+      <div class="period-wrap" id="proj-period-wrap">
+        <div class="period-bar" id="proj-period-bar">
+          <button type="button" class="period-arrow" id="proj-period-prev" aria-label="prev">‹</button>
+          <button type="button" class="period-label" id="proj-period-label">За весь период</button>
+          <button type="button" class="period-arrow" id="proj-period-next" aria-label="next">›</button>
+        </div>
+        <div class="period-dropdown" id="proj-period-dd" hidden></div>
       </div>
+      <div class="panel" id="ppa-content"></div>
     </div>
 
     <div id="screen-help" class="screen">
@@ -1067,12 +1153,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-panel-analytics" class="screen">
       <div class="section-title" data-i18n="analytics">Аналитика</div>
+      <div class="period-wrap" id="panel-period-wrap">
+        <div class="period-bar" id="panel-period-bar">
+          <button type="button" class="period-arrow" id="panel-period-prev" aria-label="prev">‹</button>
+          <button type="button" class="period-label" id="panel-period-label">За весь период</button>
+          <button type="button" class="period-arrow" id="panel-period-next" aria-label="next">›</button>
+        </div>
+        <div class="period-dropdown" id="panel-period-dd" hidden></div>
+      </div>
       <div class="btn-stack panel-an-actions">
         <button type="button" class="btn wide" data-pan-an="revenue" data-i18n="an_revenue">Оборот и выручка</button>
         <button type="button" class="btn wide" data-pan-an="expenses" data-i18n="an_expenses">Расходы</button>
         <button type="button" class="btn wide" data-pan-an="income" data-i18n="an_income">Доходы</button>
         <button type="button" class="btn wide" data-pan-an="other" data-i18n="an_other">Другое</button>
       </div>
+    </div>
+
+    <div 
+    <div id="screen-panel-period" class="screen">
+      <div class="section-title" data-i18n="an_period">Период</div>
+      <div class="list" id="panel-period-list"></div>
     </div>
 
     <div id="screen-panel-analytics-view" class="screen">
@@ -1144,7 +1244,7 @@ const LANGS=[
 
 function baseI18n(o){return o}
 const I18N={
-ru:baseI18n({download_excel:"Скачать Excel",an_revenue:"Оборот и выручка",an_other:"Другое",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль",an_net_usn:"Чистая прибыль (УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
+ru:baseI18n({download_excel:"Скачать Excel",snippet_pick_lang:"Выберите язык бота",snippet_pick_lib:"Выберите библиотеку",snippet_download:"Скачать файл",snippet_instruction:"Инструкция",cancel:"Отмена",an_all_period:"За весь период",an_period:"Период",an_revenue:"Оборот и выручка",an_other:"Другое",an_total:"всего",an_rev_detail:"Пополнения и выводы",an_net:"Итого",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль (−20%)",an_net_usn:"Чистая прибыль (−15% УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
 language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
@@ -1157,7 +1257,7 @@ support_manager:"Менеджер",support_bot:"Бот",support_email:"Почт�
 staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",staff_mandatory:"Обязательный пользователь",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",empty:"Нет данных",
 prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 ч</strong><br>• Требуется: <strong>3 смены в неделю</strong><br><br><strong>Стажировка</strong><br><br>• Период: <strong>1 месяц</strong><br>• Смена стажёра: <strong>6 ч</strong><br>• Оплата за смену стажёра: <strong>10$</strong><br><br><strong>Обязанности</strong><br><br>• Модерация объявлений<br>• Модерация жалоб<br>• Модерация обращений в поддержку<br>• Аналитика (просмотр)<br>• Рабочий центр / смены<br>• Контроль смен (только просмотр)"}),
-en:baseI18n({download_excel:"Download Excel",an_revenue:"Turnover & revenue",an_other:"Other",an_gross:"Gross profit",an_operating:"Operating profit",an_net_usn:"Net profit (STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
+en:baseI18n({download_excel:"Download Excel",snippet_pick_lang:"Choose bot language",snippet_pick_lib:"Choose library",snippet_download:"Download file",snippet_instruction:"Instructions",cancel:"Cancel",an_all_period:"All time",an_period:"Period",an_revenue:"Turnover & revenue",an_other:"Other",an_total:"total",an_rev_detail:"Deposits and withdrawals",an_net:"Net",an_gross:"Gross profit",an_operating:"Operating profit (−20%)",an_net_usn:"Net profit (−15% STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
@@ -1168,7 +1268,7 @@ terms_prefix:"By continuing you accept the ",terms_link:"terms of service",terms
 help_body:"Mini App is synced with the bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Soon",
 staff:"Staff",mod_sell:"Sell",mod_buy:"Buy",mod_tx:"Transactions",analytics:"Analytics",prev:"Prev",next:"Next",
 roles:{user:"User",partner:"Partner",corp:"Corporate",intern:"Intern",mod:"Moderator",admin:"Admin",owner:"Owner"},collab_work_hint:"<strong>Moderator</strong><br><br>• Salary: <strong>25$ / 12 h</strong><br>• Required: <strong>3 shifts per week</strong><br><br><strong>Internship</strong><br><br>• Period: <strong>1 Month</strong><br>• Intern shift: <strong>6 h</strong><br>• Pay per internship shift: <strong>10$</strong><br><br><strong>Responsibilities</strong><br><br>• Listings moderation<br>• Complaints moderation<br>• Support tickets moderation<br>• Analytics (view)<br>• Work center / shifts<br>• Shift control (view only)"}),
-uk:baseI18n({download_excel:"Завантажити Excel",an_revenue:"Оборот і виручка",an_other:"Інше",an_gross:"Валовий прибуток",an_operating:"Операційний прибуток",an_net_usn:"Чистий прибуток (УСН)",staff_show_all:"Усі співробітники",staff_all:"Усі співробітники",mod_queue_empty:"Заявок на розгляді немає",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram зірки",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",an_expenses:"Витрати",an_income:"Доходи",an_projects:"Проекти",approve:"Схвалити",reject:"Відхилити",empty:"Немає заявок",staff_change_role:"Змінити роль",staff_set_balance:"Змінити баланс",staff_new_balance:"Новий баланс",staff_balance_now:"Баланс зараз",staff_invalid_balance:"Введіть число",staff_ban:"Заблокувати",staff_unban:"Розблокувати",staff_ban_reason:"Причина",staff_ban_days:"Термін (днів)",staff_ban_forever:"Назавжди",staff_ban_reason_required:"Вкажіть причину",staff_ban_until:"До",staff_remove_role:"Зняти з посади",staff_add:"Додати",staff_apps:"Заявки",staff_enter_id:"ID користувача",staff_search:"Знайти",staff_not_found:"Користувача не знайдено",staff_invalid_id:"Введіть числовий ID",staff_apps_empty:"Немає заявок",staff_no_rights:"Недостатньо прав",insufficient_rights:"У вас недостатньо прав для цієї функції",staff_mandatory:"Обов'язковий користувач",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Адмін",role_owner:"Власник",logout:"Вийти",ref_my_code:"Мій реферальний код",save:"Зберегти",apply:"Застосувати",ref_stats_line:"Рівень: {level} · Рефералів: {total} · За 10 днів: {d10} · Зароблено: {earn} ₽",ref_apply_title:"Застосувати промокод",back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
+uk:baseI18n({an_revenue:"Оборот і виручка",an_other:"Інше",an_total:"всього",an_rev_detail:"Поповнення та виведення",an_net:"Разом",an_gross:"Валовий прибуток",an_operating:"Операційний прибуток (−20%)",an_net_usn:"Чистий прибуток (−15% УСН)",staff_show_all:"Усі співробітники",staff_all:"Усі співробітники",mod_queue_empty:"Заявок на розгляді немає",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram зірки",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",an_expenses:"Витрати",an_income:"Доходи",an_projects:"Проекти",approve:"Схвалити",reject:"Відхилити",empty:"Немає заявок",staff_change_role:"Змінити роль",staff_set_balance:"Змінити баланс",staff_new_balance:"Новий баланс",staff_balance_now:"Баланс зараз",staff_invalid_balance:"Введіть число",staff_ban:"Заблокувати",staff_unban:"Розблокувати",staff_ban_reason:"Причина",staff_ban_days:"Термін (днів)",staff_ban_forever:"Назавжди",staff_ban_reason_required:"Вкажіть причину",staff_ban_until:"До",staff_remove_role:"Зняти з посади",staff_add:"Додати",staff_apps:"Заявки",staff_enter_id:"ID користувача",staff_search:"Знайти",staff_not_found:"Користувача не знайдено",staff_invalid_id:"Введіть числовий ID",staff_apps_empty:"Немає заявок",staff_no_rights:"Недостатньо прав",insufficient_rights:"У вас недостатньо прав для цієї функції",staff_mandatory:"Обов'язковий користувач",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Адмін",role_owner:"Власник",logout:"Вийти",ref_my_code:"Мій реферальний код",save:"Зберегти",apply:"Застосувати",ref_stats_line:"Рівень: {level} · Рефералів: {total} · За 10 днів: {d10} · Зароблено: {earn} ₽",ref_apply_title:"Застосувати промокод",back:"Назад",balance:"Баланс",settings:"Налаштування",projects:"Проєкти",help:"Допомога",support:"Підтримка",panel:"Панель",
 language:"Мова",theme:"Тема",theme_light:"Світла",theme_dark:"Темна",theme_auto:"Як у Telegram",original:"Оригінал",on_moderation:"на модерації",status:"Статус",no_projects:"Немає проєктів",btn_start:"Запустити",btn_stop:"Зупинити",my_transactions:"Мої транзакції",no_transactions:"Немає транзакцій",transaction:"Транзакція",close:"Закрити",tx_type:"Тип",date_time:"Дата і час",operation_id:"Id операції",tx_deposit:"Поповнення",tx_withdraw:"Вивід",tx_purchase:"Покупка",tx_monetization:"Монетизація",tx_salary:"Зарплата",tx_admin:"Зміна балансу адміном",
 role:"Роль",deposit:"Поповнення",withdraw:"Вивід",my_requests:"Мої заявки",no_requests:"Немає заявок",
 amount_rub:"Сума (₽)",method:"Спосіб оплати",comment:"Коментар",continue:"Продовжити",pay:"Оплатити",confirm:"Підтвердити",
@@ -1179,7 +1279,7 @@ terms_prefix:"Продовжуючи, ви приймаєте ",terms_link:"ум
 help_body:"Mini App синхронізовано з ботом.",support_manager:"Менеджер",support_bot:"Бот",support_email:"Пошта",support_faq:"FAQ",soon:"Незабаром",
 staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No data",analytics:"Аналітика",prev:"Назад",next:"Вперед",
 roles:{user:"Користувач",partner:"Партнер",corp:"Корпоративний",intern:"Стажер",mod:"Модератор",admin:"Адмін",owner:"Власник"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 год</strong><br>• Потрібно: <strong>3 зміни на тиждень</strong><br><br><strong>Стажування</strong><br><br>• Період: <strong>1 місяць</strong><br>• Зміна стажера: <strong>6 год</strong><br>• Оплата за зміну стажера: <strong>10$</strong><br><br><strong>Обов’язки</strong><br><br>• Модерація оголошень<br>• Модерація скарг<br>• Модерація звернень у підтримку<br>• Аналітика (перегляд)<br>• Робочий центр / зміни<br>• Контроль змін (лише перегляд)"}),
-de:baseI18n({download_excel:"Excel herunterladen",an_revenue:"Umsatz & Ertrag",an_other:"Sonstiges",an_gross:"Bruttogewinn",an_operating:"Betriebsgewinn",an_net_usn:"Nettogewinn (STS)",staff_show_all:"Alle Mitarbeiter",staff_all:"Alle Mitarbeiter",mod_queue_empty:"Keine Anträge in Prüfung",method_sbp:"SBP",method_crypto:"Kryptowährung",method_stars:"Telegram Sterne",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",an_expenses:"Ausgaben",an_income:"Einnahmen",an_projects:"Projekte",approve:"Genehmigen",reject:"Ablehnen",empty:"Keine Anträge",staff_change_role:"Rolle ändern",staff_set_balance:"Guthaben ändern",staff_new_balance:"Neues Guthaben",staff_balance_now:"Aktuelles Guthaben",staff_invalid_balance:"Zahl eingeben",staff_ban:"Sperren",staff_unban:"Entsperren",staff_ban_reason:"Grund",staff_ban_days:"Dauer (Tage)",staff_ban_forever:"Für immer",staff_ban_reason_required:"Grund angeben",staff_ban_until:"Bis",staff_remove_role:"Rolle entfernen",staff_add:"Hinzufügen",staff_apps:"Anträge",staff_enter_id:"Benutzer-ID",staff_search:"Suchen",staff_not_found:"Benutzer nicht gefunden",staff_invalid_id:"Numerische ID eingeben",staff_apps_empty:"Keine Anträge",staff_no_rights:"Unzureichende Rechte",insufficient_rights:"Sie haben nicht genügend Rechte für diese Funktion",staff_mandatory:"Pflichtbenutzer",role_partner:"Partner",role_corp:"Corporate",role_intern:"Praktikant",role_mod:"Moderator",role_admin:"Admin",role_owner:"Inhaber",logout:"Abmelden",ref_my_code:"Mein Empfehlungscode",save:"Speichern",apply:"Anwenden",ref_stats_line:"Stufe: {level} · Refs: {total} · 10T: {d10} · Verdient: {earn} ₽",ref_apply_title:"Promo-Code anwenden",back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
+de:baseI18n({an_revenue:"Umsatz & Ertrag",an_other:"Sonstiges",an_total:"gesamt",an_rev_detail:"Einzahlungen und Auszahlungen",an_net:"Netto",an_gross:"Bruttogewinn",an_operating:"Betriebsgewinn (−20%)",an_net_usn:"Nettogewinn (−15% STS)",staff_show_all:"Alle Mitarbeiter",staff_all:"Alle Mitarbeiter",mod_queue_empty:"Keine Anträge in Prüfung",method_sbp:"SBP",method_crypto:"Kryptowährung",method_stars:"Telegram Sterne",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",an_expenses:"Ausgaben",an_income:"Einnahmen",an_projects:"Projekte",approve:"Genehmigen",reject:"Ablehnen",empty:"Keine Anträge",staff_change_role:"Rolle ändern",staff_set_balance:"Guthaben ändern",staff_new_balance:"Neues Guthaben",staff_balance_now:"Aktuelles Guthaben",staff_invalid_balance:"Zahl eingeben",staff_ban:"Sperren",staff_unban:"Entsperren",staff_ban_reason:"Grund",staff_ban_days:"Dauer (Tage)",staff_ban_forever:"Für immer",staff_ban_reason_required:"Grund angeben",staff_ban_until:"Bis",staff_remove_role:"Rolle entfernen",staff_add:"Hinzufügen",staff_apps:"Anträge",staff_enter_id:"Benutzer-ID",staff_search:"Suchen",staff_not_found:"Benutzer nicht gefunden",staff_invalid_id:"Numerische ID eingeben",staff_apps_empty:"Keine Anträge",staff_no_rights:"Unzureichende Rechte",insufficient_rights:"Sie haben nicht genügend Rechte für diese Funktion",staff_mandatory:"Pflichtbenutzer",role_partner:"Partner",role_corp:"Corporate",role_intern:"Praktikant",role_mod:"Moderator",role_admin:"Admin",role_owner:"Inhaber",logout:"Abmelden",ref_my_code:"Mein Empfehlungscode",save:"Speichern",apply:"Anwenden",ref_stats_line:"Stufe: {level} · Refs: {total} · 10T: {d10} · Verdient: {earn} ₽",ref_apply_title:"Promo-Code anwenden",back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
 language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",on_moderation:"in Moderation",status:"Status",no_projects:"Keine Projekte",btn_start:"Starten",btn_stop:"Stoppen",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
 role:"Rolle",deposit:"Einzahlung",withdraw:"Auszahlung",my_requests:"Meine Anfragen",no_requests:"Keine Anfragen",
 amount_rub:"Betrag (₽)",method:"Zahlungsmethode",comment:"Kommentar",continue:"Weiter",pay:"Bezahlen",confirm:"Bestätigen",
@@ -1190,7 +1290,7 @@ terms_prefix:"Mit dem Fortfahren akzeptieren Sie die ",terms_link:"Nutzungsbedin
 help_body:"Mini App ist mit dem Bot synchronisiert.",support_manager:"Manager",support_bot:"Bot",support_email:"E-Mail",support_faq:"FAQ",soon:"Bald",
 staff:"Personal",mod_sell:"Verkauf",mod_buy:"Kauf",mod_tx:"Transaktionen",analytics:"Analyse",prev:"Zurück",next:"Weiter",
 roles:{user:"Benutzer",partner:"Partner",corp:"Unternehmen",intern:"Praktikant",mod:"Moderator",admin:"Admin",owner:"Inhaber"},collab_work_hint:"<strong>Moderator</strong><br><br>• Gehalt: <strong>25$ / 12 Std.</strong><br>• Erforderlich: <strong>3 Schichten pro Woche</strong><br><br><strong>Praktikum</strong><br><br>• Dauer: <strong>1 Monat</strong><br>• Praktikumsschicht: <strong>6 Std.</strong><br>• Vergütung pro Praktikumsschicht: <strong>10$</strong><br><br><strong>Aufgaben</strong><br><br>• Moderation von Anzeigen<br>• Moderation von Beschwerden<br>• Moderation von Support-Tickets<br>• Analysen (Ansicht)<br>• Arbeitszentrum / Schichten<br>• Schichtkontrolle (nur Ansicht)"}),
-fr:baseI18n({download_excel:"Télécharger Excel",an_revenue:"Chiffre d'affaires",an_other:"Autre",an_gross:"Bénéfice brut",an_operating:"Résultat opérationnel",an_net_usn:"Bénéfice net (STS)",staff_show_all:"Tous les employés",staff_all:"Tous les employés",mod_queue_empty:"Aucune demande en cours d'examen",method_sbp:"SBP",method_crypto:"Cryptomonnaie",method_stars:"Étoiles Telegram",mod_sell:"Ventes",mod_buy:"Achats",mod_tx:"Transactions",an_expenses:"Dépenses",an_income:"Revenus",an_projects:"Projets",approve:"Approuver",reject:"Refuser",empty:"Aucune demande",staff_change_role:"Changer le rôle",staff_set_balance:"Modifier le solde",staff_new_balance:"Nouveau solde",staff_balance_now:"Solde actuel",staff_invalid_balance:"Entrez un nombre",staff_ban:"Bloquer",staff_unban:"Débloquer",staff_ban_reason:"Raison",staff_ban_days:"Durée (jours)",staff_ban_forever:"Pour toujours",staff_ban_reason_required:"Indiquez la raison",staff_ban_until:"Jusqu'à",staff_remove_role:"Retirer le rôle",staff_add:"Ajouter",staff_apps:"Demandes",staff_enter_id:"ID utilisateur",staff_search:"Rechercher",staff_not_found:"Utilisateur introuvable",staff_invalid_id:"Entrez un ID numérique",staff_apps_empty:"Aucune demande",staff_no_rights:"Droits insuffisants",insufficient_rights:"Vous n'avez pas les droits suffisants pour cette fonction",staff_mandatory:"Utilisateur obligatoire",role_partner:"Partenaire",role_corp:"Corporate",role_intern:"Stagiaire",role_mod:"Modérateur",role_admin:"Admin",role_owner:"Propriétaire",logout:"Déconnexion",ref_my_code:"Mon code de parrainage",save:"Enregistrer",apply:"Appliquer",ref_stats_line:"Niveau: {level} · Refs: {total} · 10j: {d10} · Gagné: {earn} ₽",ref_apply_title:"Appliquer le code promo",back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
+fr:baseI18n({an_revenue:"Chiffre d'affaires",an_other:"Autre",an_total:"total",an_rev_detail:"Dépôts et retraits",an_net:"Net",an_gross:"Bénéfice brut",an_operating:"Résultat opérationnel (−20%)",an_net_usn:"Bénéfice net (−15% STS)",staff_show_all:"Tous les employés",staff_all:"Tous les employés",mod_queue_empty:"Aucune demande en cours d'examen",method_sbp:"SBP",method_crypto:"Cryptomonnaie",method_stars:"Étoiles Telegram",mod_sell:"Ventes",mod_buy:"Achats",mod_tx:"Transactions",an_expenses:"Dépenses",an_income:"Revenus",an_projects:"Projets",approve:"Approuver",reject:"Refuser",empty:"Aucune demande",staff_change_role:"Changer le rôle",staff_set_balance:"Modifier le solde",staff_new_balance:"Nouveau solde",staff_balance_now:"Solde actuel",staff_invalid_balance:"Entrez un nombre",staff_ban:"Bloquer",staff_unban:"Débloquer",staff_ban_reason:"Raison",staff_ban_days:"Durée (jours)",staff_ban_forever:"Pour toujours",staff_ban_reason_required:"Indiquez la raison",staff_ban_until:"Jusqu'à",staff_remove_role:"Retirer le rôle",staff_add:"Ajouter",staff_apps:"Demandes",staff_enter_id:"ID utilisateur",staff_search:"Rechercher",staff_not_found:"Utilisateur introuvable",staff_invalid_id:"Entrez un ID numérique",staff_apps_empty:"Aucune demande",staff_no_rights:"Droits insuffisants",insufficient_rights:"Vous n'avez pas les droits suffisants pour cette fonction",staff_mandatory:"Utilisateur obligatoire",role_partner:"Partenaire",role_corp:"Corporate",role_intern:"Stagiaire",role_mod:"Modérateur",role_admin:"Admin",role_owner:"Propriétaire",logout:"Déconnexion",ref_my_code:"Mon code de parrainage",save:"Enregistrer",apply:"Appliquer",ref_stats_line:"Niveau: {level} · Refs: {total} · 10j: {d10} · Gagné: {earn} ₽",ref_apply_title:"Appliquer le code promo",back:"Retour",balance:"Solde",settings:"Paramètres",projects:"Projets",help:"Aide",support:"Support",panel:"Panneau",
 language:"Langue",theme:"Thème",theme_light:"Clair",theme_dark:"Sombre",theme_auto:"Comme Telegram",original:"Original",on_moderation:"en modération",status:"Statut",no_projects:"Aucun projet",btn_start:"Démarrer",btn_stop:"Arrêter",my_transactions:"Mes transactions",no_transactions:"Aucune transaction",transaction:"Transaction",close:"Fermer",tx_type:"Type",date_time:"Date et heure",operation_id:"ID opération",tx_deposit:"Dépôt",tx_withdraw:"Retrait",tx_purchase:"Achat",tx_monetization:"Monétisation",tx_salary:"Salaire",tx_admin:"Modification admin",
 role:"Rôle",deposit:"Dépôt",withdraw:"Retrait",my_requests:"Mes demandes",no_requests:"Aucune demande",
 amount_rub:"Montant (₽)",method:"Mode de paiement",comment:"Commentaire",continue:"Continuer",pay:"Payer",confirm:"Confirmer",
@@ -1201,7 +1301,7 @@ terms_prefix:"En continuant, vous acceptez les ",terms_link:"conditions d'utilis
 help_body:"Mini App synchronisée avec le bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Bientôt",
 staff:"Personnel",mod_sell:"Vente",mod_buy:"Achat",mod_tx:"Transactions",analytics:"Analytique",prev:"Préc.",next:"Suiv.",
 roles:{user:"Utilisateur",partner:"Partenaire",corp:"Entreprise",intern:"Stagiaire",mod:"Modérateur",admin:"Admin",owner:"Propriétaire"},collab_work_hint:"<strong>Modérateur</strong><br><br>• Salaire : <strong>25$ / 12 h</strong><br>• Requis : <strong>3 shifts par semaine</strong><br><br><strong>Stage</strong><br><br>• Durée : <strong>1 mois</strong><br>• Shift de stagiaire : <strong>6 h</strong><br>• Rémunération par shift de stage : <strong>10$</strong><br><br><strong>Responsabilités</strong><br><br>• Modération des annonces<br>• Modération des réclamations<br>• Modération des tickets de support<br>• Analytique (consultation)<br>• Centre de travail / shifts<br>• Contrôle des shifts (consultation uniquement)"}),
-es:baseI18n({download_excel:"Descargar Excel",an_revenue:"Volumen e ingresos",an_other:"Otro",an_gross:"Beneficio bruto",an_operating:"Beneficio operativo",an_net_usn:"Beneficio neto (STS)",staff_show_all:"Todo el personal",staff_all:"Todo el personal",mod_queue_empty:"No hay solicitudes en revisión",method_sbp:"SBP",method_crypto:"Criptomoneda",method_stars:"Estrellas de Telegram",mod_sell:"Ventas",mod_buy:"Compras",mod_tx:"Transacciones",an_expenses:"Gastos",an_income:"Ingresos",an_projects:"Proyectos",approve:"Aprobar",reject:"Rechazar",empty:"Sin solicitudes",staff_change_role:"Cambiar rol",staff_set_balance:"Cambiar saldo",staff_new_balance:"Nuevo saldo",staff_balance_now:"Saldo actual",staff_invalid_balance:"Introduce un número",staff_ban:"Bloquear",staff_unban:"Desbloquear",staff_ban_reason:"Motivo",staff_ban_days:"Plazo (días)",staff_ban_forever:"Para siempre",staff_ban_reason_required:"Indica el motivo",staff_ban_until:"Hasta",staff_remove_role:"Quitar rol",staff_add:"Añadir",staff_apps:"Solicitudes",staff_enter_id:"ID de usuario",staff_search:"Buscar",staff_not_found:"Usuario no encontrado",staff_invalid_id:"Introduce un ID numérico",staff_apps_empty:"No hay solicitudes",staff_no_rights:"Permisos insuficientes",insufficient_rights:"No tienes permisos suficientes para esta función",staff_mandatory:"Usuario obligatorio",role_partner:"Socio",role_corp:"Corp",role_intern:"Interno",role_mod:"Moderador",role_admin:"Admin",role_owner:"Propietario",logout:"Cerrar sesión",ref_my_code:"Mi código de referido",save:"Guardar",apply:"Aplicar",ref_stats_line:"Nivel: {level} · Refs: {total} · 10d: {d10} · Ganado: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
+es:baseI18n({an_revenue:"Volumen e ingresos",an_other:"Otro",an_total:"total",an_rev_detail:"Depósitos y retiros",an_net:"Neto",an_gross:"Beneficio bruto",an_operating:"Beneficio operativo (−20%)",an_net_usn:"Beneficio neto (−15% STS)",staff_show_all:"Todo el personal",staff_all:"Todo el personal",mod_queue_empty:"No hay solicitudes en revisión",method_sbp:"SBP",method_crypto:"Criptomoneda",method_stars:"Estrellas de Telegram",mod_sell:"Ventas",mod_buy:"Compras",mod_tx:"Transacciones",an_expenses:"Gastos",an_income:"Ingresos",an_projects:"Proyectos",approve:"Aprobar",reject:"Rechazar",empty:"Sin solicitudes",staff_change_role:"Cambiar rol",staff_set_balance:"Cambiar saldo",staff_new_balance:"Nuevo saldo",staff_balance_now:"Saldo actual",staff_invalid_balance:"Introduce un número",staff_ban:"Bloquear",staff_unban:"Desbloquear",staff_ban_reason:"Motivo",staff_ban_days:"Plazo (días)",staff_ban_forever:"Para siempre",staff_ban_reason_required:"Indica el motivo",staff_ban_until:"Hasta",staff_remove_role:"Quitar rol",staff_add:"Añadir",staff_apps:"Solicitudes",staff_enter_id:"ID de usuario",staff_search:"Buscar",staff_not_found:"Usuario no encontrado",staff_invalid_id:"Introduce un ID numérico",staff_apps_empty:"No hay solicitudes",staff_no_rights:"Permisos insuficientes",insufficient_rights:"No tienes permisos suficientes para esta función",staff_mandatory:"Usuario obligatorio",role_partner:"Socio",role_corp:"Corp",role_intern:"Interno",role_mod:"Moderador",role_admin:"Admin",role_owner:"Propietario",logout:"Cerrar sesión",ref_my_code:"Mi código de referido",save:"Guardar",apply:"Aplicar",ref_stats_line:"Nivel: {level} · Refs: {total} · 10d: {d10} · Ganado: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Atrás",balance:"Saldo",settings:"Ajustes",projects:"Proyectos",help:"Ayuda",support:"Soporte",panel:"Panel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Oscuro",theme_auto:"Como en Telegram",original:"Original",on_moderation:"en moderación",status:"Estado",no_projects:"Sin proyectos",btn_start:"Iniciar",btn_stop:"Detener",my_transactions:"Mis transacciones",no_transactions:"Sin transacciones",transaction:"Transacción",close:"Cerrar",tx_type:"Tipo",date_time:"Fecha y hora",operation_id:"ID de operación",tx_deposit:"Depósito",tx_withdraw:"Retiro",tx_purchase:"Compra",tx_monetization:"Monetización",tx_salary:"Salario",tx_admin:"Cambio de saldo admin",
 role:"Rol",deposit:"Depósito",withdraw:"Retiro",my_requests:"Mis solicitudes",no_requests:"Sin solicitudes",
 amount_rub:"Importe (₽)",method:"Método de pago",comment:"Comentario",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
@@ -1212,7 +1312,7 @@ terms_prefix:"Al continuar aceptas el ",terms_link:"acuerdo de usuario",terms_su
 help_body:"Mini App sincronizado con el bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Correo",support_faq:"FAQ",soon:"Pronto",
 staff:"Personal",mod_sell:"Venta",mod_buy:"Compra",mod_tx:"Transacciones",analytics:"Analítica",prev:"Atrás",next:"Adelante",
 roles:{user:"Usuario",partner:"Socio",corp:"Corporativo",intern:"Interno",mod:"Moderador",admin:"Admin",owner:"Propietario"},collab_work_hint:"<strong>Moderador</strong><br><br>• Salario: <strong>25$ / 12 h</strong><br>• Requerido: <strong>3 turnos por semana</strong><br><br><strong>Prácticas</strong><br><br>• Duración: <strong>1 mes</strong><br>• Turno del becario: <strong>6 h</strong><br>• Pago por turno de prácticas: <strong>10$</strong><br><br><strong>Responsabilidades</strong><br><br>• Moderación de anuncios<br>• Moderación de reclamaciones<br>• Moderación de tickets de soporte<br>• Analítica (consulta)<br>• Centro de trabajo / turnos<br>• Control de turnos (solo consulta)"}),
-it:baseI18n({download_excel:"Scarica Excel",an_revenue:"Fatturato e ricavi",an_other:"Altro",an_gross:"Utile lordo",an_operating:"Utile operativo",an_net_usn:"Utile netto (STS)",staff_show_all:"Tutto lo staff",staff_all:"Tutto lo staff",mod_queue_empty:"Nessuna richiesta in revisione",method_sbp:"SBP",method_crypto:"Criptovaluta",method_stars:"Stelle Telegram",mod_sell:"Vendite",mod_buy:"Acquisti",mod_tx:"Transazioni",an_expenses:"Spese",an_income:"Entrate",an_projects:"Progetti",approve:"Approva",reject:"Rifiuta",empty:"Nessuna richiesta",staff_change_role:"Cambia ruolo",staff_set_balance:"Cambia saldo",staff_new_balance:"Nuovo saldo",staff_balance_now:"Saldo attuale",staff_invalid_balance:"Inserisci un numero",staff_ban:"Blocca",staff_unban:"Sblocca",staff_ban_reason:"Motivo",staff_ban_days:"Durata (giorni)",staff_ban_forever:"Per sempre",staff_ban_reason_required:"Indica il motivo",staff_ban_until:"Fino a",staff_remove_role:"Rimuovi ruolo",staff_add:"Aggiungi",staff_apps:"Richieste",staff_enter_id:"ID utente",staff_search:"Cerca",staff_not_found:"Utente non trovato",staff_invalid_id:"Inserisci un ID numerico",staff_apps_empty:"Nessuna richiesta",staff_no_rights:"Diritti insufficienti",insufficient_rights:"Non hai diritti sufficienti per questa funzione",staff_mandatory:"Utente obbligatorio",role_partner:"Partner",role_corp:"Corporate",role_intern:"Stagista",role_mod:"Moderatore",role_admin:"Admin",role_owner:"Proprietario",logout:"Esci",ref_my_code:"Il mio codice referral",save:"Salva",apply:"Applica",ref_stats_line:"Livello: {level} · Ref: {total} · 10g: {d10} · Guadagno: {earn} ₽",ref_apply_title:"Applica codice promo",back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
+it:baseI18n({an_revenue:"Fatturato e ricavi",an_other:"Altro",an_total:"totale",an_rev_detail:"Depositi e prelievi",an_net:"Netto",an_gross:"Utile lordo",an_operating:"Utile operativo (−20%)",an_net_usn:"Utile netto (−15% STS)",staff_show_all:"Tutto lo staff",staff_all:"Tutto lo staff",mod_queue_empty:"Nessuna richiesta in revisione",method_sbp:"SBP",method_crypto:"Criptovaluta",method_stars:"Stelle Telegram",mod_sell:"Vendite",mod_buy:"Acquisti",mod_tx:"Transazioni",an_expenses:"Spese",an_income:"Entrate",an_projects:"Progetti",approve:"Approva",reject:"Rifiuta",empty:"Nessuna richiesta",staff_change_role:"Cambia ruolo",staff_set_balance:"Cambia saldo",staff_new_balance:"Nuovo saldo",staff_balance_now:"Saldo attuale",staff_invalid_balance:"Inserisci un numero",staff_ban:"Blocca",staff_unban:"Sblocca",staff_ban_reason:"Motivo",staff_ban_days:"Durata (giorni)",staff_ban_forever:"Per sempre",staff_ban_reason_required:"Indica il motivo",staff_ban_until:"Fino a",staff_remove_role:"Rimuovi ruolo",staff_add:"Aggiungi",staff_apps:"Richieste",staff_enter_id:"ID utente",staff_search:"Cerca",staff_not_found:"Utente non trovato",staff_invalid_id:"Inserisci un ID numerico",staff_apps_empty:"Nessuna richiesta",staff_no_rights:"Diritti insufficienti",insufficient_rights:"Non hai diritti sufficienti per questa funzione",staff_mandatory:"Utente obbligatorio",role_partner:"Partner",role_corp:"Corporate",role_intern:"Stagista",role_mod:"Moderatore",role_admin:"Admin",role_owner:"Proprietario",logout:"Esci",ref_my_code:"Il mio codice referral",save:"Salva",apply:"Applica",ref_stats_line:"Livello: {level} · Ref: {total} · 10g: {d10} · Guadagno: {earn} ₽",ref_apply_title:"Applica codice promo",back:"Indietro",balance:"Saldo",settings:"Impostazioni",projects:"Progetti",help:"Aiuto",support:"Supporto",panel:"Pannello",
 language:"Lingua",theme:"Tema",theme_light:"Chiaro",theme_dark:"Scuro",theme_auto:"Come Telegram",original:"Originale",on_moderation:"in moderazione",status:"Stato",no_projects:"Nessun progetto",btn_start:"Avvia",btn_stop:"Ferma",my_transactions:"Le mie transazioni",no_transactions:"Nessuna transazione",transaction:"Transazione",close:"Chiudi",tx_type:"Tipo",date_time:"Data e ora",operation_id:"ID operazione",tx_deposit:"Deposito",tx_withdraw:"Prelievo",tx_purchase:"Acquisto",tx_monetization:"Monetizzazione",tx_salary:"Stipendio",tx_admin:"Modifica saldo admin",
 role:"Ruolo",deposit:"Deposito",withdraw:"Prelievo",my_requests:"Le mie richieste",no_requests:"Nessuna richiesta",
 amount_rub:"Importo (₽)",method:"Metodo di pagamento",comment:"Commento",continue:"Continua",pay:"Paga",confirm:"Conferma",
@@ -1223,7 +1323,7 @@ terms_prefix:"Continuando accetti i ",terms_link:"termini di servizio",terms_suf
 help_body:"Mini App sincronizzata con il bot.",support_manager:"Manager",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Presto",
 staff:"Personale",mod_sell:"Vendita",mod_buy:"Acquisto",mod_tx:"Transazioni",analytics:"Analitica",prev:"Indietro",next:"Avanti",
 roles:{user:"Utente",partner:"Partner",corp:"Aziendale",intern:"Stagista",mod:"Moderatore",admin:"Admin",owner:"Proprietario"},collab_work_hint:"<strong>Moderatore</strong><br><br>• Stipendio: <strong>25$ / 12 h</strong><br>• Richiesto: <strong>3 turni a settimana</strong><br><br><strong>Tirocinio</strong><br><br>• Durata: <strong>1 mese</strong><br>• Turno del tirocinante: <strong>6 h</strong><br>• Compenso per turno di tirocinio: <strong>10$</strong><br><br><strong>Responsabilità</strong><br><br>• Moderazione degli annunci<br>• Moderazione dei reclami<br>• Moderazione dei ticket di supporto<br>• Analisi (visualizzazione)<br>• Centro di lavoro / turni<br>• Controllo dei turni (solo visualizzazione)"}),
-pt:baseI18n({download_excel:"Baixar Excel",an_revenue:"Volume e receita",an_other:"Outro",an_gross:"Lucro bruto",an_operating:"Lucro operacional",an_net_usn:"Lucro líquido (STS)",staff_show_all:"Todos os funcionários",staff_all:"Todos os funcionários",mod_queue_empty:"Nenhum pedido em análise",method_sbp:"SBP",method_crypto:"Criptomoeda",method_stars:"Estrelas do Telegram",mod_sell:"Vendas",mod_buy:"Compras",mod_tx:"Transações",an_expenses:"Despesas",an_income:"Receitas",an_projects:"Projetos",approve:"Aprovar",reject:"Rejeitar",empty:"Sem pedidos",staff_change_role:"Alterar função",staff_set_balance:"Alterar saldo",staff_new_balance:"Novo saldo",staff_balance_now:"Saldo atual",staff_invalid_balance:"Digite um número",staff_ban:"Bloquear",staff_unban:"Desbloquear",staff_ban_reason:"Motivo",staff_ban_days:"Prazo (dias)",staff_ban_forever:"Para sempre",staff_ban_reason_required:"Informe o motivo",staff_ban_until:"Até",staff_remove_role:"Remover função",staff_add:"Adicionar",staff_apps:"Pedidos",staff_enter_id:"ID do usuário",staff_search:"Buscar",staff_not_found:"Usuário não encontrado",staff_invalid_id:"Digite um ID numérico",staff_apps_empty:"Sem pedidos",staff_no_rights:"Permissões insuficientes",insufficient_rights:"Você não tem permissões suficientes para esta função",staff_mandatory:"Usuário obrigatório",role_partner:"Parceiro",role_corp:"Corp",role_intern:"Estagiário",role_mod:"Moderador",role_admin:"Admin",role_owner:"Proprietário",logout:"Sair",ref_my_code:"Meu código de indicação",save:"Salvar",apply:"Aplicar",ref_stats_line:"Nível: {level} · Refs: {total} · 10d: {d10} · Ganho: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
+pt:baseI18n({an_revenue:"Volume e receita",an_other:"Outro",an_total:"total",an_rev_detail:"Depósitos e saques",an_net:"Líquido",an_gross:"Lucro bruto",an_operating:"Lucro operacional (−20%)",an_net_usn:"Lucro líquido (−15% STS)",staff_show_all:"Todos os funcionários",staff_all:"Todos os funcionários",mod_queue_empty:"Nenhum pedido em análise",method_sbp:"SBP",method_crypto:"Criptomoeda",method_stars:"Estrelas do Telegram",mod_sell:"Vendas",mod_buy:"Compras",mod_tx:"Transações",an_expenses:"Despesas",an_income:"Receitas",an_projects:"Projetos",approve:"Aprovar",reject:"Rejeitar",empty:"Sem pedidos",staff_change_role:"Alterar função",staff_set_balance:"Alterar saldo",staff_new_balance:"Novo saldo",staff_balance_now:"Saldo atual",staff_invalid_balance:"Digite um número",staff_ban:"Bloquear",staff_unban:"Desbloquear",staff_ban_reason:"Motivo",staff_ban_days:"Prazo (dias)",staff_ban_forever:"Para sempre",staff_ban_reason_required:"Informe o motivo",staff_ban_until:"Até",staff_remove_role:"Remover função",staff_add:"Adicionar",staff_apps:"Pedidos",staff_enter_id:"ID do usuário",staff_search:"Buscar",staff_not_found:"Usuário não encontrado",staff_invalid_id:"Digite um ID numérico",staff_apps_empty:"Sem pedidos",staff_no_rights:"Permissões insuficientes",insufficient_rights:"Você não tem permissões suficientes para esta função",staff_mandatory:"Usuário obrigatório",role_partner:"Parceiro",role_corp:"Corp",role_intern:"Estagiário",role_mod:"Moderador",role_admin:"Admin",role_owner:"Proprietário",logout:"Sair",ref_my_code:"Meu código de indicação",save:"Salvar",apply:"Aplicar",ref_stats_line:"Nível: {level} · Refs: {total} · 10d: {d10} · Ganho: {earn} ₽",ref_apply_title:"Aplicar código promo",back:"Voltar",balance:"Saldo",settings:"Definições",projects:"Projetos",help:"Ajuda",support:"Suporte",panel:"Painel",
 language:"Idioma",theme:"Tema",theme_light:"Claro",theme_dark:"Escuro",theme_auto:"Como no Telegram",original:"Original",on_moderation:"em moderação",status:"Estado",no_projects:"Sem projetos",btn_start:"Iniciar",btn_stop:"Parar",my_transactions:"As minhas transações",no_transactions:"Sem transações",transaction:"Transação",close:"Fechar",tx_type:"Tipo",date_time:"Data e hora",operation_id:"ID da operação",tx_deposit:"Depósito",tx_withdraw:"Levantamento",tx_purchase:"Compra",tx_monetization:"Monetização",tx_salary:"Salário",tx_admin:"Alteração admin",
 role:"Função",deposit:"Depósito",withdraw:"Levantamento",my_requests:"Os meus pedidos",no_requests:"Sem pedidos",
 amount_rub:"Montante (₽)",method:"Método de pagamento",comment:"Comentário",continue:"Continuar",pay:"Pagar",confirm:"Confirmar",
@@ -1245,7 +1345,7 @@ terms_prefix:"Ao continuar você aceita o ",terms_link:"termo de uso",terms_suff
 help_body:"Mini App sincronizado com o bot.",support_manager:"Manager",support_bot:"Bot",support_email:"E-mail",support_faq:"FAQ",soon:"Em breve",
 staff:"Equipe",mod_sell:"Venda",mod_buy:"Compra",mod_tx:"Transações",analytics:"Analítica",prev:"Anterior",next:"Próximo",
 roles:{user:"Usuário",partner:"Parceiro",corp:"Corporativo",intern:"Estagiário",mod:"Moderador",admin:"Admin",owner:"Proprietário"},collab_work_hint:"<strong>Moderador</strong><br><br>• Salário: <strong>25$ / 12 h</strong><br>• Necessário: <strong>3 turnos por semana</strong><br><br><strong>Estágio</strong><br><br>• Período: <strong>1 mês</strong><br>• Turno do estagiário: <strong>6 h</strong><br>• Pagamento por turno de estágio: <strong>10$</strong><br><br><strong>Responsabilidades</strong><br><br>• Moderação de anúncios<br>• Moderação de reclamações<br>• Moderação de tickets de suporte<br>• Análises (visualização)<br>• Centro de trabalho / turnos<br>• Controle de turnos (somente visualização)"}),
-tr:baseI18n({download_excel:"Excel indir",an_revenue:"Ciro ve gelir",an_other:"Diğer",an_gross:"Brüt kâr",an_operating:"Faaliyet kârı",an_net_usn:"Net kâr (STS)",staff_show_all:"Tüm personel",staff_all:"Tüm personel",mod_queue_empty:"İncelemede başvuru yok",method_sbp:"SBP",method_crypto:"Kripto para",method_stars:"Telegram Yıldızları",mod_sell:"Satış",mod_buy:"Satın alma",mod_tx:"İşlemler",an_expenses:"Giderler",an_income:"Gelirler",an_projects:"Projeler",approve:"Onayla",reject:"Reddet",empty:"Başvuru yok",staff_change_role:"Rolü değiştir",staff_set_balance:"Bakiyeyi değiştir",staff_new_balance:"Yeni bakiye",staff_balance_now:"Güncel bakiye",staff_invalid_balance:"Sayı girin",staff_ban:"Engelle",staff_unban:"Engeli kaldır",staff_ban_reason:"Sebep",staff_ban_days:"Süre (gün)",staff_ban_forever:"Kalıcı",staff_ban_reason_required:"Sebep girin",staff_ban_until:"Bitiş",staff_remove_role:"Rolü kaldır",staff_add:"Ekle",staff_apps:"Başvurular",staff_enter_id:"Kullanıcı ID",staff_search:"Bul",staff_not_found:"Kullanıcı bulunamadı",staff_invalid_id:"Sayısal ID girin",staff_apps_empty:"Başvuru yok",staff_no_rights:"Yetersiz yetki",insufficient_rights:"Bu işlev için yeterli yetkiniz yok",staff_mandatory:"Zorunlu kullanıcı",role_partner:"Partner",role_corp:"Kurumsal",role_intern:"Stajyer",role_mod:"Moderatör",role_admin:"Yönetici",role_owner:"Sahip",logout:"Çıkış",ref_my_code:"Referans kodum",save:"Kaydet",apply:"Uygula",ref_stats_line:"Seviye: {level} · Ref: {total} · 10g: {d10} · Kazanç: {earn} ₽",ref_apply_title:"Promosyon kodu uygula",back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
+tr:baseI18n({an_revenue:"Ciro ve gelir",an_other:"Diğer",an_total:"toplam",an_rev_detail:"Yatırma ve çekimler",an_net:"Net",an_gross:"Brüt kâr",an_operating:"Faaliyet kârı (−20%)",an_net_usn:"Net kâr (−15% STS)",staff_show_all:"Tüm personel",staff_all:"Tüm personel",mod_queue_empty:"İncelemede başvuru yok",method_sbp:"SBP",method_crypto:"Kripto para",method_stars:"Telegram Yıldızları",mod_sell:"Satış",mod_buy:"Satın alma",mod_tx:"İşlemler",an_expenses:"Giderler",an_income:"Gelirler",an_projects:"Projeler",approve:"Onayla",reject:"Reddet",empty:"Başvuru yok",staff_change_role:"Rolü değiştir",staff_set_balance:"Bakiyeyi değiştir",staff_new_balance:"Yeni bakiye",staff_balance_now:"Güncel bakiye",staff_invalid_balance:"Sayı girin",staff_ban:"Engelle",staff_unban:"Engeli kaldır",staff_ban_reason:"Sebep",staff_ban_days:"Süre (gün)",staff_ban_forever:"Kalıcı",staff_ban_reason_required:"Sebep girin",staff_ban_until:"Bitiş",staff_remove_role:"Rolü kaldır",staff_add:"Ekle",staff_apps:"Başvurular",staff_enter_id:"Kullanıcı ID",staff_search:"Bul",staff_not_found:"Kullanıcı bulunamadı",staff_invalid_id:"Sayısal ID girin",staff_apps_empty:"Başvuru yok",staff_no_rights:"Yetersiz yetki",insufficient_rights:"Bu işlev için yeterli yetkiniz yok",staff_mandatory:"Zorunlu kullanıcı",role_partner:"Partner",role_corp:"Kurumsal",role_intern:"Stajyer",role_mod:"Moderatör",role_admin:"Yönetici",role_owner:"Sahip",logout:"Çıkış",ref_my_code:"Referans kodum",save:"Kaydet",apply:"Uygula",ref_stats_line:"Seviye: {level} · Ref: {total} · 10g: {d10} · Kazanç: {earn} ₽",ref_apply_title:"Promosyon kodu uygula",back:"Geri",balance:"Bakiye",settings:"Ayarlar",projects:"Projeler",help:"Yardım",support:"Destek",panel:"Panel",
 language:"Dil",theme:"Tema",theme_light:"Açık",theme_dark:"Koyu",theme_auto:"Telegram gibi",original:"Orijinal",on_moderation:"moderasyonda",status:"Durum",no_projects:"Proje yok",btn_start:"Başlat",btn_stop:"Durdur",my_transactions:"İşlemlerim",no_transactions:"İşlem yok",transaction:"İşlem",close:"Kapat",tx_type:"Tür",date_time:"Tarih ve saat",operation_id:"İşlem kimliği",tx_deposit:"Yatırma",tx_withdraw:"Çekme",tx_purchase:"Satın alma",tx_monetization:"Monetizasyon",tx_salary:"Maaş",tx_admin:"Admin bakiye değişikliği",
 role:"Rol",deposit:"Yatırma",withdraw:"Çekme",my_requests:"Taleplerim",no_requests:"Talep yok",
 amount_rub:"Tutar (₽)",method:"Ödeme yöntemi",comment:"Yorum",continue:"Devam",pay:"Öde",confirm:"Onayla",
@@ -1256,7 +1356,7 @@ terms_prefix:"Devam ederek ",terms_link:"kullanım koşullarını",terms_suffix:
 help_body:"Mini App bot ile senkron.",support_manager:"Yönetici",support_bot:"Bot",support_email:"E-posta",support_faq:"SSS",soon:"Yakında",
 staff:"Personel",mod_sell:"Satış",mod_buy:"Alış",mod_tx:"İşlemler",analytics:"Analitik",prev:"Geri",next:"İleri",
 roles:{user:"Kullanıcı",partner:"Partner",corp:"Kurumsal",intern:"Stajyer",mod:"Moderatör",admin:"Admin",owner:"Sahip"},collab_work_hint:"<strong>Moderatör</strong><br><br>• Maaş: <strong>25$ / 12 saat</strong><br>• Gereken: <strong>haftada 3 vardiya</strong><br><br><strong>Staj</strong><br><br>• Süre: <strong>1 ay</strong><br>• Staj vardiyası: <strong>6 saat</strong><br>• Staj vardiyası başına ödeme: <strong>10$</strong><br><br><strong>Sorumluluklar</strong><br><br>• İlan moderasyonu<br>• Şikâyet moderasyonu<br>• Destek taleplerinin moderasyonu<br>• Analitik (görüntüleme)<br>• Çalışma merkezi / vardiyalar<br>• Vardiya kontrolü (yalnızca görüntüleme)"}),
-id:baseI18n({download_excel:"Unduh Excel",an_revenue:"Omzet & pendapatan",an_other:"Lainnya",an_gross:"Laba kotor",an_operating:"Laba operasi",an_net_usn:"Laba bersih (STS)",staff_show_all:"Semua staf",staff_all:"Semua staf",mod_queue_empty:"Tidak ada permohonan dalam peninjauan",method_sbp:"SBP",method_crypto:"Mata uang kripto",method_stars:"Bintang Telegram",mod_sell:"Penjualan",mod_buy:"Pembelian",mod_tx:"Transaksi",an_expenses:"Pengeluaran",an_income:"Pendapatan",an_projects:"Proyek",approve:"Setujui",reject:"Tolak",empty:"Tidak ada permohonan",staff_change_role:"Ubah peran",staff_set_balance:"Ubah saldo",staff_new_balance:"Saldo baru",staff_balance_now:"Saldo saat ini",staff_invalid_balance:"Masukkan angka",staff_ban:"Blokir",staff_unban:"Buka blokir",staff_ban_reason:"Alasan",staff_ban_days:"Durasi (hari)",staff_ban_forever:"Selamanya",staff_ban_reason_required:"Masukkan alasan",staff_ban_until:"Sampai",staff_remove_role:"Hapus peran",staff_add:"Tambah",staff_apps:"Permohonan",staff_enter_id:"ID pengguna",staff_search:"Cari",staff_not_found:"Pengguna tidak ditemukan",staff_invalid_id:"Masukkan ID numerik",staff_apps_empty:"Tidak ada permohonan",staff_no_rights:"Hak tidak cukup",insufficient_rights:"Anda tidak memiliki hak yang cukup untuk fungsi ini",staff_mandatory:"Pengguna wajib",role_partner:"Mitra",role_corp:"Korporat",role_intern:"Magang",role_mod:"Moderator",role_admin:"Admin",role_owner:"Pemilik",logout:"Keluar",ref_my_code:"Kode referral saya",save:"Simpan",apply:"Terapkan",ref_stats_line:"Level: {level} · Ref: {total} · 10h: {d10} · Diperoleh: {earn} ₽",ref_apply_title:"Terapkan kode promo",back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
+id:baseI18n({an_revenue:"Omzet & pendapatan",an_other:"Lainnya",an_total:"total",an_rev_detail:"Deposit dan penarikan",an_net:"Bersih",an_gross:"Laba kotor",an_operating:"Laba operasi (−20%)",an_net_usn:"Laba bersih (−15% STS)",staff_show_all:"Semua staf",staff_all:"Semua staf",mod_queue_empty:"Tidak ada permohonan dalam peninjauan",method_sbp:"SBP",method_crypto:"Mata uang kripto",method_stars:"Bintang Telegram",mod_sell:"Penjualan",mod_buy:"Pembelian",mod_tx:"Transaksi",an_expenses:"Pengeluaran",an_income:"Pendapatan",an_projects:"Proyek",approve:"Setujui",reject:"Tolak",empty:"Tidak ada permohonan",staff_change_role:"Ubah peran",staff_set_balance:"Ubah saldo",staff_new_balance:"Saldo baru",staff_balance_now:"Saldo saat ini",staff_invalid_balance:"Masukkan angka",staff_ban:"Blokir",staff_unban:"Buka blokir",staff_ban_reason:"Alasan",staff_ban_days:"Durasi (hari)",staff_ban_forever:"Selamanya",staff_ban_reason_required:"Masukkan alasan",staff_ban_until:"Sampai",staff_remove_role:"Hapus peran",staff_add:"Tambah",staff_apps:"Permohonan",staff_enter_id:"ID pengguna",staff_search:"Cari",staff_not_found:"Pengguna tidak ditemukan",staff_invalid_id:"Masukkan ID numerik",staff_apps_empty:"Tidak ada permohonan",staff_no_rights:"Hak tidak cukup",insufficient_rights:"Anda tidak memiliki hak yang cukup untuk fungsi ini",staff_mandatory:"Pengguna wajib",role_partner:"Mitra",role_corp:"Korporat",role_intern:"Magang",role_mod:"Moderator",role_admin:"Admin",role_owner:"Pemilik",logout:"Keluar",ref_my_code:"Kode referral saya",save:"Simpan",apply:"Terapkan",ref_stats_line:"Level: {level} · Ref: {total} · 10h: {d10} · Diperoleh: {earn} ₽",ref_apply_title:"Terapkan kode promo",back:"Kembali",balance:"Saldo",settings:"Pengaturan",projects:"Proyek",help:"Bantuan",support:"Dukungan",panel:"Panel",
 language:"Bahasa",theme:"Tema",theme_light:"Terang",theme_dark:"Gelap",theme_auto:"Seperti Telegram",original:"Asli",on_moderation:"moderasi",status:"Status",no_projects:"Tidak ada proyek",btn_start:"Mulai",btn_stop:"Stop",my_transactions:"Transaksi saya",no_transactions:"Tidak ada transaksi",transaction:"Transaksi",close:"Tutup",tx_type:"Jenis",date_time:"Tanggal dan waktu",operation_id:"ID operasi",tx_deposit:"Deposit",tx_withdraw:"Penarikan",tx_purchase:"Pembelian",tx_monetization:"Monetisasi",tx_salary:"Gaji",tx_admin:"Perubahan saldo admin",
 role:"Peran",deposit:"Deposit",withdraw:"Penarikan",my_requests:"Permintaan saya",no_requests:"Tidak ada",
 amount_rub:"Jumlah (₽)",method:"Metode pembayaran",comment:"Komentar",continue:"Lanjut",pay:"Bayar",confirm:"Konfirmasi",
@@ -1267,7 +1367,7 @@ terms_prefix:"Dengan melanjutkan Anda menerima ",terms_link:"ketentuan layanan",
 help_body:"Mini App tersinkron dengan bot.",support_manager:"Manajer",support_bot:"Bot",support_email:"Email",support_faq:"FAQ",soon:"Segera",
 staff:"Staf",mod_sell:"Jual",mod_buy:"Beli",mod_tx:"Transaksi",analytics:"Analitik",prev:"Sebelumnya",next:"Berikutnya",
 roles:{user:"Pengguna",partner:"Mitra",corp:"Korporat",intern:"Magang",mod:"Moderator",admin:"Admin",owner:"Pemilik"},collab_work_hint:"<strong>Moderator</strong><br><br>• Gaji: <strong>25$ / 12 jam</strong><br>• Wajib: <strong>3 shift per minggu</strong><br><br><strong>Magang</strong><br><br>• Periode: <strong>1 bulan</strong><br>• Shift magang: <strong>6 jam</strong><br>• Bayaran per shift magang: <strong>10$</strong><br><br><strong>Tanggung Jawab</strong><br><br>• Moderasi listing<br>• Moderasi keluhan<br>• Moderasi tiket dukungan<br>• Analitik (lihat)<br>• Pusat kerja / shift<br>• Kontrol shift (hanya lihat)"}),
-ar:baseI18n({download_excel:"تحميل Excel",an_revenue:"الدوران والإيرادات",an_other:"أخرى",an_gross:"الربح الإجمالي",an_operating:"الربح التشغيلي",an_net_usn:"صافي الربح",staff_show_all:"كل الموظفين",staff_all:"كل الموظفين",mod_queue_empty:"لا توجد طلبات قيد المراجعة",method_sbp:"SBP",method_crypto:"عملة مشفرة",method_stars:"نجوم تيليجرام",mod_sell:"المبيعات",mod_buy:"المشتريات",mod_tx:"المعاملات",an_expenses:"المصروفات",an_income:"الإيرادات",an_projects:"المشاريع",approve:"موافقة",reject:"رفض",empty:"لا توجد طلبات",staff_change_role:"تغيير الدور",staff_set_balance:"تغيير الرصيد",staff_new_balance:"الرصيد الجديد",staff_balance_now:"الرصيد الحالي",staff_invalid_balance:"أدخل رقماً",staff_ban:"حظر",staff_unban:"إلغاء الحظر",staff_ban_reason:"السبب",staff_ban_days:"المدة (أيام)",staff_ban_forever:"دائم",staff_ban_reason_required:"أدخل السبب",staff_ban_until:"حتى",staff_remove_role:"إزالة الدور",staff_add:"إضافة",staff_apps:"الطلبات",staff_enter_id:"معرّف المستخدم",staff_search:"بحث",staff_not_found:"المستخدم غير موجود",staff_invalid_id:"أدخل معرّفاً رقمياً",staff_apps_empty:"لا توجد طلبات",staff_no_rights:"صلاحيات غير كافية",insufficient_rights:"ليس لديك صلاحيات كافية لهذه الوظيفة",staff_mandatory:"مستخدم إلزامي",role_partner:"شريك",role_corp:"شركات",role_intern:"متدرب",role_mod:"مشرف",role_admin:"مدير",role_owner:"مالك",logout:"تسجيل الخروج",ref_my_code:"رمز الإحالة الخاص بي",save:"حفظ",apply:"تطبيق",ref_stats_line:"المستوى: {level} · الإحالات: {total} · 10 أيام: {d10} · الأرباح: {earn} ₽",ref_apply_title:"تطبيق رمز ترويجي",back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
+ar:baseI18n({an_revenue:"الدوران والإيرادات",an_other:"أخرى",an_total:"الإجمالي",an_rev_detail:"الإيداعات والسحوبات",an_net:"الصافي",an_gross:"الربح الإجمالي",an_operating:"الربح التشغيلي (−20%)",an_net_usn:"صافي الربح (−15% STS)",staff_show_all:"كل الموظفين",staff_all:"كل الموظفين",mod_queue_empty:"لا توجد طلبات قيد المراجعة",method_sbp:"SBP",method_crypto:"عملة مشفرة",method_stars:"نجوم تيليجرام",mod_sell:"المبيعات",mod_buy:"المشتريات",mod_tx:"المعاملات",an_expenses:"المصروفات",an_income:"الإيرادات",an_projects:"المشاريع",approve:"موافقة",reject:"رفض",empty:"لا توجد طلبات",staff_change_role:"تغيير الدور",staff_set_balance:"تغيير الرصيد",staff_new_balance:"الرصيد الجديد",staff_balance_now:"الرصيد الحالي",staff_invalid_balance:"أدخل رقماً",staff_ban:"حظر",staff_unban:"إلغاء الحظر",staff_ban_reason:"السبب",staff_ban_days:"المدة (أيام)",staff_ban_forever:"دائم",staff_ban_reason_required:"أدخل السبب",staff_ban_until:"حتى",staff_remove_role:"إزالة الدور",staff_add:"إضافة",staff_apps:"الطلبات",staff_enter_id:"معرّف المستخدم",staff_search:"بحث",staff_not_found:"المستخدم غير موجود",staff_invalid_id:"أدخل معرّفاً رقمياً",staff_apps_empty:"لا توجد طلبات",staff_no_rights:"صلاحيات غير كافية",insufficient_rights:"ليس لديك صلاحيات كافية لهذه الوظيفة",staff_mandatory:"مستخدم إلزامي",role_partner:"شريك",role_corp:"شركات",role_intern:"متدرب",role_mod:"مشرف",role_admin:"مدير",role_owner:"مالك",logout:"تسجيل الخروج",ref_my_code:"رمز الإحالة الخاص بي",save:"حفظ",apply:"تطبيق",ref_stats_line:"المستوى: {level} · الإحالات: {total} · 10 أيام: {d10} · الأرباح: {earn} ₽",ref_apply_title:"تطبيق رمز ترويجي",back:"رجوع",balance:"الرصيد",settings:"الإعدادات",projects:"المشاريع",help:"مساعدة",support:"الدعم",panel:"اللوحة",
 language:"اللغة",theme:"المظهر",theme_light:"فاتح",theme_dark:"داكن",theme_auto:"مثل تيليجرام",original:"أصلي",on_moderation:"قيد المراجعة",status:"الحالة",no_projects:"لا مشاريع",btn_start:"تشغيل",btn_stop:"إيقاف",my_transactions:"معاملاتي",no_transactions:"لا معاملات",transaction:"معاملة",close:"إغلاق",tx_type:"النوع",date_time:"التاريخ والوقت",operation_id:"معرّف العملية",tx_deposit:"إيداع",tx_withdraw:"سحب",tx_purchase:"شراء",tx_monetization:"تحقيق الدخل",tx_salary:"راتب",tx_admin:"تعديل الرصيد من المشرف",
 role:"الدور",deposit:"إيداع",withdraw:"سحب",my_requests:"طلباتي",no_requests:"لا طلبات",
 amount_rub:"المبلغ (₽)",method:"طريقة الدفع",comment:"تعليق",continue:"متابعة",pay:"ادفع",confirm:"تأكيد",
@@ -1278,7 +1378,7 @@ terms_prefix:"بالمتابعة فإنك توافق على ",terms_link:"شرو
 help_body:"التطبيق متزامن مع البوت.",support_manager:"المدير",support_bot:"البوت",support_email:"البريد",support_faq:"الأسئلة",soon:"قريباً",
 staff:"الموظفون",mod_sell:"بيع",mod_buy:"شراء",mod_tx:"المعاملات",analytics:"تحليلات",prev:"السابق",next:"التالي",
 roles:{user:"مستخدم",partner:"شريك",corp:"شركات",intern:"متدرب",mod:"مشرف",admin:"مسؤول",owner:"مالك"},collab_work_hint:"<strong>مشرف</strong><br><br>• الراتب: <strong>25$ / 12 ساعة</strong><br>• المطلوب: <strong>3 نوبات أسبوعيًا</strong><br><br><strong>التدريب</strong><br><br>• المدة: <strong>شهر واحد</strong><br>• نوبة المتدرب: <strong>6 ساعات</strong><br>• أجر نوبة التدريب: <strong>10$</strong><br><br><strong>المسؤوليات</strong><br><br>• الإشراف على الإعلانات<br>• الإشراف على الشكاوى<br>• الإشراف على تذاكر الدعم<br>• التحليلات (عرض فقط)<br>• مركز العمل / النوبات<br>• التحكم في النوبات (عرض فقط)"}),
-zh:baseI18n({download_excel:"下载 Excel",an_revenue:"营业额与收入",an_other:"其他",an_gross:"毛利润",an_operating:"营业利润",an_net_usn:"净利润",staff_show_all:"全部员工",staff_all:"全部员工",mod_queue_empty:"没有待审核的申请",method_sbp:"SBP",method_crypto:"加密货币",method_stars:"Telegram 星星",staff_change_role:"更改角色",staff_set_balance:"更改余额",staff_new_balance:"新余额",staff_balance_now:"当前余额",staff_invalid_balance:"请输入数字",staff_ban:"封禁",staff_unban:"解封",staff_ban_reason:"原因",staff_ban_days:"期限（天）",staff_ban_forever:"永久",staff_ban_reason_required:"请填写原因",staff_ban_until:"至",staff_remove_role:"解除职务",staff_add:"添加",staff_apps:"申请",staff_enter_id:"用户ID",staff_search:"查找",staff_not_found:"未找到用户",staff_invalid_id:"请输入数字ID",staff_apps_empty:"暂无申请",staff_no_rights:"权限不足",insufficient_rights:"您没有足够的权限使用此功能",staff_mandatory:"固定用户",role_partner:"合作伙伴",role_corp:"企业",role_intern:"实习生",role_mod:"版主",role_admin:"管理员",role_owner:"所有者",logout:"退出",ref_my_code:"我的推荐码",save:"保存",apply:"应用",ref_stats_line:"等级: {level} · 推荐: {total} · 10天: {d10} · 收益: {earn} ₽",ref_apply_title:"应用优惠码",back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
+zh:baseI18n({an_revenue:"营业额与收入",an_other:"其他",an_total:"合计",an_rev_detail:"充值与提现",an_net:"净额",an_gross:"毛利润",an_operating:"营业利润（−20%）",an_net_usn:"净利润（−15% STS）",staff_show_all:"全部员工",staff_all:"全部员工",mod_queue_empty:"没有待审核的申请",method_sbp:"SBP",method_crypto:"加密货币",method_stars:"Telegram 星星",staff_change_role:"更改角色",staff_set_balance:"更改余额",staff_new_balance:"新余额",staff_balance_now:"当前余额",staff_invalid_balance:"请输入数字",staff_ban:"封禁",staff_unban:"解封",staff_ban_reason:"原因",staff_ban_days:"期限（天）",staff_ban_forever:"永久",staff_ban_reason_required:"请填写原因",staff_ban_until:"至",staff_remove_role:"解除职务",staff_add:"添加",staff_apps:"申请",staff_enter_id:"用户ID",staff_search:"查找",staff_not_found:"未找到用户",staff_invalid_id:"请输入数字ID",staff_apps_empty:"暂无申请",staff_no_rights:"权限不足",insufficient_rights:"您没有足够的权限使用此功能",staff_mandatory:"固定用户",role_partner:"合作伙伴",role_corp:"企业",role_intern:"实习生",role_mod:"版主",role_admin:"管理员",role_owner:"所有者",logout:"退出",ref_my_code:"我的推荐码",save:"保存",apply:"应用",ref_stats_line:"等级: {level} · 推荐: {total} · 10天: {d10} · 收益: {earn} ₽",ref_apply_title:"应用优惠码",back:"返回",balance:"余额",settings:"设置",projects:"项目",help:"帮助",support:"支持",panel:"面板",
 language:"语言",theme:"主题",theme_light:"浅色",theme_dark:"深色",theme_auto:"跟随 Telegram",original:"原版",on_moderation:"审核中",status:"状态",no_projects:"暂无项目",btn_start:"启动",btn_stop:"停止",my_transactions:"我的交易",no_transactions:"暂无交易",transaction:"交易",close:"关闭",tx_type:"类型",date_time:"日期和时间",operation_id:"操作编号",tx_deposit:"充值",tx_withdraw:"提现",tx_purchase:"购买",tx_monetization:"变现",tx_salary:"工资",tx_admin:"管理员调整余额",
 role:"角色",deposit:"充值",withdraw:"提现",my_requests:"我的申请",no_requests:"暂无申请",
 amount_rub:"金额 (₽)",method:"支付方式",comment:"备注",continue:"继续",pay:"支付",confirm:"确认",
@@ -1289,7 +1389,7 @@ terms_prefix:"继续即表示同意",terms_link:"服务条款",terms_suffix:"",
 help_body:"小程序已与机器人同步。",support_manager:"经理",support_bot:"机器人",support_email:"邮箱",support_faq:"常见问题",soon:"即将推出",
 staff:"员工",mod_sell:"出售",mod_buy:"购买",mod_tx:"交易",analytics:"分析",prev:"上一页",next:"下一页",
 roles:{user:"用户",partner:"合作伙伴",corp:"企业",intern:"实习",mod:"版主",admin:"管理员",owner:"所有者"},collab_work_hint:"<strong>审核员</strong><br><br>• 薪资：<strong>25$ / 12 小时</strong><br>• 要求：<strong>每周 3 个班次</strong><br><br><strong>实习</strong><br><br>• 期限：<strong>1 个月</strong><br>• 实习班次：<strong>6 小时</strong><br>• 每个实习班次报酬：<strong>10$</strong><br><br><strong>职责</strong><br><br>• 信息发布审核<br>• 投诉审核<br>• 客服工单审核<br>• 数据分析（仅查看）<br>• 工作中心 / 班次<br>• 班次管理（仅查看）"}),
-ja:baseI18n({download_excel:"Excelをダウンロード",an_revenue:"売上と収益",an_other:"その他",an_gross:"粗利益",an_operating:"営業利益",an_net_usn:"純利益",staff_show_all:"全スタッフ",staff_all:"全スタッフ",mod_queue_empty:"審査中の申請はありません",method_sbp:"SBP",method_crypto:"暗号通貨",method_stars:"Telegramスター",staff_change_role:"役割を変更",staff_set_balance:"残高を変更",staff_new_balance:"新しい残高",staff_balance_now:"現在の残高",staff_invalid_balance:"数字を入力",staff_ban:"ブロック",staff_unban:"ブロック解除",staff_ban_reason:"理由",staff_ban_days:"期間（日）",staff_ban_forever:"無期限",staff_ban_reason_required:"理由を入力",staff_ban_until:"まで",staff_remove_role:"役職を解除",staff_add:"追加",staff_apps:"申請",staff_enter_id:"ユーザーID",staff_search:"検索",staff_not_found:"ユーザーが見つかりません",staff_invalid_id:"数字のIDを入力してください",staff_apps_empty:"申請はありません",staff_no_rights:"権限が不足しています",insufficient_rights:"この機能を利用する権限がありません",staff_mandatory:"必須ユーザー",role_partner:"パートナー",role_corp:"法人",role_intern:"インターン",role_mod:"モデレーター",role_admin:"管理者",role_owner:"オーナー",logout:"ログアウト",ref_my_code:"紹介コード",save:"保存",apply:"適用",ref_stats_line:"レベル: {level} · 紹介: {total} · 10日: {d10} · 収益: {earn} ₽",ref_apply_title:"プロモコードを適用",back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
+ja:baseI18n({an_revenue:"売上と収益",an_other:"その他",an_total:"合計",an_rev_detail:"入金と出金",an_net:"純額",an_gross:"粗利益",an_operating:"営業利益（−20%）",an_net_usn:"純利益（−15% STS）",staff_show_all:"全スタッフ",staff_all:"全スタッフ",mod_queue_empty:"審査中の申請はありません",method_sbp:"SBP",method_crypto:"暗号通貨",method_stars:"Telegramスター",staff_change_role:"役割を変更",staff_set_balance:"残高を変更",staff_new_balance:"新しい残高",staff_balance_now:"現在の残高",staff_invalid_balance:"数字を入力",staff_ban:"ブロック",staff_unban:"ブロック解除",staff_ban_reason:"理由",staff_ban_days:"期間（日）",staff_ban_forever:"無期限",staff_ban_reason_required:"理由を入力",staff_ban_until:"まで",staff_remove_role:"役職を解除",staff_add:"追加",staff_apps:"申請",staff_enter_id:"ユーザーID",staff_search:"検索",staff_not_found:"ユーザーが見つかりません",staff_invalid_id:"数字のIDを入力してください",staff_apps_empty:"申請はありません",staff_no_rights:"権限が不足しています",insufficient_rights:"この機能を利用する権限がありません",staff_mandatory:"必須ユーザー",role_partner:"パートナー",role_corp:"法人",role_intern:"インターン",role_mod:"モデレーター",role_admin:"管理者",role_owner:"オーナー",logout:"ログアウト",ref_my_code:"紹介コード",save:"保存",apply:"適用",ref_stats_line:"レベル: {level} · 紹介: {total} · 10日: {d10} · 収益: {earn} ₽",ref_apply_title:"プロモコードを適用",back:"戻る",balance:"残高",settings:"設定",projects:"プロジェクト",help:"ヘルプ",support:"サポート",panel:"パネル",
 language:"言語",theme:"テーマ",theme_light:"ライト",theme_dark:"ダーク",theme_auto:"Telegramと同じ",original:"オリジナル",on_moderation:"審査中",status:"ステータス",no_projects:"プロジェクトなし",btn_start:"開始",btn_stop:"停止",my_transactions:"取引履歴",no_transactions:"取引なし",transaction:"取引",close:"閉じる",tx_type:"種類",date_time:"日時",operation_id:"操作ID",tx_deposit:"入金",tx_withdraw:"出金",tx_purchase:"購入",tx_monetization:"収益化",tx_salary:"給与",tx_admin:"管理者による残高変更",
 role:"ロール",deposit:"入金",withdraw:"出金",my_requests:"申請一覧",no_requests:"申請なし",
 amount_rub:"金額 (₽)",method:"支払い方法",comment:"コメント",continue:"続行",pay:"支払う",confirm:"確認",
@@ -1300,7 +1400,7 @@ terms_prefix:"続行すると",terms_link:"利用規約",terms_suffix:"に同意
 help_body:"Mini Appはボットと同期しています。",support_manager:"マネージャー",support_bot:"ボット",support_email:"メール",support_faq:"FAQ",soon:"近日",
 staff:"スタッフ",mod_sell:"販売",mod_buy:"購入",mod_tx:"取引",analytics:"分析",prev:"前へ",next:"次へ",
 roles:{user:"ユーザー",partner:"パートナー",corp:"法人",intern:"インターン",mod:"モデレーター",admin:"管理者",owner:"オーナー"},collab_work_hint:"<strong>モデレーター</strong><br><br>• 給与：<strong>25$ / 12時間</strong><br>• 必須：<strong>週3シフト</strong><br><br><strong>インターンシップ</strong><br><br>• 期間：<strong>1か月</strong><br>• インターンのシフト：<strong>6時間</strong><br>• インターン1シフトの報酬：<strong>10$</strong><br><br><strong>業務内容</strong><br><br>• 掲載情報のモデレーション<br>• 苦情のモデレーション<br>• サポートチケットのモデレーション<br>• 分析（閲覧）<br>• ワークセンター / シフト<br>• シフト管理（閲覧のみ）"}),
-ko:baseI18n({download_excel:"Excel 다운로드",an_revenue:"매출 및 수익",an_other:"기타",an_gross:"매출총이익",an_operating:"영업이익",an_net_usn:"순이익",staff_show_all:"전체 직원",staff_all:"전체 직원",mod_queue_empty:"검토 중인 신청이 없습니다",method_sbp:"SBP",method_crypto:"암호화폐",method_stars:"텔레그램 스타",staff_change_role:"역할 변경",staff_set_balance:"잔액 변경",staff_new_balance:"새 잔액",staff_balance_now:"현재 잔액",staff_invalid_balance:"숫자를 입력하세요",staff_ban:"차단",staff_unban:"차단 해제",staff_ban_reason:"사유",staff_ban_days:"기간(일)",staff_ban_forever:"영구",staff_ban_reason_required:"사유를 입력하세요",staff_ban_until:"까지",staff_remove_role:"역할 해제",staff_add:"추가",staff_apps:"신청",staff_enter_id:"사용자 ID",staff_search:"찾기",staff_not_found:"사용자를 찾을 수 없습니다",staff_invalid_id:"숫자 ID를 입력하세요",staff_apps_empty:"신청 없음",staff_no_rights:"권한 부족",insufficient_rights:"이 기능을 사용할 권한이 없습니다",staff_mandatory:"필수 사용자",role_partner:"파트너",role_corp:"법인",role_intern:"인턴",role_mod:"모더",role_admin:"관리자",role_owner:"소유자",logout:"로그아웃",ref_my_code:"내 추천 코드",save:"저장",apply:"적용",ref_stats_line:"레벨: {level} · 추천: {total} · 10일: {d10} · 수익: {earn} ₽",ref_apply_title:"프로모 코드 적용",back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
+ko:baseI18n({an_revenue:"매출 및 수익",an_other:"기타",an_total:"합계",an_rev_detail:"입금 및 출금",an_net:"순액",an_gross:"매출총이익",an_operating:"영업이익(−20%)",an_net_usn:"순이익(−15% STS)",staff_show_all:"전체 직원",staff_all:"전체 직원",mod_queue_empty:"검토 중인 신청이 없습니다",method_sbp:"SBP",method_crypto:"암호화폐",method_stars:"텔레그램 스타",staff_change_role:"역할 변경",staff_set_balance:"잔액 변경",staff_new_balance:"새 잔액",staff_balance_now:"현재 잔액",staff_invalid_balance:"숫자를 입력하세요",staff_ban:"차단",staff_unban:"차단 해제",staff_ban_reason:"사유",staff_ban_days:"기간(일)",staff_ban_forever:"영구",staff_ban_reason_required:"사유를 입력하세요",staff_ban_until:"까지",staff_remove_role:"역할 해제",staff_add:"추가",staff_apps:"신청",staff_enter_id:"사용자 ID",staff_search:"찾기",staff_not_found:"사용자를 찾을 수 없습니다",staff_invalid_id:"숫자 ID를 입력하세요",staff_apps_empty:"신청 없음",staff_no_rights:"권한 부족",insufficient_rights:"이 기능을 사용할 권한이 없습니다",staff_mandatory:"필수 사용자",role_partner:"파트너",role_corp:"법인",role_intern:"인턴",role_mod:"모더",role_admin:"관리자",role_owner:"소유자",logout:"로그아웃",ref_my_code:"내 추천 코드",save:"저장",apply:"적용",ref_stats_line:"레벨: {level} · 추천: {total} · 10일: {d10} · 수익: {earn} ₽",ref_apply_title:"프로모 코드 적용",back:"뒤로",balance:"잔액",settings:"설정",projects:"프로젝트",help:"도움말",support:"지원",panel:"패널",
 language:"언어",theme:"테마",theme_light:"라이트",theme_dark:"다크",theme_auto:"텔레그램과 동일",original:"원본",on_moderation:"검토 중",status:"상태",no_projects:"프로젝트 없음",btn_start:"시작",btn_stop:"중지",my_transactions:"내 거래",no_transactions:"거래 없음",transaction:"거래",close:"닫기",tx_type:"유형",date_time:"날짜 및 시간",operation_id:"작업 ID",tx_deposit:"입금",tx_withdraw:"출금",tx_purchase:"구매",tx_monetization:"수익화",tx_salary:"급여",tx_admin:"관리자 잔액 변경",
 role:"역할",deposit:"입금",withdraw:"출금",my_requests:"내 요청",no_requests:"요청 없음",
 amount_rub:"금액 (₽)",method:"결제 수단",comment:"메모",continue:"계속",pay:"결제",confirm:"확인",
@@ -1730,6 +1830,7 @@ const SCREEN_TO_PATH = {
   "panel-mod-buy": "/panel/mod/buy",
   "panel-mod-tx": "/panel/mod/tx",
   "panel-analytics": "/panel/analytics",
+  "panel-period": "/panel/analytics/period",
   "panel-analytics-view": "/panel/analytics/view",
   collaborate: "/advanced",
   "job-form": "/job",
@@ -2062,7 +2163,24 @@ function show(id,push){
   try{applyI18n()}catch(e){}
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
-function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
+function goBack(){
+  // Подменю настроек проекта: назад → список настроек (не карточка проекта)
+  try{
+    const active=document.querySelector(".screen.active");
+    const aid=active&&active.id;
+    const inSettings=aid==="screen-project-settings";
+    const sub=!!(state&&state.psSubLevel);
+    // fallback: если на экране есть кнопка возврата в настройки
+    const hasSubBack=inSettings&&document.getElementById("ps-sub-back");
+    if(inSettings && (sub || hasSubBack) && state.currentProjectId){
+      state.psSubLevel=0;
+      const fn=window.openProjectSettings;
+      if(typeof fn==="function"){ fn(state.currentProjectId); return; }
+    }
+  }catch(e){}
+  if(state.history.length>1)state.history.pop();
+  show(state.history[state.history.length-1]||"main",false);
+}
 
 function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
 async function apiFetch(path,opts,timeoutMs){
@@ -2422,54 +2540,127 @@ function projectNameUrl(p){
   return uname?"https://t.me/"+encodeURIComponent(uname):"";
 }
 
+
 async function openProjectSnippetMenu(pid){
   state.currentProjectId=pid;
-  // отдельный лёгкий экран на базе project-settings контейнера или alert-flow с понятным меню
-  let host=document.getElementById("screen-project-snippet");
-  if(!host){
-    // используем project-analytics-like simple panel via project screen body
-    show("project");
-  }
-  const r=await apiGet("/api/miniapp/project/"+pid+"/snippet?user_id="+encodeURIComponent(USER_ID));
-  const installed=!!(r&&r.installed);
-  const title=t("btn_snippet")||t("snippet")||"Сниппет";
-  const statusTxt=installed?(t("snippet_installed")||"Сниппет установлен"):(t("snippet_not_installed")||"Сниппет не установлен");
+  state.snippetFlow={step:"lang", lang:null, library:null, stacks:[], file:null};
+  show("project");
+  document.getElementById("pd-title").textContent=t("btn_snippet")||t("snippet")||"Сниппет";
   const body=document.getElementById("pd-body");
   const act=document.getElementById("pd-actions");
-  document.getElementById("pd-title").textContent=title;
-  if(body){
-    body.innerHTML='<div class="field"><div class="label">'+(t("status")||"Статус")+'</div><div class="value">'+statusTxt+'</div></div>'
-      +'<div class="muted" style="margin-top:10px">'+(installed
-        ?(t("snippet_hint_ok")||"Файл сниппета уже отмечен как установленный.")
-        :(t("snippet_hint_get")||"Получите файл сниппета в Telegram-боте (кнопка «Сниппет»), вставьте в своего бота, затем отметьте установку."))+'</div>';
-  }
-  if(act){
-    let btns='';
-    if(installed){
-      btns+='<button class="btn wide" id="snip-reset">'+(t("snippet_reset")||"Сбросить статус")+'</button>';
-    }else{
-      btns+='<button class="btn primary wide" id="snip-install">'+(t("snippet_mark")||"Отметить установленным")+'</button>';
+  body.innerHTML="…";
+  act.innerHTML="";
+  try{
+    const r=await apiGet("/api/miniapp/project/"+pid+"/snippet?user_id="+encodeURIComponent(USER_ID));
+    if(r&&r.installed){
+      body.innerHTML='<div class="field"><div class="label">'+(t("status")||"Статус")+'</div><div class="value">'+(t("snippet_installed")||"Сниппет установлен")+'</div></div>';
+      act.innerHTML='<button type="button" class="btn wide" id="snip-reset">'+(t("snippet_reset")||"Сбросить статус")+'</button>'
+        +'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+      document.getElementById("snip-reset").onclick=async()=>{
+        await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"reset"});
+        openProjectSnippetMenu(pid);
+      };
+      document.getElementById("snip-back").onclick=()=>openProject(pid);
+      return;
     }
-    btns+='<button class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
-    act.innerHTML=btns;
-    const back=document.getElementById("snip-back");
-    if(back) back.onclick=()=>openProject(pid);
-    const inst=document.getElementById("snip-install");
-    if(inst) inst.onclick=async()=>{
-      try{
-        const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"install"});
-        if(rr&&rr.ok) openProjectSnippetMenu(pid);
-        else alert((rr&&(rr.message||rr.error))||"error");
-      }catch(e){alert(String(e.message||e))}
+    state.snippetFlow.stacks=r.stacks||[];
+    renderSnippetLangStep(pid);
+  }catch(e){
+    body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>';
+    act.innerHTML='<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+    document.getElementById("snip-back").onclick=()=>openProject(pid);
+  }
+}
+function renderSnippetLangStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  const stacks=state.snippetFlow.stacks||[];
+  body.innerHTML='<div class="muted" style="margin-bottom:8px">'+(t("snippet_pick_lang")||"Выберите язык бота")+'</div>';
+  let html='';
+  stacks.forEach(s=>{
+    html+='<button type="button" class="btn wide" data-slang="'+panelEsc(s.id)+'">'+panelEsc(s.title||s.id)+'</button>';
+  });
+  if(!stacks.length){
+    html+='<button type="button" class="btn wide" data-slang="python">Python</button>';
+  }
+  act.innerHTML=html+'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+  act.querySelectorAll("[data-slang]").forEach(b=>{
+    b.onclick=()=>{
+      state.snippetFlow.lang=b.getAttribute("data-slang");
+      renderSnippetLibStep(pid);
     };
-    const rst=document.getElementById("snip-reset");
-    if(rst) rst.onclick=async()=>{
-      try{
-        const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"reset"});
-        if(rr&&rr.ok) openProjectSnippetMenu(pid);
-        else alert((rr&&(rr.message||rr.error))||"error");
-      }catch(e){alert(String(e.message||e))}
+  });
+  document.getElementById("snip-back").onclick=()=>openProject(pid);
+}
+function renderSnippetLibStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  const stacks=state.snippetFlow.stacks||[];
+  const stack=stacks.find(s=>s.id===state.snippetFlow.lang)||{libs:[{id:"telebot",title:"telebot"}]};
+  body.innerHTML='<div class="muted" style="margin-bottom:8px">'+(t("snippet_pick_lib")||"Выберите библиотеку")+'</div>';
+  let html='';
+  (stack.libs||[]).forEach(l=>{
+    html+='<button type="button" class="btn wide" data-slib="'+panelEsc(l.id)+'">'+panelEsc(l.title||l.id)+'</button>';
+  });
+  act.innerHTML=html+'<button type="button" class="btn wide" id="snip-back">'+(t("back")||"Назад")+'</button>';
+  act.querySelectorAll("[data-slib]").forEach(b=>{
+    b.onclick=async()=>{
+      state.snippetFlow.library=b.getAttribute("data-slib");
+      await renderSnippetFileStep(pid);
     };
+  });
+  document.getElementById("snip-back").onclick=()=>renderSnippetLangStep(pid);
+}
+async function renderSnippetFileStep(pid){
+  const body=document.getElementById("pd-body");
+  const act=document.getElementById("pd-actions");
+  body.innerHTML="…";
+  act.innerHTML="";
+  try{
+    const r=await apiPost("/api/miniapp/project/"+pid+"/snippet",{
+      user_id:USER_ID, action:"generate",
+      lang:state.snippetFlow.lang, library:state.snippetFlow.library
+    });
+    if(!r||!r.ok){ body.innerHTML='<div class="muted">'+panelEsc((r&&(r.error||r.message))||"error")+'</div>'; return; }
+    state.snippetFlow.file=r;
+    const fname=r.filename||"snippet.py";
+    const instr=r.instruction||"";
+    body.innerHTML=
+      '<div class="snip-file-card">'
+      +'<div class="snip-file-icon" aria-hidden="true">'
+      +'<svg viewBox="0 0 48 48" width="48" height="48">'
+      +'<rect x="10" y="6" width="28" height="36" rx="4" fill="var(--brand-soft)" stroke="var(--brand)" stroke-width="2"/>'
+      +'<path d="M18 20h12M18 26h12M18 32h8" stroke="var(--brand)" stroke-width="2" stroke-linecap="round"/>'
+      +'</svg></div>'
+      +'<div class="snip-file-name">'+panelEsc(fname)+'</div>'
+      +'<button type="button" class="btn primary snip-dl-btn" id="snip-download">'
+      +'<span class="snip-dl-ico" aria-hidden="true">⬇</span> '
+      +(t("snippet_download")||"Скачать файл")
+      +'</button>'
+      +'</div>'
+      +'<div class="snip-instr"><div class="snip-instr-title">'+(t("snippet_instruction")||"Инструкция")+'</div>'
+      +'<div class="snip-instr-body">'+panelEsc(instr).replace(/\\n/g,"<br>")+'</div></div>';
+    act.innerHTML=
+      '<button type="button" class="btn primary wide" id="snip-installed">'+(t("snippet_mark")||"Я установил сниппет")+'</button>'
+      +'<button type="button" class="btn wide" id="snip-cancel">'+(t("cancel")||"Отмена")+'</button>';
+    document.getElementById("snip-download").onclick=()=>{
+      try{
+        const blob=new Blob([r.content||""],{type:"text/plain;charset=utf-8"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=url; a.download=fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),2000);
+      }catch(e){ alert(String(e.message||e)); }
+    };
+    document.getElementById("snip-installed").onclick=async()=>{
+      const rr=await apiPost("/api/miniapp/project/"+pid+"/snippet",{user_id:USER_ID,action:"install"});
+      if(rr&&rr.ok) openProject(pid);
+      else alert((rr&&(rr.message||rr.error))||"error");
+    };
+    document.getElementById("snip-cancel").onclick=()=>openProject(pid);
+  }catch(e){
+    body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>';
   }
 }
 
@@ -2638,7 +2829,7 @@ async function openPanelSection(key){
   if(key==="mod_sell"){ state.panelPages.sell=1; show("panel-mod-sell"); await loadPanelMod("sell"); return; }
   if(key==="mod_buy"){ state.panelPages.buy=1; show("panel-mod-buy"); await loadPanelMod("buy"); return; }
   if(key==="mod_tx"){ state.panelPages.tx=1; show("panel-mod-tx"); await loadPanelMod("tx"); return; }
-  if(key==="analytics"){ show("panel-analytics"); return; }
+  if(key==="analytics"){ show("panel-analytics"); try{wirePeriodBars()}catch(e){}; return; }
 }
 
 function staffBlueStar(){return '<span class="star-blue" aria-hidden="true"></span>'}
@@ -2695,7 +2886,6 @@ function renderStaffListMain(){
       +'<span>'+(t("staff_show_all")||"Все сотрудники")+'</span></button>';
   }
   box.innerHTML=html;
-      bindExcelDownload(box, pxurl);
   bindStaffListClicks(box);
   const more=document.getElementById("panel-staff-more");
   if(more) more.onclick=(e)=>{e.stopPropagation();openStaffAllList();};
@@ -3148,43 +3338,196 @@ async function openPanelModDetail(kind, id, type){
 }
 
 
+// --- период аналитики (кварталы) ---
+state.anPeriod = state.anPeriod || {mode:"all", q:null, label:"За весь период", quarters:[]};
+state.projPeriod = state.projPeriod || {mode:"all", q:null, label:"За весь период", quarters:[]};
+
 function periodQuery(p){
-  p=p||(state&&state.anPeriod)||{mode:"all"};
-  if(!p||p.mode==="all"||p.q==null) return "&period=all";
+  p = p || state.anPeriod;
+  if(!p || p.mode==="all" || p.q==null) return "&period=all";
   return "&period=quarter&q="+encodeURIComponent(p.q);
 }
+function updatePeriodLabel(elId, p){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  el.textContent=(p&&p.label)||(t("an_all_period")||"За весь период");
+}
+async function ensureQuarters(target){
+  target = target || state.anPeriod;
+  if(target.quarters && target.quarters.length) return target.quarters;
+  try{
+    const r=await apiGet("/api/miniapp/panel/analytics?user_id="+encodeURIComponent(USER_ID)+"&kind=quarters");
+    const list=(r&&r.quarters)||[];
+    target.quarters=list;
+    if(target.mode!=="all" && target.q==null && r.current!=null){
+      target.q=r.current;
+      const hit=list.find(x=>x.index===r.current);
+      if(hit) target.label=hit.label;
+    }
+    return list;
+  }catch(e){ return target.quarters||[]; }
+}
+function shiftPeriod(target, dir){
+  // list ascending: 1,2,3… ; dir -1 = назад (меньший номер), +1 = вперёд (больший)
+  const list=target.quarters||[];
+  if(!list.length) return;
+  if(target.mode==="all"){
+    if(dir>0){
+      // с «весь период» вперёд → 1-й квартал
+      const q=list[0];
+      target.mode="quarter"; target.q=q.index; target.label=q.label;
+    }else if(dir<0){
+      // назад с «весь период» → последний (текущий) квартал
+      const q=list[list.length-1];
+      target.mode="quarter"; target.q=q.index; target.label=q.label;
+    }
+    return;
+  }
+  const idx=list.findIndex(x=>Number(x.index)===Number(target.q));
+  if(idx<0){ target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период"; return; }
+  const ni=idx+dir;
+  if(ni<0){
+    target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
+    return;
+  }
+  if(ni>=list.length){
+    // дальше текущего нет — «весь период»
+    target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
+    return;
+  }
+  const q=list[ni];
+  target.mode="quarter"; target.q=q.index; target.label=q.label;
+}
+function closePeriodDropdowns(){
+  ["panel-period-dd","proj-period-dd"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.hidden=true; el.innerHTML=""; }
+  });
+}
+async function openPeriodPicker(which){
+  which = which || "panel";
+  const target = which==="proj" ? state.projPeriod : state.anPeriod;
+  const ddId = which==="proj" ? "proj-period-dd" : "panel-period-dd";
+  const dd=document.getElementById(ddId);
+  if(!dd) return;
+  // toggle
+  if(!dd.hidden && dd.innerHTML){ closePeriodDropdowns(); return; }
+  closePeriodDropdowns();
+  await ensureQuarters(target);
+  let html='<button type="button" class="pd-item'+(target.mode==="all"?" active":"")+'" data-pq="all">'+(t("an_all_period")||"За весь период")+'</button>';
+  (target.quarters||[]).forEach(q=>{
+    const act=(target.mode==="quarter" && Number(target.q)===Number(q.index))?" active":"";
+    html+='<button type="button" class="pd-item'+act+'" data-pq="'+q.index+'">'+panelEsc(q.label)+'</button>';
+  });
+  dd.innerHTML=html;
+  dd.hidden=false;
+  dd.querySelectorAll("[data-pq]").forEach(el=>{
+    el.onclick=(e)=>{
+      e.stopPropagation();
+      const v=el.getAttribute("data-pq");
+      if(v==="all"){
+        target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
+      }else{
+        const q=(target.quarters||[]).find(x=>String(x.index)===String(v));
+        target.mode="quarter"; target.q=Number(v);
+        target.label=q?q.label:("Q "+v);
+      }
+      closePeriodDropdowns();
+      if(which==="proj"){
+        updatePeriodLabel("proj-period-label", target);
+        if(state.currentProjectId) openProjectAnalytics(state.currentProjectId);
+      }else{
+        updatePeriodLabel("panel-period-label", target);
+      }
+    };
+  });
+}
+// закрытие дропдауна по клику вне
+if(!window._periodDdDocWired){
+  window._periodDdDocWired=true;
+  document.addEventListener("click", function(e){
+    if(e.target.closest(".period-wrap")) return;
+    closePeriodDropdowns();
+  }, true);
+}
+async function wirePeriodBars(){
+  await ensureQuarters(state.anPeriod);
+  updatePeriodLabel("panel-period-label", state.anPeriod);
+  const prev=document.getElementById("panel-period-prev");
+  const next=document.getElementById("panel-period-next");
+  const lab=document.getElementById("panel-period-label");
+  if(prev && !prev._wired){ prev._wired=true; prev.onclick=async()=>{ await ensureQuarters(state.anPeriod); shiftPeriod(state.anPeriod,-1); updatePeriodLabel("panel-period-label", state.anPeriod); }; }
+  if(next && !next._wired){ next._wired=true; next.onclick=async()=>{ await ensureQuarters(state.anPeriod); shiftPeriod(state.anPeriod,+1); updatePeriodLabel("panel-period-label", state.anPeriod); }; }
+  if(lab && !lab._wired){ lab._wired=true; lab.onclick=(e)=>{e.stopPropagation(); openPeriodPicker("panel");}; }
+
+  const pprev=document.getElementById("proj-period-prev");
+  const pnext=document.getElementById("proj-period-next");
+  const plab=document.getElementById("proj-period-label");
+  if(pprev && !pprev._wired){ pprev._wired=true; pprev.onclick=async()=>{ await ensureQuarters(state.projPeriod); shiftPeriod(state.projPeriod,-1); updatePeriodLabel("proj-period-label", state.projPeriod); if(state.currentProjectId) openProjectAnalytics(state.currentProjectId); }; }
+  if(pnext && !pnext._wired){ pnext._wired=true; pnext.onclick=async()=>{ await ensureQuarters(state.projPeriod); shiftPeriod(state.projPeriod,+1); updatePeriodLabel("proj-period-label", state.projPeriod); if(state.currentProjectId) openProjectAnalytics(state.currentProjectId); }; }
+  if(plab && !plab._wired){ plab._wired=true; plab.onclick=(e)=>{e.stopPropagation(); openPeriodPicker("proj");}; }
+}
+
+
+
 function analyticsExportUrl(kind, periodObj){
   let url=API_BASE.replace(/\/$/,"")+"/api/miniapp/panel/analytics/export?user_id="+encodeURIComponent(USER_ID)+"&kind="+encodeURIComponent(kind);
-  url+=periodQuery(periodObj||(state&&state.anPeriod));
+  url+=periodQuery(periodObj||state.anPeriod);
   return url;
 }
 function projectExportUrl(pid, periodObj){
   let url=API_BASE.replace(/\/$/,"")+"/api/miniapp/project/"+pid+"/analytics/export?user_id="+encodeURIComponent(USER_ID);
-  url+=periodQuery(periodObj||(state&&state.projPeriod)||(state&&state.anPeriod));
+  url+=periodQuery(periodObj||state.projPeriod);
   return url;
 }
-function renderExcelDownloadCard(label, url){
-  return '<div style="margin-top:14px"><button type="button" class="btn wide" id="an-xlsx-btn">'
-    +(label||(t("download_excel")||"Скачать Excel"))
-    +'</button></div>';
-}
-function bindExcelDownload(root, url){
-  const btn=(root||document).querySelector("#an-xlsx-btn");
-  if(!btn) return;
-  btn.onclick=async()=>{
-    try{
-      const r=await fetch(url,{credentials:"omit"});
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      const blob=await r.blob();
-      const a=document.createElement("a");
-      const href=URL.createObjectURL(blob);
-      a.href=href; a.download="report.xlsx";
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(()=>URL.revokeObjectURL(href),2000);
-    }catch(e){ window.open(url,"_blank"); }
-  };
+function renderExcelDownloadCard(label, url, fname){
+  return '<div class="snip-file-card" style="margin-top:16px">'
+    +'<div class="snip-file-icon" aria-hidden="true">'
+    +'<svg viewBox="0 0 48 48" width="48" height="48">'
+    +'<rect x="8" y="6" width="32" height="36" rx="4" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>'
+    +'<text x="24" y="30" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">XLSX</text>'
+    +'</svg></div>'
+    +'<div class="snip-file-name">'+panelEsc(fname||"report.xlsx")+'</div>'
+    +'<a class="btn primary snip-dl-btn" href="'+url+'" download target="_blank" rel="noopener">'
+    +'<span class="snip-dl-ico">⬇</span> '+(label||(t("download_excel")||"Скачать Excel"))
+    +'</a></div>';
 }
 
+function panelDonut(segments, centerHtml, size){
+  size = size || 180;
+  const r = 56, cx = 80, cy = 80, stroke = 22;
+  const circ = 2 * Math.PI * r;
+  let total = 0;
+  (segments||[]).forEach(s=>{ total += Math.max(0, Number(s.value)||0); });
+  if(total <= 0){
+    return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+      +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="'+stroke+'"/>'
+      +'</svg><div class="pa-donut-center">'+centerHtml+'</div></div>';
+  }
+  let offset = 0, arcs = '';
+  (segments||[]).forEach(s=>{
+    const v = Math.max(0, Number(s.value)||0);
+    if(v <= 0) return;
+    const len = (v / total) * circ;
+    const color = s.color || '#006AD2';
+    arcs += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+stroke+'" '
+      +'stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" '
+      +'stroke-dashoffset="'+(-offset).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"/>';
+    offset += len;
+  });
+  return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+    +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'+arcs+'</svg>'
+    +'<div class="pa-donut-center">'+centerHtml+'</div></div>';
+}
+function panelLegend(items){
+  return '<div class="pa-legend">'+(items||[]).map(it=>
+    '<div class="pa-legend-item"><span class="pa-swatch" style="background:'+(it.color||'#94A3B8')+'"></span>'
+    +'<span class="pa-legend-label">'+panelEsc(it.label||'')+'</span>'
+    +(it.value!=null?'<span class="pa-legend-val">'+panelEsc(Number(it.value).toFixed(2))+' ₽</span>':'')
+    +'</div>'
+  ).join('')+'</div>';
+}
 async function openPanelAnalyticsView(kind){
   state.panelBack="panel-analytics";
   show("panel-analytics-view");
@@ -3200,39 +3543,62 @@ async function openPanelAnalyticsView(kind){
   body.innerHTML="…";
   try{
     const r=await apiGet("/api/miniapp/panel/analytics?user_id="+encodeURIComponent(USER_ID)+"&kind="+encodeURIComponent(kind)+periodQuery(state.anPeriod));
-    let html="";
-    // segments (expenses/income/revenue)
-    if(r && r.segments && r.segments.length){
+    if(!r||r.ok===false){ body.innerHTML='<div class="muted">'+panelEsc((r&&(r.error||r.message))||"error")+'</div>'; return; }
+
+    if(kind==="expenses" || kind==="income"){
+      const segs=r.segments||[];
       const total=Number(r.total||0);
-      html+='<div style="margin-bottom:8px;font-weight:700">'+(total?total.toFixed(2)+" ₽":"")+'</div>';
-      r.segments.forEach(s=>{
-        html+='<div style="margin:6px 0;font-size:14px">'+panelEsc(s.label||"")+': <b>'+Number(s.value||0).toFixed(2)+' ₽</b></div>';
-      });
+      let html='<div class="pa-block">';
+      html+=panelDonut(segs, '<div class="pa-cr-label">'+(kind==="expenses"?(t("an_expenses")||"Расходы"):(t("an_income")||"Доходы"))+'</div><div class="pa-cr-val">'+total.toFixed(0)+'</div>', 190);
+      html+='<div class="pa-total-line">'+total.toFixed(2)+' ₽ — '+(t("an_total")||"всего")+'</div>';
+      html+=panelLegend(segs.map(s=>({color:s.color,label:s.label,value:s.value})));
+      html+='</div>';
+      const fname=(kind==="expenses"?"expenses":"income")+"_"+((state.anPeriod&&state.anPeriod.mode==="all")?"all_time":("q"+(state.anPeriod&&state.anPeriod.q||"")))+".xlsx";
+      html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", analyticsExportUrl(kind, state.anPeriod), fname);
+      body.innerHTML=html;
+      return;
     }
-    if(r && r.kind==="revenue"){
-      html+='<div style="margin:8px 0">CR: <b>~ '+Number(r.cr||0).toFixed(1)+'%</b></div>';
-      html+='<div style="margin:6px 0">'+(t("an_gross")||"Валовая прибыль")+': <b>'+Number(r.gross_profit||0).toFixed(2)+' ₽</b></div>';
-      html+='<div style="margin:6px 0">'+(t("an_operating")||"Операционная прибыль")+': <b>'+Number(r.operating_profit||0).toFixed(2)+' ₽</b></div>';
-      html+='<div style="margin:6px 0">'+(t("an_net_usn")||"Чистая прибыль (УСН)")+': <b>'+Number(r.net_profit||0).toFixed(2)+' ₽</b></div>';
+
+    if(kind==="revenue"){
+      const main=r.segments_main||[];
+      const rev=r.segments_rev||[];
+      const cr=Number(r.cr||0);
+      let html='<div class="pa-block">';
+      html+=panelDonut(main, '<div class="pa-cr-label">CR</div><div class="pa-cr-val">~ '+cr.toFixed(1).replace(".",",")+'%</div>', 190);
+      html+=panelLegend(main.map(s=>({color:s.color,label:s.label,value:s.value})));
+      html+='</div>';
+      html+='<div class="pa-block" style="margin-top:8px">';
+      html+='<div class="pa-section-label">'+(t("an_rev_detail")||"Пополнения и выводы")+'</div>';
+      const net=Number(r.revenue_net||0);
+      html+=panelDonut(rev, '<div class="pa-cr-label">'+(t("an_net")||"Итого")+'</div><div class="pa-cr-val" style="font-size:16px">'+net.toFixed(0)+'</div>', 150);
+      html+='<div class="pa-total-line">'+net.toFixed(2)+' ₽</div>';
+      html+=panelLegend(rev.map(s=>({color:s.color,label:s.label,value:s.value})));
+      html+='</div>';
+      html+='<div class="pa-meta">';
+      html+='<div class="pa-meta-row"><span>'+(t("an_gross")||"Валовая прибыль")+'</span><b>'+Number(r.gross_profit||0).toFixed(2)+' ₽</b></div>';
+      html+='<div class="pa-meta-row"><span>'+(t("an_operating")||"Операционная прибыль (−20%)")+'</span><b>'+Number(r.operating_profit||0).toFixed(2)+' ₽</b></div>';
+      html+='<div class="pa-meta-row"><span>'+(t("an_net_usn")||"Чистая прибыль (−15% УСН)")+'</span><b>'+Number(r.net_profit||0).toFixed(2)+' ₽</b></div>';
+      html+='</div>';
+      const rname="revenue_"+((state.anPeriod&&state.anPeriod.mode==="all")?"all_time":("q"+(state.anPeriod&&state.anPeriod.q||"")))+".xlsx";
+      html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", analyticsExportUrl("revenue", state.anPeriod), rname);
+      body.innerHTML=html;
+      return;
     }
-    const lines=(r&&r.lines)||[];
-    lines.forEach(l=>{
-      if(l==null||l===""){ html+='<div style="height:8px"></div>'; return; }
+
+    // other / projects text summary
+    const lines=(r.lines)||[];
+    if(!lines.length){ body.innerHTML='<div class="muted">'+(t("empty")||"Нет данных")+'</div>'; return; }
+    body.innerHTML=lines.map(l=>{
+      if(l==null || l==="") return '<div style="height:8px"></div>';
       const s=String(l);
-      if(s.indexOf("##")===0) html+='<div style="margin:12px 0 6px;font-weight:800">'+panelEsc(s.slice(2))+'</div>';
-      else if(s.indexOf("!!")===0) html+='<div style="margin:10px 0 4px;font-weight:800">'+panelEsc(s.slice(2))+'</div>';
-      else html+='<div style="margin:6px 0;font-size:14px;line-height:1.4">'+panelEsc(s)+'</div>';
-    });
-    if(!html){ html='<div class="muted">'+(t("empty")||"Нет данных")+'</div>'; }
-    // Excel only for expenses/income/revenue
-    if(kind==="expenses"||kind==="income"||kind==="revenue"){
-      const xurl=analyticsExportUrl(kind, state.anPeriod);
-      html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", xurl);
-      body.innerHTML=html;
-      bindExcelDownload(body, xurl);
-    }else{
-      body.innerHTML=html;
-    }
+      if(s.indexOf("##")===0){
+        return '<div class="an-h">'+panelEsc(s.slice(2))+'</div>';
+      }
+      if(s.indexOf("!!")===0){
+        return '<div class="an-emph">'+panelEsc(s.slice(2))+'</div>';
+      }
+      return '<div class="an-line">'+panelEsc(s)+'</div>';
+    }).join("");
   }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
 }
 
@@ -3754,7 +4120,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 </script>
 
 <style id="project-settings-analytics-ui">
-/* в едином стиле с balance/settings: внутри .content, те же отступы */
+/* настройки/аналитика проекта: геометрия как у balance/project, кнопки вытянутые */
 #screen-project-settings,
 #screen-project-analytics{
   width:100%;
@@ -3774,32 +4140,86 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   max-width:100%;
   box-sizing:border-box;
   margin:0;
-  padding:14px 14px;
-  border-radius:16px;
+  padding:14px;
+  border-radius:14px;
   border:1px solid var(--line);
   background:var(--surface);
   box-shadow:var(--shadow);
 }
-#screen-project-settings .tile-grid .tile .t-title{
-  font-size:13px;
+
+#screen-project-settings #pps-content{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:100%;
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:none;
+  box-shadow:none;
 }
-#screen-project-settings .tile-grid .tile .t-sub{
-  font-size:12px;
+#screen-project-settings #pps-content .btn-row{margin-top:0}
+#screen-project-settings #pps-content .btn{
+  min-height:48px;
+  font-size:14px;
+  font-weight:600;
+}
+#screen-project-settings #pps-content .settings-input-row{
+  display:flex;gap:8px;align-items:center;width:100%;
+}
+#screen-project-settings #pps-content .form-input{flex:1;min-width:0}
+#screen-project-settings .price-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  width:100%;
+}
+#screen-project-settings .theme-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  width:100%;
+}
+#screen-project-settings .proj-set-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#screen-project-settings .proj-set-actions .btn-row{
+  margin-top:0;
+  gap:10px;
+}
+#screen-project-settings .proj-set-actions .btn{
+  min-height:48px;
+  font-size:14px;
+  font-weight:600;
+  white-space:normal;
+  text-align:center;
 }
 #screen-project-settings .price-grid{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:8px;
 }
+#screen-project-settings .price-grid .btn{
+  min-height:44px;
+  font-size:13px;
+}
 #screen-project-settings .theme-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
 }
-#screen-project-settings .channel-list{display:grid;gap:8px}
-#screen-project-settings .settings-block{display:grid;gap:10px}
+#screen-project-settings .theme-grid .btn{
+  min-height:44px;
+  font-size:13px;
+  white-space:normal;
+}
+#screen-project-settings .channel-list{display:flex;flex-direction:column;gap:8px}
+#screen-project-settings .channel-list .btn{min-height:48px;text-align:left;justify-content:flex-start}
+#screen-project-settings .settings-block{display:flex;flex-direction:column;gap:10px}
 #screen-project-settings .settings-note{font-size:13px;color:var(--muted);margin-bottom:2px}
-#screen-project-settings .settings-input-row{display:flex;gap:8px}
+#screen-project-settings .settings-input-row{display:flex;gap:8px;align-items:center}
 #screen-project-settings .settings-input-row .form-input{flex:1;min-width:0}
 #screen-project-settings .btn-row,
 #screen-project-analytics .btn-stack{
@@ -3809,11 +4229,49 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 }
 #screen-project-analytics .panel .field{margin-bottom:8px}
 #screen-project-analytics .panel b{font-weight:700}
+
+#screen-project-analytics .pa-block{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+#screen-project-analytics .pa-donut-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#screen-project-analytics .pa-donut-wrap svg{display:block}
+#screen-project-analytics .pa-donut-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;pointer-events:none;padding:24px;
+}
+#screen-project-analytics .pa-cr-label{font-size:12px;font-weight:600;color:var(--hint);letter-spacing:.04em;text-transform:uppercase}
+#screen-project-analytics .pa-cr-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-top:2px}
+#screen-project-analytics .pa-total-line{
+  margin:8px 0 6px;font-size:12px;font-weight:600;color:var(--hint);text-align:center;
+}
+#screen-project-analytics .pa-legend{
+  width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px;
+}
+#screen-project-analytics .pa-legend-item{
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);
+}
+#screen-project-analytics .pa-swatch{
+  width:12px;height:12px;border-radius:3px;flex-shrink:0;
+}
+#screen-project-analytics .pa-legend-label{flex:1;min-width:0}
+#screen-project-analytics .pa-legend-val{color:var(--hint);font-weight:700}
+#screen-project-analytics .pa-meta{
+  width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:10px 0;margin:4px 0 14px;
+}
+#screen-project-analytics .pa-meta-row{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:14px;padding:6px 0;color:var(--text2);
+}
+#screen-project-analytics .pa-meta-row b{color:var(--text);font-weight:700}
+#screen-project-analytics .pa-section-label{
+  width:100%;font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;text-align:left;
+}
+#screen-project-analytics .pa-themes{margin-top:4px}
+
 </style>
 <script>
 (function(){
   const PS_I18N={
-    ru:{settings:"Настройки",back:"Назад",menu:"В меню",subs:"Подписчики",price:"Цена",daily:"Лимит в день",hourly:"Скорость в час",unsubs:"Отписки",relink:"Изменить ссылку",themes:"Тематики",subcount:"Количество каналов",mychannels:"Мои каналы",addchannel:"Добавить канал",analytics:"Аналитика",save:"Сохранить",enter:"Введите значение",all:"Все тематики",required:"Обязательный",notrequired:"Необязательный",pending:"На проверке",active:"Активен",noaccess:"Нет доступа",saved:"Сохранено",starts:"Запуски",confirmed:"Подтвержденные подписки",total:"Всего подписалось",remain:"Осталось",cr:"CR пользователей",premium:"Пользователи с TG Premium",avatar:"Коэффициент аватаров",nodata:"Данных пока нет"},
+    ru:{settings:"Настройки",back:"Назад",menu:"В меню",unsub:"Отписались",remain:"Остались",subs:"Подписчики",price:"Цена",daily:"Лимит в день",hourly:"Скорость в час",unsubs:"Отписки",relink:"Изменить ссылку",themes:"Тематики",subcount:"Количество каналов",mychannels:"Мои каналы",addchannel:"Добавить канал",analytics:"Аналитика",save:"Сохранить",enter:"Введите значение",all:"Все тематики",required:"Обязательный",notrequired:"Необязательный",pending:"На проверке",active:"Активен",noaccess:"Нет доступа",saved:"Сохранено",starts:"Запуски",confirmed:"Подтвержденные подписки",total:"Всего подписалось",remain:"Осталось",cr:"CR пользователей",premium:"Пользователи с TG Premium",avatar:"Коэффициент аватаров",nodata:"Данных пока нет"},
     en:{settings:"Settings",back:"Back",menu:"Main menu",subs:"Subscribers",price:"Price",daily:"Daily limit",hourly:"Hourly speed",unsubs:"Unsubs",relink:"Change link",themes:"Themes",subcount:"Channel count",mychannels:"My channels",addchannel:"Add channel",analytics:"Analytics",save:"Save",enter:"Enter value",all:"All themes",required:"Required",notrequired:"Optional",pending:"Pending",active:"Active",noaccess:"No access",saved:"Saved",starts:"Starts",confirmed:"Confirmed subscribers",total:"Subscribed all time",remain:"Remaining",cr:"User CR",premium:"Users with TG Premium",avatar:"Avatar coefficient",nodata:"No data yet"},
     uk:{settings:"Налаштування",back:"Назад",menu:"Головне меню",subs:"Підписники",price:"Ціна",daily:"Ліміт на день",hourly:"Швидкість на годину",unsubs:"Відписки",relink:"Змінити посилання",themes:"Тематики",subcount:"Кількість каналів",mychannels:"Мої канали",addchannel:"Додати канал",analytics:"Аналітика",save:"Зберегти",enter:"Введіть значення",all:"Усі тематики",required:"Обов'язковий",notrequired:"Необов'язковий",pending:"На перевірці",active:"Активний",noaccess:"Немає доступу",saved:"Збережено",starts:"Запуски",confirmed:"Підтверджені підписники",total:"Всього підписалося",remain:"Залишилось",cr:"CR користувачів",premium:"Користувачі з TG Premium",avatar:"Коефіцієнт аватарів",nodata:"Даних поки немає"},
     de:{settings:"Einstellungen",back:"Zurück",menu:"Hauptmenü",subs:"Abonnenten",price:"Preis",daily:"Tageslimit",hourly:"Geschwindigkeit pro Stunde",unsubs:"Abmeldungen",relink:"Link ändern",themes:"Themen",subcount:"Kanalanzahl",mychannels:"Meine Kanäle",addchannel:"Kanal hinzufügen",analytics:"Analyse",save:"Speichern",enter:"Wert eingeben",all:"Alle Themen",required:"Erforderlich",notrequired:"Optional",pending:"Ausstehend",active:"Aktiv",noaccess:"Kein Zugriff",saved:"Gespeichert",starts:"Starts",confirmed:"Bestätigte Abonnenten",total:"Insgesamt abonniert",remain:"Verbleibend",cr:"Nutzer-CR",premium:"Nutzer mit TG Premium",avatar:"Avatar-Koeffizient",nodata:"Noch keine Daten"},
@@ -3833,7 +4291,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   function psEsc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
   async function psApi(pid,action,payload={}){return await apiPost("/api/miniapp/project/"+pid+"/settings",Object.assign({user_id:USER_ID,action},payload))}
   async function openProjectSettings(pid){
-    state.currentProjectId=pid; show("project-settings");
+    state.currentProjectId=pid; state.psSubLevel=0; show("project-settings");
     const box=document.getElementById("pps-content"); box.innerHTML="…";
     document.getElementById("pps-title").textContent=psT("settings");
     try{
@@ -3848,25 +4306,23 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   }
   function renderProjectSettings(pid,s){
     const role=String(s.role||"monetize").toLowerCase();
-    const box=document.getElementById("pps-content"); let html='<div class="settings-block">';
+    const box=document.getElementById("pps-content");
+    const rowBtn=(key,label,val)=>{
+      const right=(val===undefined||val===null||val==="")?"":(': '+val);
+      return '<button type="button" class="btn" data-set="'+key+'">'+psEsc(label+right)+'</button>';
+    };
+    let html='';
     if(role==="advertiser"){
-      html+='<div class="tile-grid">';
-      html+=psTile("subs",psT("subs"),Number(s.target_subs||0));
-      html+=psTile("price",psT("price"),Number(s.price||0).toFixed(2)+' ₽');
-      html+=psTile("daily",psT("daily"),Number(s.daily_limit||0));
-      html+=psTile("hourly",psT("hourly"),Number(s.hourly_speed||0));
-      html+=psTile("unsubs",psT("unsubs"),Number(s.track_unsubs||0)?"✅":"❌");
-      html+=psTile("relink",psT("relink"),"");
-      html+='</div>';
-      html+='<button class="btn wide" data-set="themes" style="margin-top:10px">'+psT("themes")+'</button>';
+      html+='<div class="btn-row">'+rowBtn("subs",psT("subs"),Number(s.target_subs||0))+rowBtn("price",psT("price"),Number(s.price||0).toFixed(2)+' ₽')+'</div>';
+      html+='<div class="btn-row">'+rowBtn("daily",psT("daily"),Number(s.daily_limit||0))+rowBtn("hourly",psT("hourly"),Number(s.hourly_speed||0))+'</div>';
+      html+='<div class="btn-row">'+rowBtn("unsubs",psT("unsubs"),Number(s.track_unsubs||0)?"✅":"❌")+rowBtn("relink",psT("relink"),"")+'</div>';
+      html+='<button type="button" class="btn wide" data-set="themes">'+psT("themes")+'</button>';
     }else{
-      html+='<div class="tile-grid">';
-      html+=psTile("subcount",psT("subcount"),Number(s.sub_count||1));
-      html+=psTile("price",psT("price"),Number(s.price||1).toFixed(2)+' ₽');
-      html+='</div>';
-      html+='<button class="btn wide" data-set="mychannels" style="margin-top:10px">'+psT("mychannels")+'</button><button class="btn wide" data-set="relink" style="margin-top:10px">'+psT("relink")+'</button>';
+      html+='<div class="btn-row">'+rowBtn("subcount",psT("subcount"),Number(s.sub_count||1))+rowBtn("price",psT("price"),Number(s.price||1).toFixed(2)+' ₽')+'</div>';
+      html+='<button type="button" class="btn wide" data-set="mychannels">'+psT("mychannels")+'</button>';
+      html+='<button type="button" class="btn wide" data-set="relink">'+psT("relink")+'</button>';
     }
-    html+='</div>'; box.innerHTML=html;
+    box.innerHTML=html;
     box.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>psHandle(pid,s,b.getAttribute("data-set")));
   }
   async function psHandle(pid,s,a){
@@ -3881,38 +4337,162 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     return psInput(pid,a==="subs"?"set_subs":a==="daily"?"set_daily":a==="hourly"?"set_hourly":"set_subcount",title,"");
   }
   async function psInput(pid,action,title,placeholder){
-    const box=document.getElementById("pps-content"); box.innerHTML='<div class="settings-block"><div><b>'+psEsc(title)+'</b></div><div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"><button class="btn primary" id="ps-save">'+psT("save")+'</button></div></div>';
+    state.psSubLevel=1;
+    const box=document.getElementById("pps-content");
+    box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(title)+'</div>'
+      +'<div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"></div>'
+      +'<button type="button" class="btn primary wide" id="ps-save">'+psT("save")+'</button>'
+      +'<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
     document.getElementById("ps-save").onclick=async()=>{const v=document.getElementById("ps-input").value.trim();if(!v)return;const r=await psApi(pid,action,{value:v});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psPrice(pid,s){
+    state.psSubLevel=1;
     const box=document.getElementById("pps-content"); const prices=Array.isArray(s.price_options)?s.price_options:[];
-    box.innerHTML='<div class="settings-note">'+psEsc(psT("price"))+'</div><div class="price-grid">'+prices.map(x=>'<button class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>';
+    box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(psT("price"))+'</div>'
+      +'<div class="price-grid">'+prices.map(x=>'<button type="button" class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>'
+      +'<button type="button" class="btn wide" id="ps-sub-back" style="margin-top:10px">'+psT("back")+'</button>';
     box.querySelectorAll("[data-price]").forEach(b=>b.onclick=async()=>{const r=await psApi(pid,"set_price",{value:b.getAttribute("data-price")});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)});
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psThemes(pid,s){
+    state.psSubLevel=1;
     const selected=new Set((s.themes_mode==="all"||!Array.isArray(s.selected_themes)||!s.selected_themes.length)?(s.themes||[]):s.selected_themes);
     const box=document.getElementById("pps-content");
-    box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div><button class="btn wide" id="ps-themes-save" style="margin-top:10px">'+psT("save")+'</button>';
+    box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button type="button" class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div>'
+      +'<button type="button" class="btn primary wide" id="ps-themes-save">'+psT("save")+'</button>'
+      +'<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
     box.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{const x=b.getAttribute("data-theme");if(selected.has(x))selected.delete(x);else selected.add(x);b.textContent=(selected.has(x)?'✅ ':'❌ ')+x});
     document.getElementById("ps-themes-save").onclick=async()=>{const r=await psApi(pid,"set_themes",{themes:Array.from(selected)});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psChannels(pid){
+    state.psSubLevel=1;
     const r=await apiGet("/api/miniapp/project/"+pid+"/settings?user_id="+encodeURIComponent(USER_ID)); const s=r.settings||{}; const box=document.getElementById("pps-content");
-    let html='<div class="channel-list">';
-    (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button class="btn" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
-    html+='<button class="btn wide" id="ps-add-channel">'+psT("addchannel")+'</button></div>'; box.innerHTML=html;
+    let html='';
+    (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button type="button" class="btn wide" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
+    html+='<button type="button" class="btn wide" id="ps-add-channel">'+psT("addchannel")+'</button>';
+    html+='<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
+    box.innerHTML=html;
     box.querySelectorAll("[data-ch]").forEach(b=>b.onclick=async()=>{const rr=await psApi(pid,"toggle_channel",{index:Number(b.getAttribute("data-ch"))});if(rr.ok)psChannels(pid);else alert(rr.message||rr.error)});
     document.getElementById("ps-add-channel").onclick=()=>psInput(pid,"add_channel",psT("addchannel"),"@username or t.me/...");
+    const back=document.getElementById("ps-sub-back"); if(back) back.onclick=()=>openProjectSettings(pid);
+  }
+  function paDonut(segments, centerHtml, size){
+    size = size || 180;
+    const r = 56, cx = 80, cy = 80, stroke = 22;
+    const circ = 2 * Math.PI * r;
+    let total = 0;
+    segments.forEach(s=>{ total += Math.max(0, Number(s.value)||0); });
+    if(total <= 0){
+      // empty ring
+      return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+        +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'
+        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="'+stroke+'"/>'
+        +'</svg><div class="pa-donut-center">'+centerHtml+'</div></div>';
+    }
+    let offset = 0;
+    let arcs = '';
+    segments.forEach(s=>{
+      const v = Math.max(0, Number(s.value)||0);
+      if(v <= 0) return;
+      const len = (v / total) * circ;
+      arcs += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+s.color+'" stroke-width="'+stroke+'" '
+        +'stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" '
+        +'stroke-dashoffset="'+(-offset).toFixed(2)+'" stroke-linecap="butt" '
+        +'transform="rotate(-90 '+cx+' '+cy+')"/>';
+      offset += len;
+    });
+    return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+      +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'+arcs+'</svg>'
+      +'<div class="pa-donut-center">'+centerHtml+'</div></div>';
+  }
+  function paLegend(items){
+    return '<div class="pa-legend">'+items.map(it=>
+      '<div class="pa-legend-item"><span class="pa-swatch" style="background:'+it.color+'"></span>'
+      +'<span class="pa-legend-label">'+psEsc(it.label)+'</span>'
+      +(it.value!=null?'<span class="pa-legend-val">'+psEsc(String(it.value))+'</span>':'')
+      +'</div>'
+    ).join('')+'</div>';
   }
   async function openProjectAnalytics(pid){
-    state.currentProjectId=pid; show("project-analytics"); document.getElementById("ppa-title").textContent=psT("analytics"); const box=document.getElementById("ppa-content");box.innerHTML="…";
-    try{const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID));const a=r.analytics||{};let html='';if(a.themes&&Object.keys(a.themes).length){html+='<div><b>'+psT("themes")+'</b></div>';for(const [k,v] of Object.entries(a.themes))html+='<div>'+psEsc(k)+' — '+psEsc(v)+'</div>'}html+='<br/><div><b>'+psT("total")+':</b> '+Number(a.total||0)+'</div><div><b>'+psT("remain")+':</b> '+Number(a.remain||0)+'</div><div><b>'+psT("cr")+':</b> '+Number(a.cr||0)+'%</div><div><b>'+psT("premium")+':</b> '+Number(a.premium_pct||0)+'%</div><div><b>'+psT("avatar")+':</b> '+psEsc(a.avatar_coef==null?0:a.avatar_coef)+'</div>';const pxurl=projectExportUrl(pid, state.projPeriod||state.anPeriod);
-      html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", pxurl);
-      box.innerHTML=html||'<div class="muted">'+psT("nodata")+'</div>'}catch(e){box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>'}
+    state.currentProjectId=pid;
+    show("project-analytics");
+    document.getElementById("ppa-title").textContent=psT("analytics");
+    const box=document.getElementById("ppa-content");
+    box.innerHTML="…";
+    try{
+      await ensureQuarters(state.projPeriod); updatePeriodLabel("proj-period-label", state.projPeriod);
+      const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID)+periodQuery(state.projPeriod));
+      const a=r.analytics||{};
+      const total=Number(a.total||0);
+      const remain=Number(a.remain||0);
+      const unsub=Math.max(0, total-remain);
+      let cr=Number(a.cr);
+      if(!isFinite(cr)){
+        cr = total>0 ? (remain/total)*100 : 100;
+      }
+      cr = Math.round(cr*10)/10;
+      const colRemain=(getComputedStyle(document.documentElement).getPropertyValue("--brand")||"#006AD2").trim()||"#006AD2";
+      const colUnsub=(getComputedStyle(document.documentElement).getPropertyValue("--hint")||"#94A3B8").trim()||"#94A3B8";
+      const themeColors=["#006AD2","#0EA5E9","#8B5CF6","#10B981","#F59E0B","#EF4444","#EC4899","#14B8A6","#6366F1","#84CC16","#F97316","#06B6D4"];
+
+      let html='<div class="pa-block">';
+      // CR donut
+      html+=paDonut(
+        [{value:remain,color:colRemain},{value:unsub,color:colUnsub}],
+        '<div class="pa-cr-label">CR</div><div class="pa-cr-val">~ '+cr.toFixed(1).replace(".",",")+'%</div>',
+        190
+      );
+      html+='<div class="pa-total-line">('+total+' - '+(psT("total")||"подписалось всего")+')</div>';
+      html+=paLegend([
+        {color:colUnsub,label:(psT("unsub")||"Отписались"),value:unsub},
+        {color:colRemain,label:(psT("remain")||"Остались"),value:remain}
+      ]);
+      html+='</div>';
+
+      // premium / avatar
+      html+='<div class="pa-meta">';
+      html+='<div class="pa-meta-row"><span>'+(psT("premium")||"Telegram Premium")+'</span><b>'+Number(a.premium_pct||0).toFixed(1)+'%</b></div>';
+      html+='<div class="pa-meta-row"><span>'+(psT("avatar")||"С аватаркой")+'</span><b>'+psEsc(a.avatar_coef==null?"0":String(a.avatar_coef))+'</b></div>';
+      html+='</div>';
+
+      // themes donut
+      const themes=a.themes||{};
+      const themeSegs=[];
+      let ti=0;
+      Object.keys(themes).forEach(k=>{
+        const v=Number(themes[k]||0);
+        if(v<=0) return;
+        themeSegs.push({key:k,value:v,color:themeColors[ti%themeColors.length]});
+        ti++;
+      });
+      html+='<div class="pa-block pa-themes">';
+      html+='<div class="pa-section-label">'+(psT("themes")||"Тематики")+'</div>';
+      if(themeSegs.length){
+        html+=paDonut(themeSegs, '<div class="pa-cr-label">'+(psT("themes")||"Темы")+'</div>', 190);
+        html+=paLegend(themeSegs.map(s=>({color:s.color,label:s.key,value:s.value})));
+      }else{
+        html+='<div class="muted" style="text-align:center;padding:12px 0">'+(psT("nodata")||"Нет данных")+'</div>';
+      }
+      html+='</div>';
+
+      const pxname="project_"+pid+"_"+((state.projPeriod&&state.projPeriod.mode==="all")?"all":("q"+(state.projPeriod&&state.projPeriod.q||"")))+".xlsx";
+      html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", projectExportUrl(pid, state.projPeriod), pxname);
+      box.innerHTML=html;
+    }catch(e){
+      box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>';
+    }
   }
-  document.getElementById("pps-back").onclick=()=>openProject(state.currentProjectId);
-  document.getElementById("pps-menu").onclick=()=>show("home");
-  document.getElementById("ppa-back").onclick=()=>openProject(state.currentProjectId);
+  const ppsBack=document.getElementById("pps-back");
+  if(ppsBack) ppsBack.onclick=()=>openProject(state.currentProjectId);
+  const ppsMenu=document.getElementById("pps-menu");
+  if(ppsMenu) ppsMenu.onclick=()=>show("home");
+  const ppaBack=document.getElementById("ppa-back");
+  if(ppaBack) ppaBack.onclick=()=>openProject(state.currentProjectId);
+  const ppaMenu=document.getElementById("ppa-menu");
+  if(ppaMenu) ppaMenu.onclick=()=>show("home");
+  // нижние кнопки аналитики убраны — остаётся верхний Back
   // доступ из основного скрипта (кнопки проекта)
   window.openProjectSettings = openProjectSettings;
   window.openProjectAnalytics = openProjectAnalytics;
@@ -4238,8 +4818,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 <style id="FINAL-PANEL-SUPPORT-TILE-GEOMETRY">
 /* FINAL AUTHORITY: Panel, Support and Project Settings must use the exact Settings tile geometry. */
 #screen-support .tile-grid,
-#screen-panel .tile-grid,
-#screen-project-settings .tile-grid{
+#screen-panel .tile-grid{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
   grid-auto-flow:row !important;
@@ -4250,8 +4829,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   box-sizing:border-box !important;
 }
 #screen-support .tile,
-#screen-panel .tile,
-#screen-project-settings .tile{
+#screen-panel .tile{
   display:flex !important;
   width:100% !important;
   min-width:0 !important;
