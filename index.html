@@ -809,18 +809,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-project-settings" class="screen">
       <div class="section-title" id="pps-title">Настройки</div>
-      <div class="panel" id="pps-content"></div>
-      <div class="btn-row" style="margin-top:12px">
-        <button type="button" class="btn" id="pps-back">Назад</button>
-        <button type="button" class="btn" id="pps-menu">В меню</button>
-      </div>
+      <div class="btn-stack" id="pps-content"></div>
     </div>
 
     <div id="screen-project-analytics" class="screen">
       <div class="section-title" id="ppa-title">Аналитика</div>
       <div class="panel" id="ppa-content"></div>
-      <div class="btn-stack" style="margin-top:12px">
-        <button type="button" class="btn wide" id="ppa-back">Назад</button>
+      <div class="btn-row" style="margin-top:12px">
+        <button type="button" class="btn" id="ppa-back">Назад</button>
+        <button type="button" class="btn" id="ppa-menu">В меню</button>
       </div>
     </div>
 
@@ -3701,6 +3698,40 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   background:var(--surface);
   box-shadow:var(--shadow);
 }
+
+#screen-project-settings #pps-content{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:100%;
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+#screen-project-settings #pps-content .btn-row{margin-top:0}
+#screen-project-settings #pps-content .btn{
+  min-height:48px;
+  font-size:14px;
+  font-weight:600;
+}
+#screen-project-settings #pps-content .settings-input-row{
+  display:flex;gap:8px;align-items:center;width:100%;
+}
+#screen-project-settings #pps-content .form-input{flex:1;min-width:0}
+#screen-project-settings .price-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  width:100%;
+}
+#screen-project-settings .theme-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  width:100%;
+}
 #screen-project-settings .proj-set-actions{
   display:flex;
   flex-direction:column;
@@ -3750,11 +3781,49 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 }
 #screen-project-analytics .panel .field{margin-bottom:8px}
 #screen-project-analytics .panel b{font-weight:700}
+
+#screen-project-analytics .pa-block{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+#screen-project-analytics .pa-donut-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#screen-project-analytics .pa-donut-wrap svg{display:block}
+#screen-project-analytics .pa-donut-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;pointer-events:none;padding:24px;
+}
+#screen-project-analytics .pa-cr-label{font-size:12px;font-weight:600;color:var(--hint);letter-spacing:.04em;text-transform:uppercase}
+#screen-project-analytics .pa-cr-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-top:2px}
+#screen-project-analytics .pa-total-line{
+  margin:8px 0 6px;font-size:12px;font-weight:600;color:var(--hint);text-align:center;
+}
+#screen-project-analytics .pa-legend{
+  width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px;
+}
+#screen-project-analytics .pa-legend-item{
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);
+}
+#screen-project-analytics .pa-swatch{
+  width:12px;height:12px;border-radius:3px;flex-shrink:0;
+}
+#screen-project-analytics .pa-legend-label{flex:1;min-width:0}
+#screen-project-analytics .pa-legend-val{color:var(--hint);font-weight:700}
+#screen-project-analytics .pa-meta{
+  width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:10px 0;margin:4px 0 14px;
+}
+#screen-project-analytics .pa-meta-row{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:14px;padding:6px 0;color:var(--text2);
+}
+#screen-project-analytics .pa-meta-row b{color:var(--text);font-weight:700}
+#screen-project-analytics .pa-section-label{
+  width:100%;font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;text-align:left;
+}
+#screen-project-analytics .pa-themes{margin-top:4px}
+
 </style>
 <script>
 (function(){
   const PS_I18N={
-    ru:{settings:"Настройки",back:"Назад",menu:"В меню",subs:"Подписчики",price:"Цена",daily:"Лимит в день",hourly:"Скорость в час",unsubs:"Отписки",relink:"Изменить ссылку",themes:"Тематики",subcount:"Количество каналов",mychannels:"Мои каналы",addchannel:"Добавить канал",analytics:"Аналитика",save:"Сохранить",enter:"Введите значение",all:"Все тематики",required:"Обязательный",notrequired:"Необязательный",pending:"На проверке",active:"Активен",noaccess:"Нет доступа",saved:"Сохранено",starts:"Запуски",confirmed:"Подтвержденные подписки",total:"Всего подписалось",remain:"Осталось",cr:"CR пользователей",premium:"Пользователи с TG Premium",avatar:"Коэффициент аватаров",nodata:"Данных пока нет"},
+    ru:{settings:"Настройки",back:"Назад",menu:"В меню",unsub:"Отписались",remain:"Остались",subs:"Подписчики",price:"Цена",daily:"Лимит в день",hourly:"Скорость в час",unsubs:"Отписки",relink:"Изменить ссылку",themes:"Тематики",subcount:"Количество каналов",mychannels:"Мои каналы",addchannel:"Добавить канал",analytics:"Аналитика",save:"Сохранить",enter:"Введите значение",all:"Все тематики",required:"Обязательный",notrequired:"Необязательный",pending:"На проверке",active:"Активен",noaccess:"Нет доступа",saved:"Сохранено",starts:"Запуски",confirmed:"Подтвержденные подписки",total:"Всего подписалось",remain:"Осталось",cr:"CR пользователей",premium:"Пользователи с TG Premium",avatar:"Коэффициент аватаров",nodata:"Данных пока нет"},
     en:{settings:"Settings",back:"Back",menu:"Main menu",subs:"Subscribers",price:"Price",daily:"Daily limit",hourly:"Hourly speed",unsubs:"Unsubs",relink:"Change link",themes:"Themes",subcount:"Channel count",mychannels:"My channels",addchannel:"Add channel",analytics:"Analytics",save:"Save",enter:"Enter value",all:"All themes",required:"Required",notrequired:"Optional",pending:"Pending",active:"Active",noaccess:"No access",saved:"Saved",starts:"Starts",confirmed:"Confirmed subscribers",total:"Subscribed all time",remain:"Remaining",cr:"User CR",premium:"Users with TG Premium",avatar:"Avatar coefficient",nodata:"No data yet"},
     uk:{settings:"Налаштування",back:"Назад",menu:"Головне меню",subs:"Підписники",price:"Ціна",daily:"Ліміт на день",hourly:"Швидкість на годину",unsubs:"Відписки",relink:"Змінити посилання",themes:"Тематики",subcount:"Кількість каналів",mychannels:"Мої канали",addchannel:"Додати канал",analytics:"Аналітика",save:"Зберегти",enter:"Введіть значення",all:"Усі тематики",required:"Обов'язковий",notrequired:"Необов'язковий",pending:"На перевірці",active:"Активний",noaccess:"Немає доступу",saved:"Збережено",starts:"Запуски",confirmed:"Підтверджені підписники",total:"Всього підписалося",remain:"Залишилось",cr:"CR користувачів",premium:"Користувачі з TG Premium",avatar:"Коефіцієнт аватарів",nodata:"Даних поки немає"},
     de:{settings:"Einstellungen",back:"Zurück",menu:"Hauptmenü",subs:"Abonnenten",price:"Preis",daily:"Tageslimit",hourly:"Geschwindigkeit pro Stunde",unsubs:"Abmeldungen",relink:"Link ändern",themes:"Themen",subcount:"Kanalanzahl",mychannels:"Meine Kanäle",addchannel:"Kanal hinzufügen",analytics:"Analyse",save:"Speichern",enter:"Wert eingeben",all:"Alle Themen",required:"Erforderlich",notrequired:"Optional",pending:"Ausstehend",active:"Aktiv",noaccess:"Kein Zugriff",saved:"Gespeichert",starts:"Starts",confirmed:"Bestätigte Abonnenten",total:"Insgesamt abonniert",remain:"Verbleibend",cr:"Nutzer-CR",premium:"Nutzer mit TG Premium",avatar:"Avatar-Koeffizient",nodata:"Noch keine Daten"},
@@ -3794,7 +3863,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
       const right=(val===undefined||val===null||val==="")?"":(': '+val);
       return '<button type="button" class="btn" data-set="'+key+'">'+psEsc(label+right)+'</button>';
     };
-    let html='<div class="settings-block proj-set-actions">';
+    let html='';
     if(role==="advertiser"){
       html+='<div class="btn-row">'+rowBtn("subs",psT("subs"),Number(s.target_subs||0))+rowBtn("price",psT("price"),Number(s.price||0).toFixed(2)+' ₽')+'</div>';
       html+='<div class="btn-row">'+rowBtn("daily",psT("daily"),Number(s.daily_limit||0))+rowBtn("hourly",psT("hourly"),Number(s.hourly_speed||0))+'</div>';
@@ -3805,7 +3874,6 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
       html+='<button type="button" class="btn wide" data-set="mychannels">'+psT("mychannels")+'</button>';
       html+='<button type="button" class="btn wide" data-set="relink">'+psT("relink")+'</button>';
     }
-    html+='</div>';
     box.innerHTML=html;
     box.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>psHandle(pid,s,b.getAttribute("data-set")));
   }
@@ -3821,36 +3889,154 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     return psInput(pid,a==="subs"?"set_subs":a==="daily"?"set_daily":a==="hourly"?"set_hourly":"set_subcount",title,"");
   }
   async function psInput(pid,action,title,placeholder){
-    const box=document.getElementById("pps-content"); box.innerHTML='<div class="settings-block"><div><b>'+psEsc(title)+'</b></div><div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"><button class="btn primary" id="ps-save">'+psT("save")+'</button></div></div>';
+    const box=document.getElementById("pps-content");
+    box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(title)+'</div>'
+      +'<div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"></div>'
+      +'<button type="button" class="btn primary wide" id="ps-save">'+psT("save")+'</button>'
+      +'<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
     document.getElementById("ps-save").onclick=async()=>{const v=document.getElementById("ps-input").value.trim();if(!v)return;const r=await psApi(pid,action,{value:v});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psPrice(pid,s){
     const box=document.getElementById("pps-content"); const prices=Array.isArray(s.price_options)?s.price_options:[];
-    box.innerHTML='<div class="settings-note">'+psEsc(psT("price"))+'</div><div class="price-grid">'+prices.map(x=>'<button class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>';
+    box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(psT("price"))+'</div>'
+      +'<div class="price-grid">'+prices.map(x=>'<button type="button" class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>'
+      +'<button type="button" class="btn wide" id="ps-sub-back" style="margin-top:10px">'+psT("back")+'</button>';
     box.querySelectorAll("[data-price]").forEach(b=>b.onclick=async()=>{const r=await psApi(pid,"set_price",{value:b.getAttribute("data-price")});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)});
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psThemes(pid,s){
     const selected=new Set((s.themes_mode==="all"||!Array.isArray(s.selected_themes)||!s.selected_themes.length)?(s.themes||[]):s.selected_themes);
     const box=document.getElementById("pps-content");
-    box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div><button class="btn wide" id="ps-themes-save" style="margin-top:10px">'+psT("save")+'</button>';
+    box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button type="button" class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div>'
+      +'<button type="button" class="btn primary wide" id="ps-themes-save">'+psT("save")+'</button>'
+      +'<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
     box.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{const x=b.getAttribute("data-theme");if(selected.has(x))selected.delete(x);else selected.add(x);b.textContent=(selected.has(x)?'✅ ':'❌ ')+x});
     document.getElementById("ps-themes-save").onclick=async()=>{const r=await psApi(pid,"set_themes",{themes:Array.from(selected)});if(r.ok)openProjectSettings(pid);else alert(r.message||r.error)};
+    document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psChannels(pid){
     const r=await apiGet("/api/miniapp/project/"+pid+"/settings?user_id="+encodeURIComponent(USER_ID)); const s=r.settings||{}; const box=document.getElementById("pps-content");
-    let html='<div class="channel-list">';
-    (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button class="btn" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
-    html+='<button class="btn wide" id="ps-add-channel">'+psT("addchannel")+'</button></div>'; box.innerHTML=html;
+    let html='';
+    (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button type="button" class="btn wide" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
+    html+='<button type="button" class="btn wide" id="ps-add-channel">'+psT("addchannel")+'</button>';
+    html+='<button type="button" class="btn wide" id="ps-sub-back">'+psT("back")+'</button>';
+    box.innerHTML=html;
     box.querySelectorAll("[data-ch]").forEach(b=>b.onclick=async()=>{const rr=await psApi(pid,"toggle_channel",{index:Number(b.getAttribute("data-ch"))});if(rr.ok)psChannels(pid);else alert(rr.message||rr.error)});
     document.getElementById("ps-add-channel").onclick=()=>psInput(pid,"add_channel",psT("addchannel"),"@username or t.me/...");
+    const back=document.getElementById("ps-sub-back"); if(back) back.onclick=()=>openProjectSettings(pid);
+  }
+  function paDonut(segments, centerHtml, size){
+    size = size || 180;
+    const r = 56, cx = 80, cy = 80, stroke = 22;
+    const circ = 2 * Math.PI * r;
+    let total = 0;
+    segments.forEach(s=>{ total += Math.max(0, Number(s.value)||0); });
+    if(total <= 0){
+      // empty ring
+      return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+        +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'
+        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="'+stroke+'"/>'
+        +'</svg><div class="pa-donut-center">'+centerHtml+'</div></div>';
+    }
+    let offset = 0;
+    let arcs = '';
+    segments.forEach(s=>{
+      const v = Math.max(0, Number(s.value)||0);
+      if(v <= 0) return;
+      const len = (v / total) * circ;
+      arcs += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+s.color+'" stroke-width="'+stroke+'" '
+        +'stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" '
+        +'stroke-dashoffset="'+(-offset).toFixed(2)+'" stroke-linecap="butt" '
+        +'transform="rotate(-90 '+cx+' '+cy+')"/>';
+      offset += len;
+    });
+    return '<div class="pa-donut-wrap" style="width:'+size+'px;height:'+size+'px">'
+      +'<svg viewBox="0 0 160 160" width="'+size+'" height="'+size+'">'+arcs+'</svg>'
+      +'<div class="pa-donut-center">'+centerHtml+'</div></div>';
+  }
+  function paLegend(items){
+    return '<div class="pa-legend">'+items.map(it=>
+      '<div class="pa-legend-item"><span class="pa-swatch" style="background:'+it.color+'"></span>'
+      +'<span class="pa-legend-label">'+psEsc(it.label)+'</span>'
+      +(it.value!=null?'<span class="pa-legend-val">'+psEsc(String(it.value))+'</span>':'')
+      +'</div>'
+    ).join('')+'</div>';
   }
   async function openProjectAnalytics(pid){
-    state.currentProjectId=pid; show("project-analytics"); document.getElementById("ppa-title").textContent=psT("analytics"); const box=document.getElementById("ppa-content");box.innerHTML="…";
-    try{const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID));const a=r.analytics||{};let html='';if(a.themes&&Object.keys(a.themes).length){html+='<div><b>'+psT("themes")+'</b></div>';for(const [k,v] of Object.entries(a.themes))html+='<div>'+psEsc(k)+' — '+psEsc(v)+'</div>'}html+='<br/><div><b>'+psT("total")+':</b> '+Number(a.total||0)+'</div><div><b>'+psT("remain")+':</b> '+Number(a.remain||0)+'</div><div><b>'+psT("cr")+':</b> '+Number(a.cr||0)+'%</div><div><b>'+psT("premium")+':</b> '+Number(a.premium_pct||0)+'%</div><div><b>'+psT("avatar")+':</b> '+psEsc(a.avatar_coef==null?0:a.avatar_coef)+'</div>';box.innerHTML=html||'<div class="muted">'+psT("nodata")+'</div>'}catch(e){box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>'}
+    state.currentProjectId=pid;
+    show("project-analytics");
+    document.getElementById("ppa-title").textContent=psT("analytics");
+    const box=document.getElementById("ppa-content");
+    box.innerHTML="…";
+    try{
+      const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID));
+      const a=r.analytics||{};
+      const total=Number(a.total||0);
+      const remain=Number(a.remain||0);
+      const unsub=Math.max(0, total-remain);
+      let cr=Number(a.cr);
+      if(!isFinite(cr)){
+        cr = total>0 ? (remain/total)*100 : 100;
+      }
+      cr = Math.round(cr*10)/10;
+      const colRemain=(getComputedStyle(document.documentElement).getPropertyValue("--brand")||"#006AD2").trim()||"#006AD2";
+      const colUnsub=(getComputedStyle(document.documentElement).getPropertyValue("--hint")||"#94A3B8").trim()||"#94A3B8";
+      const themeColors=["#006AD2","#0EA5E9","#8B5CF6","#10B981","#F59E0B","#EF4444","#EC4899","#14B8A6","#6366F1","#84CC16","#F97316","#06B6D4"];
+
+      let html='<div class="pa-block">';
+      // CR donut
+      html+=paDonut(
+        [{value:remain,color:colRemain},{value:unsub,color:colUnsub}],
+        '<div class="pa-cr-label">CR</div><div class="pa-cr-val">~ '+cr.toFixed(1).replace(".",",")+'%</div>',
+        190
+      );
+      html+='<div class="pa-total-line">('+total+' - '+(psT("total")||"подписалось всего")+')</div>';
+      html+=paLegend([
+        {color:colUnsub,label:(psT("unsub")||"Отписались"),value:unsub},
+        {color:colRemain,label:(psT("remain")||"Остались"),value:remain}
+      ]);
+      html+='</div>';
+
+      // premium / avatar
+      html+='<div class="pa-meta">';
+      html+='<div class="pa-meta-row"><span>'+(psT("premium")||"Telegram Premium")+'</span><b>'+Number(a.premium_pct||0).toFixed(1)+'%</b></div>';
+      html+='<div class="pa-meta-row"><span>'+(psT("avatar")||"С аватаркой")+'</span><b>'+psEsc(a.avatar_coef==null?"0":String(a.avatar_coef))+'</b></div>';
+      html+='</div>';
+
+      // themes donut
+      const themes=a.themes||{};
+      const themeSegs=[];
+      let ti=0;
+      Object.keys(themes).forEach(k=>{
+        const v=Number(themes[k]||0);
+        if(v<=0) return;
+        themeSegs.push({key:k,value:v,color:themeColors[ti%themeColors.length]});
+        ti++;
+      });
+      html+='<div class="pa-block pa-themes">';
+      html+='<div class="pa-section-label">'+(psT("themes")||"Тематики")+'</div>';
+      if(themeSegs.length){
+        html+=paDonut(themeSegs, '<div class="pa-cr-label">'+(psT("themes")||"Темы")+'</div>', 190);
+        html+=paLegend(themeSegs.map(s=>({color:s.color,label:s.key,value:s.value})));
+      }else{
+        html+='<div class="muted" style="text-align:center;padding:12px 0">'+(psT("nodata")||"Нет данных")+'</div>';
+      }
+      html+='</div>';
+
+      box.innerHTML=html;
+    }catch(e){
+      box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>';
+    }
   }
-  document.getElementById("pps-back").onclick=()=>openProject(state.currentProjectId);
-  document.getElementById("pps-menu").onclick=()=>show("home");
-  document.getElementById("ppa-back").onclick=()=>openProject(state.currentProjectId);
+  const ppsBack=document.getElementById("pps-back");
+  if(ppsBack) ppsBack.onclick=()=>openProject(state.currentProjectId);
+  const ppsMenu=document.getElementById("pps-menu");
+  if(ppsMenu) ppsMenu.onclick=()=>show("home");
+  const ppaBack=document.getElementById("ppa-back");
+  if(ppaBack) ppaBack.onclick=()=>openProject(state.currentProjectId);
+  const ppaMenu=document.getElementById("ppa-menu");
+  if(ppaMenu) ppaMenu.onclick=()=>show("home");
   // доступ из основного скрипта (кнопки проекта)
   window.openProjectSettings = openProjectSettings;
   window.openProjectAnalytics = openProjectAnalytics;
