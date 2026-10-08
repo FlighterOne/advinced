@@ -3701,15 +3701,11 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   background:var(--surface);
   box-shadow:var(--shadow);
 }
-#screen-project-settings .setting-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-#screen-project-settings .setting-grid .btn{
-  min-height:52px;
-  white-space:normal;
+#screen-project-settings .tile-grid .tile .t-title{
   font-size:13px;
+}
+#screen-project-settings .tile-grid .tile .t-sub{
+  font-size:12px;
 }
 #screen-project-settings .price-grid{
   display:grid;
@@ -3767,17 +3763,29 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
       renderProjectSettings(pid,r.settings||{});
     }catch(e){box.innerHTML='<div class="muted">'+psEsc(e.message||e)+'</div>'}
   }
+  function psTile(key,label,value){
+    return '<button type="button" class="tile" data-set="'+key+'"><div class="t-title">'+psEsc(label)+'</div>'
+      +(value===""?'':'<div class="t-sub">'+psEsc(value)+'</div>')+'</button>';
+  }
   function renderProjectSettings(pid,s){
     const role=String(s.role||"monetize").toLowerCase();
     const box=document.getElementById("pps-content"); let html='<div class="settings-block">';
     if(role==="advertiser"){
-      html+='<div class="setting-grid"><button class="btn" data-set="subs">'+psT("subs")+': '+Number(s.target_subs||0)+'</button><button class="btn" data-set="price">'+psT("price")+': '+Number(s.price||0).toFixed(2)+' ₽</button>';
-      html+='<button class="btn" data-set="daily">'+psT("daily")+': '+Number(s.daily_limit||0)+'</button><button class="btn" data-set="hourly">'+psT("hourly")+': '+Number(s.hourly_speed||0)+'</button>';
-      html+='<button class="btn" data-set="unsubs">'+psT("unsubs")+': '+(Number(s.track_unsubs||0)?"✅":"❌")+'</button><button class="btn" data-set="relink">'+psT("relink")+'</button></div>';
-      html+='<button class="btn wide" data-set="themes">'+psT("themes")+'</button>';
+      html+='<div class="tile-grid">';
+      html+=psTile("subs",psT("subs"),Number(s.target_subs||0));
+      html+=psTile("price",psT("price"),Number(s.price||0).toFixed(2)+' ₽');
+      html+=psTile("daily",psT("daily"),Number(s.daily_limit||0));
+      html+=psTile("hourly",psT("hourly"),Number(s.hourly_speed||0));
+      html+=psTile("unsubs",psT("unsubs"),Number(s.track_unsubs||0)?"✅":"❌");
+      html+=psTile("relink",psT("relink"),"");
+      html+='</div>';
+      html+='<button class="btn wide" data-set="themes" style="margin-top:10px">'+psT("themes")+'</button>';
     }else{
-      html+='<div class="setting-grid"><button class="btn" data-set="subcount">'+psT("subcount")+': '+Number(s.sub_count||1)+'</button><button class="btn" data-set="price">'+psT("price")+': '+Number(s.price||1).toFixed(2)+' ₽</button></div>';
-      html+='<button class="btn wide" data-set="mychannels">'+psT("mychannels")+'</button><button class="btn wide" data-set="relink">'+psT("relink")+'</button>';
+      html+='<div class="tile-grid">';
+      html+=psTile("subcount",psT("subcount"),Number(s.sub_count||1));
+      html+=psTile("price",psT("price"),Number(s.price||1).toFixed(2)+' ₽');
+      html+='</div>';
+      html+='<button class="btn wide" data-set="mychannels" style="margin-top:10px">'+psT("mychannels")+'</button><button class="btn wide" data-set="relink" style="margin-top:10px">'+psT("relink")+'</button>';
     }
     html+='</div>'; box.innerHTML=html;
     box.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>psHandle(pid,s,b.getAttribute("data-set")));
@@ -4147,9 +4155,10 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 </style>
 
 <style id="FINAL-PANEL-SUPPORT-TILE-GEOMETRY">
-/* FINAL AUTHORITY: Panel and Support must use the exact Settings tile geometry. */
+/* FINAL AUTHORITY: Panel, Support and Project Settings must use the exact Settings tile geometry. */
 #screen-support .tile-grid,
-#screen-panel .tile-grid{
+#screen-panel .tile-grid,
+#screen-project-settings .tile-grid{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
   grid-auto-flow:row !important;
@@ -4160,7 +4169,8 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   box-sizing:border-box !important;
 }
 #screen-support .tile,
-#screen-panel .tile{
+#screen-panel .tile,
+#screen-project-settings .tile{
   display:flex !important;
   width:100% !important;
   min-width:0 !important;
