@@ -941,7 +941,79 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="tile" data-panel="mod_tx"><div class="t-title" data-i18n="mod_tx">Транзакции</div></button>
         <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
       </div>
-      
+    </div>
+
+    <div id="screen-panel-staff" class="screen">
+      <div class="section-title" data-i18n="staff">Сотрудники</div>
+      <div class="list" id="panel-staff-list"></div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" data-nav="panel" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-mod-sell" class="screen">
+      <div class="section-title" data-i18n="mod_sell">Продажа</div>
+      <div class="list" id="panel-mod-sell-list"></div>
+      <div class="btn-row" id="panel-mod-sell-nav" style="display:none;margin-top:8px">
+        <button type="button" class="btn" id="panel-mod-sell-prev">⬅️</button>
+        <button type="button" class="btn" id="panel-mod-sell-next">➡️</button>
+      </div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" data-nav="panel" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-mod-buy" class="screen">
+      <div class="section-title" data-i18n="mod_buy">Покупка</div>
+      <div class="list" id="panel-mod-buy-list"></div>
+      <div class="btn-row" id="panel-mod-buy-nav" style="display:none;margin-top:8px">
+        <button type="button" class="btn" id="panel-mod-buy-prev">⬅️</button>
+        <button type="button" class="btn" id="panel-mod-buy-next">➡️</button>
+      </div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" data-nav="panel" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-mod-tx" class="screen">
+      <div class="section-title" data-i18n="mod_tx">Транзакции</div>
+      <div class="list" id="panel-mod-tx-list"></div>
+      <div class="btn-row" id="panel-mod-tx-nav" style="display:none;margin-top:8px">
+        <button type="button" class="btn" id="panel-mod-tx-prev">⬅️</button>
+        <button type="button" class="btn" id="panel-mod-tx-next">➡️</button>
+      </div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" data-nav="panel" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-analytics" class="screen">
+      <div class="section-title" data-i18n="analytics">Аналитика</div>
+      <div class="tile-grid">
+        <button type="button" class="tile" data-pan-an="expenses"><div class="t-title" data-i18n="an_expenses">Расходы</div></button>
+        <button type="button" class="tile" data-pan-an="income"><div class="t-title" data-i18n="an_income">Доходы</div></button>
+        <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-pan-an="projects"><div class="t-title" data-i18n="an_projects">Проекты</div></button>
+      </div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" data-nav="panel" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-analytics-view" class="screen">
+      <div class="section-title" id="panel-an-view-title">Аналитика</div>
+      <div class="panel" id="panel-an-view-body"><div class="muted">…</div></div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" id="panel-an-view-back" data-i18n="back">Назад</button>
+      </div>
+    </div>
+
+    <div id="screen-panel-detail" class="screen">
+      <div class="section-title" id="panel-detail-title">—</div>
+      <div class="panel" id="panel-detail-body"></div>
+      <div class="btn-stack" id="panel-detail-actions" style="margin-top:10px"></div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn ghost wide" id="panel-detail-back" data-i18n="back">Назад</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1009,7 +1081,7 @@ pay_placeholder:"Оплата будет доступна после подкл�
 terms_prefix:"Продолжая, вы принимаете ",terms_link:"пользовательское соглашение",terms_suffix:" и правила сервиса",
 help_body:"Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.",
 support_manager:"Менеджер",support_bot:"Бот",support_email:"Почта",support_faq:"FAQ",soon:"Скоро",
-staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",
+staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",staff_mandatory:"Обязательный пользователь",empty:"Нет данных",
 prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 ч</strong><br>• Требуется: <strong>3 смены в неделю</strong><br><br><strong>Стажировка</strong><br><br>• Период: <strong>1 месяц</strong><br>• Смена стажёра: <strong>6 ч</strong><br>• Оплата за смену стажёра: <strong>10$</strong><br><br><strong>Обязанности</strong><br><br>• Модерация объявлений<br>• Модерация жалоб<br>• Модерация обращений в поддержку<br>• Аналитика (просмотр)<br>• Рабочий центр / смены<br>• Контроль смен (только просмотр)"}),
 en:baseI18n({logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
@@ -1032,7 +1104,7 @@ total_to_debit:"Разом до списання",withdraw_amount:"Сума ви
 pay_placeholder:"Оплата буде доступна після підключення еквайрингу.",
 terms_prefix:"Продовжуючи, ви приймаєте ",terms_link:"умови користування",terms_suffix:" і правила сервісу",
 help_body:"Mini App синхронізовано з ботом.",support_manager:"Менеджер",support_bot:"Бот",support_email:"Пошта",support_faq:"FAQ",soon:"Незабаром",
-staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",analytics:"Аналітика",prev:"Назад",next:"Вперед",
+staff:"Співробітники",mod_sell:"Продаж",mod_buy:"Купівля",mod_tx:"Транзакції",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No data",analytics:"Аналітика",prev:"Назад",next:"Вперед",
 roles:{user:"Користувач",partner:"Партнер",corp:"Корпоративний",intern:"Стажер",mod:"Модератор",admin:"Адмін",owner:"Власник"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 год</strong><br>• Потрібно: <strong>3 зміни на тиждень</strong><br><br><strong>Стажування</strong><br><br>• Період: <strong>1 місяць</strong><br>• Зміна стажера: <strong>6 год</strong><br>• Оплата за зміну стажера: <strong>10$</strong><br><br><strong>Обов’язки</strong><br><br>• Модерація оголошень<br>• Модерація скарг<br>• Модерація звернень у підтримку<br>• Аналітика (перегляд)<br>• Робочий центр / зміни<br>• Контроль змін (лише перегляд)"}),
 de:baseI18n({logout:"Abmelden",ref_my_code:"Mein Empfehlungscode",save:"Speichern",apply:"Anwenden",ref_stats_line:"Stufe: {level} · Refs: {total} · 10T: {d10} · Verdient: {earn} ₽",ref_apply_title:"Promo-Code anwenden",back:"Zurück",balance:"Guthaben",settings:"Einstellungen",projects:"Projekte",help:"Hilfe",support:"Support",panel:"Panel",
 language:"Sprache",theme:"Design",theme_light:"Hell",theme_dark:"Dunkel",theme_auto:"Wie in Telegram",original:"Original",on_moderation:"in Moderation",status:"Status",no_projects:"Keine Projekte",btn_start:"Starten",btn_stop:"Stoppen",my_transactions:"Meine Transaktionen",no_transactions:"Keine Transaktionen",transaction:"Transaktion",close:"Schließen",tx_type:"Typ",date_time:"Datum und Uhrzeit",operation_id:"Vorgangs-ID",tx_deposit:"Einzahlung",tx_withdraw:"Auszahlung",tx_purchase:"Kauf",tx_monetization:"Monetarisierung",tx_salary:"Gehalt",tx_admin:"Admin-Saldönderung",
@@ -2269,8 +2341,180 @@ async function openProject(pid){
 }
 async function loadPanel(){
   if(!USER_ID)return;
-  try{const p=await apiGet("/api/miniapp/panel?user_id="+encodeURIComponent(USER_ID));document.getElementById("panel-role").textContent=p.role_name||roleName(p.role)}
-  catch(e){document.getElementById("panel-role").textContent="—"}
+  try{
+    const p=await apiGet("/api/miniapp/panel?user_id="+encodeURIComponent(USER_ID));
+    const el=document.getElementById("panel-role");
+    if(el) el.textContent=(p&&(p.role_name||roleName(p.role)))||"—";
+  }catch(e){
+    const el=document.getElementById("panel-role");
+    if(el) el.textContent="—";
+  }
+}
+
+// ---- Panel submenus ----
+state.panelPages = state.panelPages || {sell:1,buy:1,tx:1};
+state.panelBack = state.panelBack || "panel";
+
+function panelEsc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+async function openPanelSection(key){
+  if(key==="staff"){ show("panel-staff"); await loadPanelStaff(); return; }
+  if(key==="mod_sell"){ state.panelPages.sell=1; show("panel-mod-sell"); await loadPanelMod("sell"); return; }
+  if(key==="mod_buy"){ state.panelPages.buy=1; show("panel-mod-buy"); await loadPanelMod("buy"); return; }
+  if(key==="mod_tx"){ state.panelPages.tx=1; show("panel-mod-tx"); await loadPanelMod("tx"); return; }
+  if(key==="analytics"){ show("panel-analytics"); return; }
+}
+
+async function loadPanelStaff(){
+  const box=document.getElementById("panel-staff-list");
+  if(!box)return;
+  box.innerHTML='<div class="empty">…</div>';
+  try{
+    const r=await apiGet("/api/miniapp/panel/staff?user_id="+encodeURIComponent(USER_ID));
+    const items=(r&&r.items)||[];
+    if(!items.length){ box.innerHTML='<div class="empty">'+(t("empty")||"Нет данных")+'</div>'; return; }
+    box.innerHTML=items.map(u=>{
+      const role=u.role_name||roleName(u.role)||"—";
+      const name=u.username?("@"+u.username):(u.first_name||u.user_id);
+      const star=u.mandatory?"⭐ ":"";
+      return '<div class="item" data-staff="'+u.user_id+'"><div class="name">'+star+panelEsc(name)+'</div><div class="sub">'+panelEsc(role)+' · ID '+u.user_id+' · '+(u.balance!=null?Number(u.balance).toFixed(2):"0.00")+' ₽</div></div>';
+    }).join("");
+    box.querySelectorAll("[data-staff]").forEach(el=>{
+      el.onclick=()=>openPanelStaffDetail(el.getAttribute("data-staff"));
+    });
+  }catch(e){
+    box.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>';
+  }
+}
+
+async function openPanelStaffDetail(uid){
+  state.panelBack="panel-staff";
+  show("panel-detail");
+  document.getElementById("panel-detail-title").textContent=t("staff")||"Сотрудники";
+  const body=document.getElementById("panel-detail-body");
+  const actions=document.getElementById("panel-detail-actions");
+  body.innerHTML="…"; actions.innerHTML="";
+  try{
+    const r=await apiGet("/api/miniapp/panel/staff/"+encodeURIComponent(uid)+"?user_id="+encodeURIComponent(USER_ID));
+    const u=r.user||{};
+    body.innerHTML=
+      '<div class="field"><div class="label">ID</div><div class="value">'+panelEsc(u.user_id)+'</div></div>'+
+      '<div class="field"><div class="label">Username</div><div class="value">'+panelEsc(u.username?("@"+u.username):"—")+'</div></div>'+
+      '<div class="field"><div class="label">'+(t("role")||"Роль")+'</div><div class="value">'+panelEsc(u.role_name||roleName(u.role))+'</div></div>'+
+      '<div class="field"><div class="label">'+(t("balance")||"Баланс")+'</div><div class="value">'+Number(u.balance||0).toFixed(2)+' ₽</div></div>'+
+      (u.mandatory?'<div class="hint" style="margin-top:8px">⭐ '+(t("staff_mandatory")||"Обязательный пользователь")+'</div>':'');
+  }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
+}
+
+async function loadPanelMod(kind){
+  const map={sell:{list:"panel-mod-sell-list",nav:"panel-mod-sell-nav",pageKey:"sell",api:"sell"},
+             buy:{list:"panel-mod-buy-list",nav:"panel-mod-buy-nav",pageKey:"buy",api:"buy"},
+             tx:{list:"panel-mod-tx-list",nav:"panel-mod-tx-nav",pageKey:"tx",api:"tx"}};
+  const cfg=map[kind]; if(!cfg)return;
+  const box=document.getElementById(cfg.list);
+  const nav=document.getElementById(cfg.nav);
+  if(!box)return;
+  box.innerHTML='<div class="empty">…</div>';
+  const page=state.panelPages[cfg.pageKey]||1;
+  try{
+    const r=await apiGet("/api/miniapp/panel/mod/"+cfg.api+"?user_id="+encodeURIComponent(USER_ID)+"&page="+page);
+    const items=(r&&r.items)||[];
+    const pages=Math.max(1, Number(r.pages||1));
+    if(nav){ nav.style.display=pages>1?"":"none"; }
+    if(!items.length){ box.innerHTML='<div class="empty">'+(t("empty")||"Нет заявок")+'</div>'; return; }
+    box.innerHTML=items.map(it=>{
+      const title=it.title||("#"+(it.id||""));
+      const sub=it.sub||it.status||"";
+      return '<div class="item" data-mod-kind="'+kind+'" data-mod-id="'+panelEsc(it.id)+'" data-mod-type="'+panelEsc(it.type||"")+'"><div class="name">'+panelEsc(title)+'</div><div class="sub">'+panelEsc(sub)+'</div></div>';
+    }).join("");
+    box.querySelectorAll("[data-mod-id]").forEach(el=>{
+      el.onclick=()=>openPanelModDetail(el.getAttribute("data-mod-kind"), el.getAttribute("data-mod-id"), el.getAttribute("data-mod-type"));
+    });
+  }catch(e){ box.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>'; }
+}
+
+async function openPanelModDetail(kind, id, type){
+  state.panelBack = kind==="sell"?"panel-mod-sell":kind==="buy"?"panel-mod-buy":"panel-mod-tx";
+  show("panel-detail");
+  document.getElementById("panel-detail-title").textContent=t(kind==="tx"?"mod_tx":kind==="buy"?"mod_buy":"mod_sell")||"Модерация";
+  const body=document.getElementById("panel-detail-body");
+  const actions=document.getElementById("panel-detail-actions");
+  body.innerHTML="…"; actions.innerHTML="";
+  try{
+    const r=await apiGet("/api/miniapp/panel/mod/detail?user_id="+encodeURIComponent(USER_ID)+"&kind="+encodeURIComponent(kind)+"&id="+encodeURIComponent(id)+"&type="+encodeURIComponent(type||""));
+    const d=r.detail||{};
+    let html="";
+    (d.fields||[]).forEach(f=>{
+      html+='<div class="field"><div class="label">'+panelEsc(f.label)+'</div><div class="value">'+panelEsc(f.value)+'</div></div>';
+    });
+    body.innerHTML=html||'<div class="muted">'+(t("empty")||"—")+'</div>';
+    if(d.can_moderate){
+      actions.innerHTML=
+        '<div class="btn-row">'+
+        '<button type="button" class="btn primary" id="panel-mod-approve">'+(t("approve")||"Одобрить")+'</button>'+
+        '<button type="button" class="btn" id="panel-mod-reject">'+(t("reject")||"Отклонить")+'</button>'+
+        '</div>';
+      const go=async(decision)=>{
+        try{
+          const rr=await apiPost("/api/miniapp/panel/mod/action",{user_id:USER_ID,kind,id,type:type||"",decision});
+          if(rr&&rr.ok){ openPanelSection(kind==="tx"?"mod_tx":kind==="buy"?"mod_buy":"mod_sell"); }
+          else alert((rr&&(rr.message||rr.error))||"Error");
+        }catch(e){ alert(e.message||e); }
+      };
+      document.getElementById("panel-mod-approve").onclick=()=>go("approve");
+      document.getElementById("panel-mod-reject").onclick=()=>go("reject");
+    }
+  }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
+}
+
+async function openPanelAnalyticsView(kind){
+  state.panelBack="panel-analytics";
+  show("panel-analytics-view");
+  const titleMap={expenses:t("an_expenses")||"Расходы",income:t("an_income")||"Доходы",projects:t("an_projects")||"Проекты"};
+  document.getElementById("panel-an-view-title").textContent=titleMap[kind]||"Аналитика";
+  const body=document.getElementById("panel-an-view-body");
+  body.innerHTML="…";
+  try{
+    const r=await apiGet("/api/miniapp/panel/analytics?user_id="+encodeURIComponent(USER_ID)+"&kind="+encodeURIComponent(kind));
+    const lines=(r&&r.lines)||[];
+    if(!lines.length){ body.innerHTML='<div class="muted">'+(t("empty")||"Нет данных")+'</div>'; return; }
+    body.innerHTML=lines.map(l=>'<div style="margin:6px 0;font-size:14px;line-height:1.4">'+panelEsc(l)+'</div>').join("");
+  }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
+}
+
+function wirePanelMenus(){
+  document.querySelectorAll("[data-panel]").forEach(b=>{
+    b.onclick=function(e){
+      e.preventDefault();
+      const key=b.getAttribute("data-panel");
+      openPanelSection(key);
+    };
+  });
+  document.querySelectorAll("[data-pan-an]").forEach(b=>{
+    b.onclick=function(e){
+      e.preventDefault();
+      openPanelAnalyticsView(b.getAttribute("data-pan-an"));
+    };
+  });
+  const bindPage=(btnId, kind, delta)=>{
+    const el=document.getElementById(btnId);
+    if(!el)return;
+    el.onclick=()=>{
+      const key=kind==="sell"?"sell":kind==="buy"?"buy":"tx";
+      state.panelPages[key]=Math.max(1,(state.panelPages[key]||1)+delta);
+      loadPanelMod(kind);
+    };
+  };
+  bindPage("panel-mod-sell-prev","sell",-1);
+  bindPage("panel-mod-sell-next","sell",1);
+  bindPage("panel-mod-buy-prev","buy",-1);
+  bindPage("panel-mod-buy-next","buy",1);
+  bindPage("panel-mod-tx-prev","tx",-1);
+  bindPage("panel-mod-tx-next","tx",1);
+  const db=document.getElementById("panel-detail-back");
+  if(db) db.onclick=()=>show(state.panelBack||"panel");
+  const ab=document.getElementById("panel-an-view-back");
+  if(ab) ab.onclick=()=>show("panel-analytics");
 }
 
 
@@ -2556,7 +2800,7 @@ on("wc-pay","onclick",async()=>{
   }catch(e){if(st)st.textContent=String(e.message||e)}
 });
 
-document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{});
+try{wirePanelMenus()}catch(e){console.warn("wirePanelMenus",e)}
 
 setInterval(()=>{if(USER_ID)loadMe(true)},30000);
 
