@@ -2052,13 +2052,18 @@ function show(id,push){
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
 function goBack(){
-  // Подменю настроек проекта: назад → список настроек, не карточка проекта
+  // Подменю настроек проекта: назад → список настроек (не карточка проекта)
   try{
     const active=document.querySelector(".screen.active");
     const aid=active&&active.id;
-    if(aid==="screen-project-settings" && state.psSubLevel){
+    const inSettings=aid==="screen-project-settings";
+    const sub=!!(state&&state.psSubLevel);
+    // fallback: если на экране есть кнопка возврата в настройки
+    const hasSubBack=inSettings&&document.getElementById("ps-sub-back");
+    if(inSettings && (sub || hasSubBack) && state.currentProjectId){
       state.psSubLevel=0;
-      if(state.currentProjectId){ openProjectSettings(state.currentProjectId); return; }
+      const fn=window.openProjectSettings;
+      if(typeof fn==="function"){ fn(state.currentProjectId); return; }
     }
   }catch(e){}
   if(state.history.length>1)state.history.pop();
