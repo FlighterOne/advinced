@@ -815,10 +815,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     <div id="screen-project-analytics" class="screen">
       <div class="section-title" id="ppa-title">Аналитика</div>
       <div class="panel" id="ppa-content"></div>
-      <div class="btn-row" style="margin-top:12px">
-        <button type="button" class="btn" id="ppa-back">Назад</button>
-        <button type="button" class="btn" id="ppa-menu">В меню</button>
-      </div>
     </div>
 
     <div id="screen-help" class="screen">
@@ -2055,7 +2051,19 @@ function show(id,push){
   try{applyI18n()}catch(e){}
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
-function goBack(){if(state.history.length>1)state.history.pop();show(state.history[state.history.length-1]||"main",false)}
+function goBack(){
+  // Подменю настроек проекта: назад → список настроек, не карточка проекта
+  try{
+    const active=document.querySelector(".screen.active");
+    const aid=active&&active.id;
+    if(aid==="screen-project-settings" && state.psSubLevel){
+      state.psSubLevel=0;
+      if(state.currentProjectId){ openProjectSettings(state.currentProjectId); return; }
+    }
+  }catch(e){}
+  if(state.history.length>1)state.history.pop();
+  show(state.history[state.history.length-1]||"main",false);
+}
 
 function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
 async function apiFetch(path,opts,timeoutMs){
@@ -3843,7 +3851,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   function psEsc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
   async function psApi(pid,action,payload={}){return await apiPost("/api/miniapp/project/"+pid+"/settings",Object.assign({user_id:USER_ID,action},payload))}
   async function openProjectSettings(pid){
-    state.currentProjectId=pid; show("project-settings");
+    state.currentProjectId=pid; state.psSubLevel=0; show("project-settings");
     const box=document.getElementById("pps-content"); box.innerHTML="…";
     document.getElementById("pps-title").textContent=psT("settings");
     try{
@@ -3889,6 +3897,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     return psInput(pid,a==="subs"?"set_subs":a==="daily"?"set_daily":a==="hourly"?"set_hourly":"set_subcount",title,"");
   }
   async function psInput(pid,action,title,placeholder){
+    state.psSubLevel=1;
     const box=document.getElementById("pps-content");
     box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(title)+'</div>'
       +'<div class="settings-input-row"><input class="form-input" id="ps-input" type="text" inputmode="decimal" placeholder="'+psEsc(placeholder)+'"></div>'
@@ -3898,6 +3907,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psPrice(pid,s){
+    state.psSubLevel=1;
     const box=document.getElementById("pps-content"); const prices=Array.isArray(s.price_options)?s.price_options:[];
     box.innerHTML='<div class="muted" style="margin-bottom:8px">'+psEsc(psT("price"))+'</div>'
       +'<div class="price-grid">'+prices.map(x=>'<button type="button" class="btn" data-price="'+x+'">'+Number(x).toFixed(2)+'</button>').join('')+'</div>'
@@ -3906,6 +3916,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psThemes(pid,s){
+    state.psSubLevel=1;
     const selected=new Set((s.themes_mode==="all"||!Array.isArray(s.selected_themes)||!s.selected_themes.length)?(s.themes||[]):s.selected_themes);
     const box=document.getElementById("pps-content");
     box.innerHTML='<div class="theme-grid">'+(s.themes||[]).map(x=>'<button type="button" class="btn" data-theme="'+psEsc(x)+'">'+(selected.has(x)?'✅ ':'❌ ')+psEsc(x)+'</button>').join('')+'</div>'
@@ -3916,6 +3927,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     document.getElementById("ps-sub-back").onclick=()=>openProjectSettings(pid);
   }
   async function psChannels(pid){
+    state.psSubLevel=1;
     const r=await apiGet("/api/miniapp/project/"+pid+"/settings?user_id="+encodeURIComponent(USER_ID)); const s=r.settings||{}; const box=document.getElementById("pps-content");
     let html='';
     (s.own_channels||[]).forEach((c,i)=>{const mark=c.required?'✅':'❌';const st=c.status==="active"?psT("active"):psT("pending");html+='<button type="button" class="btn wide" data-ch="'+i+'">'+mark+' '+psEsc(c.title||c.username||c.url||("#"+(i+1)))+' · '+st+'</button>'});
@@ -4037,6 +4049,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   if(ppaBack) ppaBack.onclick=()=>openProject(state.currentProjectId);
   const ppaMenu=document.getElementById("ppa-menu");
   if(ppaMenu) ppaMenu.onclick=()=>show("home");
+  // нижние кнопки аналитики убраны — остаётся верхний Back
   // доступ из основного скрипта (кнопки проекта)
   window.openProjectSettings = openProjectSettings;
   window.openProjectAnalytics = openProjectAnalytics;
