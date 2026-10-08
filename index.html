@@ -1882,6 +1882,40 @@ function applyRouteFromLocation(opts){
       show("support-chat", false); try{loadSupportChat()}catch(e){}
     }else if(r.screen==="panel"){
       show("panel", false); try{loadPanel()}catch(e){}
+    }else if(r.screen==="panel-staff"){
+      show("panel-staff", false); try{loadPanelStaff()}catch(e){}
+    }else if(r.screen==="panel-staff-add"){
+      show("panel-staff-add", false);
+    }else if(r.screen==="panel-staff-apps"){
+      show("panel-staff-apps", false); try{openStaffApps()}catch(e){}
+    }else if(r.screen==="panel-staff-role" || r.screen==="panel-staff-balance" || r.screen==="panel-staff-ban" || r.screen==="panel-detail"){
+      if(r.staffId){
+        state.currentStaffId = r.staffId;
+        try{ openPanelStaffDetail(r.staffId, {assignMode:false}); }catch(e){ show(r.screen, false); }
+        if(r.screen==="panel-staff-role" || r.screen==="panel-staff-balance" || r.screen==="panel-staff-ban"){
+          // after detail loads async, open submenu
+          setTimeout(function(){
+            try{
+              const u = state.staffTarget || {user_id:r.staffId};
+              if(r.screen==="panel-staff-role") openStaffRoleMenu(u);
+              else if(r.screen==="panel-staff-balance") openStaffBalanceMenu(u);
+              else if(r.screen==="panel-staff-ban") openStaffBanMenu(u);
+            }catch(e){}
+          }, 200);
+        }
+      }else{
+        show(r.screen, false);
+      }
+    }else if(r.screen==="panel-mod-sell"){
+      show("panel-mod-sell", false); try{loadPanelMod("sell")}catch(e){}
+    }else if(r.screen==="panel-mod-buy"){
+      show("panel-mod-buy", false); try{loadPanelMod("buy")}catch(e){}
+    }else if(r.screen==="panel-mod-tx"){
+      show("panel-mod-tx", false); try{loadPanelMod("tx")}catch(e){}
+    }else if(r.screen==="panel-analytics"){
+      show("panel-analytics", false);
+    }else if(r.screen==="panel-analytics-view"){
+      show("panel-analytics-view", false);
     }else if(r.screen==="collaborate"){
       show("collaborate", false);
       try{
@@ -2479,6 +2513,7 @@ async function openPanelStaffDetail(uid, opts){
   opts=opts||{};
   const assignMode=!!opts.assignMode;
   state.panelBack=assignMode?"panel-staff-add":"panel-staff";
+  state.currentStaffId=uid;
   show("panel-detail");
   document.getElementById("panel-detail-title").textContent=t("staff")||"Сотрудники";
   const body=document.getElementById("panel-detail-body");
@@ -2489,6 +2524,9 @@ async function openPanelStaffDetail(uid, opts){
   try{
     const r=await apiGet("/api/miniapp/panel/staff/"+encodeURIComponent(uid)+"?user_id="+encodeURIComponent(USER_ID));
     const u=r.user||{};
+    state.staffTarget=u;
+    state.currentStaffId=u.user_id||uid;
+    try{setLocationRoute("panel-detail",{staffId:u.user_id||uid,replace:true})}catch(e){}
     const unameCell=u.username?staffUnameHtml(u):('<span>'+panelEsc(u.user_id||"—")+'</span>');
     let html=
       '<div class="field"><div class="label">ID</div><div class="value">'+panelEsc(u.user_id)+'</div></div>'+
