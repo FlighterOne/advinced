@@ -807,6 +807,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       <div class="btn-stack" id="pd-actions"></div>
     </div>
 
+    <div id="screen-project-settings" class="screen">
+      <div class="section-title" id="pps-title">Настройки</div>
+      <div class="panel" id="pps-content"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button type="button" class="btn" id="pps-back">Назад</button>
+        <button type="button" class="btn" id="pps-menu">В меню</button>
+      </div>
+    </div>
+
+    <div id="screen-project-analytics" class="screen">
+      <div class="section-title" id="ppa-title">Аналитика</div>
+      <div class="panel" id="ppa-content"></div>
+      <div class="btn-stack" style="margin-top:12px">
+        <button type="button" class="btn wide" id="ppa-back">Назад</button>
+      </div>
+    </div>
+
     <div id="screen-help" class="screen">
       <div class="section-title" data-i18n="help">Помощь</div>
         <p class="muted" data-i18n="help_body">Mini App синхронизирован с ботом. Баланс и проекты загружаются с сервера.</p>
@@ -3657,30 +3674,66 @@ try{bindMainMenu()}catch(e){console.warn(e)}
 window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFromLocation,getTrafficKind,isStandaloneApp,isTelegramMiniApp};
 </script>
 
-<div id="screen-project-settings" class="screen">
-  <div class="section-title" id="pps-title">Настройки</div>
-  <div class="panel" id="pps-content"></div>
-  <div class="btn-row" style="margin-top:10px">
-    <button class="btn" id="pps-back">Назад</button>
-    <button class="btn" id="pps-menu">В меню</button>
-  </div>
-</div>
-<div id="screen-project-analytics" class="screen">
-  <div class="section-title" id="ppa-title">📊 Аналитика</div>
-  <div class="panel" id="ppa-content"></div>
-  <button class="btn wide" id="ppa-back" style="margin-top:10px">Назад</button>
-</div>
 <style id="project-settings-analytics-ui">
-#screen-project-settings .panel,#screen-project-analytics .panel{font-size:14px;line-height:1.48}
-#screen-project-settings .setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#screen-project-settings .setting-grid .btn{min-height:58px;white-space:normal}
-#screen-project-settings .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-#screen-project-settings .theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* в едином стиле с balance/settings: внутри .content, те же отступы */
+#screen-project-settings,
+#screen-project-analytics{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#screen-project-settings .section-title,
+#screen-project-analytics .section-title{
+  margin:0 0 12px !important;
+  padding:0 !important;
+}
+#screen-project-settings .panel,
+#screen-project-analytics .panel{
+  font-size:14px;
+  line-height:1.48;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  margin:0;
+  padding:14px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+#screen-project-settings .setting-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+#screen-project-settings .setting-grid .btn{
+  min-height:52px;
+  white-space:normal;
+  font-size:13px;
+}
+#screen-project-settings .price-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+#screen-project-settings .theme-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
 #screen-project-settings .channel-list{display:grid;gap:8px}
 #screen-project-settings .settings-block{display:grid;gap:10px}
 #screen-project-settings .settings-note{font-size:13px;color:var(--muted);margin-bottom:2px}
 #screen-project-settings .settings-input-row{display:flex;gap:8px}
 #screen-project-settings .settings-input-row .form-input{flex:1;min-width:0}
+#screen-project-settings .btn-row,
+#screen-project-analytics .btn-stack{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#screen-project-analytics .panel .field{margin-bottom:8px}
+#screen-project-analytics .panel b{font-weight:700}
 </style>
 <script>
 (function(){
