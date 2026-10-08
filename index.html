@@ -1719,30 +1719,37 @@ const SCREEN_TO_PATH = {
   "withdraw-confirm": "/withdraw/confirm"
 };
 
+let __APP_ROUTE_BASE = null; // кэш: для custom domain "" ; для github.io "/repo"
 function getRouteBase(){
-  // base path for GitHub project pages, e.g. /repo/ — otherwise ""
+  // База приложения фиксируется один раз и НЕ зависит от текущей «глубины» меню.
+  // Иначе каждый переход дописывался в URL (panel/staff/panel/mod/...).
+  if(__APP_ROUTE_BASE !== null) return __APP_ROUTE_BASE;
   try{
-    const parts = (location.pathname||"/").split("/").filter(Boolean);
-    // if last segment looks like a known route or index.html — base is parent
-    if(!parts.length) return "";
-    const last = parts[parts.length-1].toLowerCase();
-    if(last==="index.html" || last==="index"){
-      return "/" + parts.slice(0,-1).join("/") + (parts.length>1?"/":"");
+    const host = (location.hostname || "").toLowerCase();
+    // Свой домен / локалка — без префикса
+    if(!host || host==="localhost" || host==="127.0.0.1" || host==="advinced.site" || host.endsWith(".advinced.site")){
+      __APP_ROUTE_BASE = "";
+      return __APP_ROUTE_BASE;
     }
-    const known = new Set(Object.keys(ROUTES).concat(["project","support","deposit","withdraw","admin"]));
-    // walk from end: if segment is known route, base is before it
-    for(let i=parts.length-1;i>=0;i--){
-      const seg = parts[i].toLowerCase();
-      if(known.has(seg) || /^\d+$/.test(seg)){
-        // continue to find start of route chain
-        continue;
-      }
-      // static prefix (repo name etc.)
-      return "/" + parts.slice(0,i+1).join("/") + "/";
+    const parts = (location.pathname || "/").split("/").filter(Boolean);
+    if(!parts.length){ __APP_ROUTE_BASE = ""; return __APP_ROUTE_BASE; }
+    // github.io → /<repo>
+    if(host.endsWith("github.io")){
+      __APP_ROUTE_BASE = "/" + parts[0];
+      return __APP_ROUTE_BASE;
     }
-    // entire path is routes
-    return "/";
-  }catch(e){return "/"}
+    // иначе: если первый сегмент не похож на app-route — это префикс хостинга
+    const appRoots = new Set(["home","login","balance","projects","project","settings","profile","support","help","panel","admin","advanced","collaborate","hire","job","deposit","withdraw","index.html","index"]);
+    if(!appRoots.has(String(parts[0]).toLowerCase())){
+      __APP_ROUTE_BASE = "/" + parts[0];
+    }else{
+      __APP_ROUTE_BASE = "";
+    }
+    return __APP_ROUTE_BASE;
+  }catch(e){
+    __APP_ROUTE_BASE = "";
+    return __APP_ROUTE_BASE;
+  }
 }
 
 function parseLocationRoute(){
@@ -1761,6 +1768,33 @@ function parseLocationRoute(){
   path = path.replace(/\/index\.html$/i,"");
   if(!path || path==="/") path="/home";
   if(path[0]!=="/") path="/"+path;
+  // защита от «склеенного» URL: /panel/staff/panel/mod/tx → берём хвост с последнего корня
+  try{
+    const roots=["home","login","balance","projects","project","settings","profile","support","help","panel","admin","advanced","collaborate","job","deposit","withdraw"];
+    const rawSegs=path.split("/").filter(Boolean);
+    let cut=-1;
+    for(let i=0;i<rawSegs.length;i++){
+      const s=String(rawSegs[i]).toLowerCase().replace(/_/g,"/");
+      const head=s.split("/")[0];
+      if(roots.indexOf(head)>=0 || roots.indexOf(String(rawSegs[i]).toLowerCase())>=0){
+        // если корень повторяется — сдвигаем окно
+        if(cut>=0 && (head==="panel"||String(rawSegs[i]).toLowerCase().indexOf("panel")===0)) cut=i;
+        else if(cut<0) cut=i;
+        else if(["home","balance","projects","settings","support","panel","admin"].indexOf(head)>=0) cut=i;
+      }
+    }
+    // более надёжно: последний индекс сегмента panel / balance / ...
+    let lastRoot=-1;
+    for(let i=0;i<rawSegs.length;i++){
+      const seg=String(rawSegs[i]).toLowerCase();
+      if(roots.indexOf(seg)>=0 || seg==="panel-staff" || seg.indexOf("panel-")===0) lastRoot=i;
+    }
+    if(lastRoot>0){
+      path="/"+rawSegs.slice(lastRoot).join("/").replace(/panel-/g,"panel/");
+      // panel-staff → panel/staff if underscore form
+      path=path.replace(/\/panel-staff\b/g,"/panel/staff").replace(/\/panel-mod-sell\b/g,"/panel/mod/sell").replace(/\/panel-mod-buy\b/g,"/panel/mod/buy").replace(/\/panel-mod-tx\b/g,"/panel/mod/tx").replace(/\/panel-analytics\b/g,"/panel/analytics").replace(/\/panel-detail\b/g,"/panel/detail");
+    }
+  }catch(e){}
   const segs = path.split("/").filter(Boolean).map(function(s){return String(s).toLowerCase()});
   const head = (segs[0]||"home");
   let screen = ROUTES[head] || "main";
@@ -1808,31 +1842,43 @@ function parseLocationRoute(){
 
 let __routeSyncing = false;
 function pathForScreen(id, extra){
-  let p = SCREEN_TO_PATH[id] || ("/"+id);
-  if(id==="project" && extra && extra.projectId){
-    p = "/project/"+encodeURIComponent(extra.projectId);
+  extra = extra || {};
+  // только логический путь текущего экрана (без истории посещений)
+  let p = SCREEN_TO_PATH[id];
+  if(!p){
+    // fallback: panel-staff → /panel/staff
+    p = "/" + String(id || "home").replace(/_/g, "/").replace(/[^a-zA-Z0-9\/\-]/g, "");
   }
-  const base = getRouteBase();
-  if(base && base!=="/"){
-    return (base.replace(/\/$/,"") + p).replace(/\/+/g,"/");
+  if(id === "project" && extra.projectId){
+    p = "/project/" + encodeURIComponent(extra.projectId);
+  }
+  if((id === "panel-detail" || id === "panel-staff-role" || id === "panel-staff-balance" || id === "panel-staff-ban") && extra.staffId){
+    if(id === "panel-detail") p = "/panel/staff/" + encodeURIComponent(extra.staffId);
+    if(id === "panel-staff-role") p = "/panel/staff/" + encodeURIComponent(extra.staffId) + "/role";
+    if(id === "panel-staff-balance") p = "/panel/staff/" + encodeURIComponent(extra.staffId) + "/balance";
+    if(id === "panel-staff-ban") p = "/panel/staff/" + encodeURIComponent(extra.staffId) + "/ban";
+  }
+  if(!p || p[0] !== "/") p = "/" + (p || "home");
+  const base = getRouteBase() || "";
+  if(base){
+    return (base.replace(/\/$/, "") + p).replace(/\/+/g, "/");
   }
   return p;
 }
 
 function setLocationRoute(id, opts){
-  opts = opts||{};
+  opts = opts || {};
   if(__routeSyncing) return;
   try{
-    // only for website-like contexts; still ok in miniapp
+    // В адресе — ТОЛЬКО текущая страница. Стек «назад» в state.history.
     const url = pathForScreen(id, opts);
-    const st = {screen:id, projectId:opts.projectId||null};
-    if(opts.replace){
-      history.replaceState(st, "", url);
-    }else{
-      const cur = location.pathname + location.search + location.hash;
-      if(cur!==url && cur!==url+"/") history.pushState(st, "", url);
-      else history.replaceState(st, "", url);
-    }
+    const st = {
+      screen: id,
+      projectId: opts.projectId || null,
+      staffId: opts.staffId || null,
+      navStack: (state.history || []).slice(-40)
+    };
+    history.replaceState(st, "", url);
   }catch(e){}
 }
 
@@ -1973,11 +2019,12 @@ function show(id,push){
     console.warn("show: screen not found", id);
   }
   if(push!==false&&state.history[state.history.length-1]!==id)state.history.push(id);
-  if(push!==false){
-    try{setLocationRoute(id, {projectId: (id==="project"&&state.currentProjectId)?state.currentProjectId:null})}catch(e){}
-  }else{
-    try{setLocationRoute(id, {replace:true, projectId: (id==="project"&&state.currentProjectId)?state.currentProjectId:null})}catch(e){}
-  }
+  try{
+    setLocationRoute(id, {
+      projectId: (id==="project" && state.currentProjectId) ? state.currentProjectId : null,
+      staffId: (id==="panel-staff") ? null : (state.currentStaffId || (state.staffTarget && state.staffTarget.user_id) || null)
+    });
+  }catch(e){}
   const bar=document.getElementById("menu-back-bar");
   const content=document.querySelector(".content");
   if(bar){
