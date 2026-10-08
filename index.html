@@ -555,15 +555,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 #screen-panel-analytics-view .pa-meta-row b{color:var(--text);font-weight:700;text-align:right}
 #screen-panel-analytics-view .pa-section-label{width:100%;font-size:13px;font-weight:700;margin-bottom:8px;text-align:left}
 </style><style id="period-bar-ui">
+.period-wrap{position:relative;width:100%;margin:0 0 12px;z-index:20}
 .period-bar{
   display:grid;
   grid-template-columns:40px 1fr 40px;
   gap:8px;
   align-items:center;
-  margin:0 0 12px;
+  margin:0;
   width:100%;
   box-sizing:border-box;
 }
+.period-dropdown{
+  position:absolute;left:40px;right:40px;top:calc(100% + 4px);
+  max-height:240px;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);padding:6px;z-index:30;
+}
+.period-dropdown[hidden]{display:none!important}
+.period-dropdown .pd-item{
+  display:block;width:100%;text-align:left;padding:10px 12px;
+  border:none;background:transparent;color:var(--text);
+  font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;
+}
+.period-dropdown .pd-item:hover,.period-dropdown .pd-item.active{background:var(--brand-soft);color:var(--brand)}
+
 .period-arrow{
   width:40px;height:40px;min-height:40px;padding:0;
   border-radius:12px;border:1px solid var(--line);
@@ -869,10 +884,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-project-analytics" class="screen">
       <div class="section-title" id="ppa-title">Аналитика</div>
-      <div class="period-bar" id="proj-period-bar">
-        <button type="button" class="period-arrow" id="proj-period-prev" aria-label="prev">‹</button>
-        <button type="button" class="period-label" id="proj-period-label">За весь период</button>
-        <button type="button" class="period-arrow" id="proj-period-next" aria-label="next">›</button>
+      <div class="period-wrap" id="proj-period-wrap">
+        <div class="period-bar" id="proj-period-bar">
+          <button type="button" class="period-arrow" id="proj-period-prev" aria-label="prev">‹</button>
+          <button type="button" class="period-label" id="proj-period-label">За весь период</button>
+          <button type="button" class="period-arrow" id="proj-period-next" aria-label="next">›</button>
+        </div>
+        <div class="period-dropdown" id="proj-period-dd" hidden></div>
       </div>
       <div class="panel" id="ppa-content"></div>
     </div>
@@ -1117,16 +1135,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 
     <div id="screen-panel-analytics" class="screen">
       <div class="section-title" data-i18n="analytics">Аналитика</div>
-      <div class="period-bar" id="panel-period-bar">
-        <button type="button" class="period-arrow" id="panel-period-prev" aria-label="prev">‹</button>
-        <button type="button" class="period-label" id="panel-period-label">За весь период</button>
-        <button type="button" class="period-arrow" id="panel-period-next" aria-label="next">›</button>
+      <div class="period-wrap" id="panel-period-wrap">
+        <div class="period-bar" id="panel-period-bar">
+          <button type="button" class="period-arrow" id="panel-period-prev" aria-label="prev">‹</button>
+          <button type="button" class="period-label" id="panel-period-label">За весь период</button>
+          <button type="button" class="period-arrow" id="panel-period-next" aria-label="next">›</button>
+        </div>
+        <div class="period-dropdown" id="panel-period-dd" hidden></div>
       </div>
       <div class="tile-grid">
         <button type="button" class="tile" data-pan-an="expenses"><div class="t-title" data-i18n="an_expenses">Расходы</div></button>
         <button type="button" class="tile" data-pan-an="income"><div class="t-title" data-i18n="an_income">Доходы</div></button>
-        <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-pan-an="revenue"><div class="t-title" data-i18n="an_revenue">Оборот и выручка</div></button>
-        <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-pan-an="other"><div class="t-title" data-i18n="an_other">Другое</div></button>
+        <button type="button" class="tile" data-pan-an="revenue"><div class="t-title" data-i18n="an_revenue">Оборот и выручка</div></button>
+        <button type="button" class="tile" data-pan-an="other"><div class="t-title" data-i18n="an_other">Другое</div></button>
       </div>
     </div>
 
@@ -3286,22 +3307,32 @@ function shiftPeriod(target, dir){
   const q=list[ni];
   target.mode="quarter"; target.q=q.index; target.label=q.label;
 }
+function closePeriodDropdowns(){
+  ["panel-period-dd","proj-period-dd"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.hidden=true; el.innerHTML=""; }
+  });
+}
 async function openPeriodPicker(which){
   which = which || "panel";
-  state.periodPickerTarget = which;
   const target = which==="proj" ? state.projPeriod : state.anPeriod;
+  const ddId = which==="proj" ? "proj-period-dd" : "panel-period-dd";
+  const dd=document.getElementById(ddId);
+  if(!dd) return;
+  // toggle
+  if(!dd.hidden && dd.innerHTML){ closePeriodDropdowns(); return; }
+  closePeriodDropdowns();
   await ensureQuarters(target);
-  state.panelBack = which==="proj" ? "project-analytics" : "panel-analytics";
-  show("panel-period");
-  const box=document.getElementById("panel-period-list");
-  if(!box) return;
-  let html='<div class="item" data-pq="all"><div class="name">'+(t("an_all_period")||"За весь период")+'</div></div>';
+  let html='<button type="button" class="pd-item'+(target.mode==="all"?" active":"")+'" data-pq="all">'+(t("an_all_period")||"За весь период")+'</button>';
   (target.quarters||[]).forEach(q=>{
-    html+='<div class="item" data-pq="'+q.index+'"><div class="name">'+panelEsc(q.label)+'</div></div>';
+    const act=(target.mode==="quarter" && Number(target.q)===Number(q.index))?" active":"";
+    html+='<button type="button" class="pd-item'+act+'" data-pq="'+q.index+'">'+panelEsc(q.label)+'</button>';
   });
-  box.innerHTML=html;
-  box.querySelectorAll("[data-pq]").forEach(el=>{
-    el.onclick=()=>{
+  dd.innerHTML=html;
+  dd.hidden=false;
+  dd.querySelectorAll("[data-pq]").forEach(el=>{
+    el.onclick=(e)=>{
+      e.stopPropagation();
       const v=el.getAttribute("data-pq");
       if(v==="all"){
         target.mode="all"; target.q=null; target.label=t("an_all_period")||"За весь период";
@@ -3310,15 +3341,23 @@ async function openPeriodPicker(which){
         target.mode="quarter"; target.q=Number(v);
         target.label=q?q.label:("Q "+v);
       }
+      closePeriodDropdowns();
       if(which==="proj"){
         updatePeriodLabel("proj-period-label", target);
         if(state.currentProjectId) openProjectAnalytics(state.currentProjectId);
       }else{
         updatePeriodLabel("panel-period-label", target);
-        show("panel-analytics");
       }
     };
   });
+}
+// закрытие дропдауна по клику вне
+if(!window._periodDdDocWired){
+  window._periodDdDocWired=true;
+  document.addEventListener("click", function(e){
+    if(e.target.closest(".period-wrap")) return;
+    closePeriodDropdowns();
+  }, true);
 }
 async function wirePeriodBars(){
   await ensureQuarters(state.anPeriod);
@@ -3328,14 +3367,14 @@ async function wirePeriodBars(){
   const lab=document.getElementById("panel-period-label");
   if(prev && !prev._wired){ prev._wired=true; prev.onclick=async()=>{ await ensureQuarters(state.anPeriod); shiftPeriod(state.anPeriod,-1); updatePeriodLabel("panel-period-label", state.anPeriod); }; }
   if(next && !next._wired){ next._wired=true; next.onclick=async()=>{ await ensureQuarters(state.anPeriod); shiftPeriod(state.anPeriod,+1); updatePeriodLabel("panel-period-label", state.anPeriod); }; }
-  if(lab && !lab._wired){ lab._wired=true; lab.onclick=()=>openPeriodPicker("panel"); }
+  if(lab && !lab._wired){ lab._wired=true; lab.onclick=(e)=>{e.stopPropagation(); openPeriodPicker("panel");}; }
 
   const pprev=document.getElementById("proj-period-prev");
   const pnext=document.getElementById("proj-period-next");
   const plab=document.getElementById("proj-period-label");
   if(pprev && !pprev._wired){ pprev._wired=true; pprev.onclick=async()=>{ await ensureQuarters(state.projPeriod); shiftPeriod(state.projPeriod,-1); updatePeriodLabel("proj-period-label", state.projPeriod); if(state.currentProjectId) openProjectAnalytics(state.currentProjectId); }; }
   if(pnext && !pnext._wired){ pnext._wired=true; pnext.onclick=async()=>{ await ensureQuarters(state.projPeriod); shiftPeriod(state.projPeriod,+1); updatePeriodLabel("proj-period-label", state.projPeriod); if(state.currentProjectId) openProjectAnalytics(state.currentProjectId); }; }
-  if(plab && !plab._wired){ plab._wired=true; plab.onclick=()=>openPeriodPicker("proj"); }
+  if(plab && !plab._wired){ plab._wired=true; plab.onclick=(e)=>{e.stopPropagation(); openPeriodPicker("proj");}; }
 }
 
 
