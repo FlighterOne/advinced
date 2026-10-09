@@ -1126,19 +1126,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       <div id="collab-ads-panel">
         <div class="panel">
           <h2 data-i18n="ref_my_code">Мой реферальный код</h2>
-          <div class="ref-row">
-            <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="MYCODE"/>
-            <button type="button" class="btn primary" id="ref-save-btn" data-i18n="save">Сохранить</button>
+          <!-- режим просмотра: код + карандаш -->
+          <div id="ref-code-view" class="ref-code-display" style="display:none">
+            <span class="ref-code-text" id="ref-code-label">—</span>
+            <button type="button" class="ref-edit-btn" id="ref-edit-btn" aria-label="edit" title="edit">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20z" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12.5 7.5l4 4" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <!-- режим регистрации / редактирования -->
+          <div id="ref-code-edit" class="ref-edit-form show">
+            <label class="form-label" data-i18n="promo_code_label">Промокод</label>
+            <div class="ref-row">
+              <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Промокод" data-i18n-placeholder="promo_code_label"/>
+              <button type="button" class="btn primary" id="ref-save-btn" data-i18n="save">Сохранить</button>
+            </div>
           </div>
           <div class="ref-stats" id="ref-stats">—</div>
           <div id="ref-status"></div>
-        </div>
-        <div class="panel">
-          <div class="ref-row">
-            <input class="form-input" type="text" id="promo-code-input" maxlength="24" placeholder="PROMO"/>
-            <button type="button" class="btn promo-apply-btn" id="promo-apply-btn" data-i18n="apply">Применить</button>
-          </div>
-          <div id="promo-status" class="hint" style="margin-top:8px"></div>
         </div>
         <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
       </div>
@@ -1316,14 +1323,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-panel-support-chat" class="screen">
-      <div class="section-title" id="panel-support-chat-title">Чат</div>
-      <div class="panel" style="padding:10px;margin-bottom:8px">
-        <div id="panel-support-chat-user" class="muted" style="font-size:13px"></div>
+      <div class="psc-head" id="panel-support-chat-head">
+        <div class="psc-ava" id="panel-support-chat-ava">?</div>
+        <div class="psc-meta">
+          <a class="psc-name nolink" id="panel-support-chat-name">—</a>
+          <div class="psc-sub" id="panel-support-chat-sub"></div>
+        </div>
       </div>
-      <div id="panel-support-chat-messages" class="list" style="max-height:55vh;overflow:auto;display:flex;flex-direction:column;gap:8px"></div>
-      <div class="btn-row" style="margin-top:10px;gap:8px;align-items:stretch">
-        <input type="text" class="input" id="panel-support-chat-input" data-i18n-placeholder="support_msg_ph" placeholder="Сообщение…" style="flex:1;min-width:0">
-        <button type="button" class="btn" id="panel-support-chat-send" data-i18n="send">Отправить</button>
+      <div id="panel-support-chat-messages" class="list"></div>
+      <div class="psc-footer">
+        <div class="chat-input-row">
+          <input class="form-input" type="text" id="panel-support-chat-input" data-i18n-placeholder="support_msg_ph" placeholder="Сообщение…" maxlength="4000"/>
+          <button type="button" class="btn primary" id="panel-support-chat-send" data-i18n="send">Отправить</button>
+        </div>
       </div>
     </div>
 <div id="screen-panel-mod-tx" class="screen">
@@ -3899,10 +3911,9 @@ async function renderPanelAdsAnalytics(){
       hh+='<div style="display:flex;gap:6px">';
       for(let lv=0;lv<=3;lv++){
         const sel=state.defaultPartnerLevel===lv;
-        hh+='<button type="button" class="btn" data-def-lv="'+lv+'" style="flex:1;min-height:42px;font-size:13px;'+(sel?"background:var(--brand);border-color:var(--brand);color:#fff;":"background:var(--surface);color:var(--text);border:1px solid var(--line);")+'">'+lv+'</button>';
+        hh+='<button type="button" class="btn" data-def-lv="'+lv+'" style="flex:1;min-height:42px;font-size:13px;'+(sel?"background:var(--brand);border-color:var(--brand);color:#fff;":"background:var(--surface);color:var(--text);border:1px solid var(--line);")+'">'+(t("ads_level")||"Ур.")+' '+lv+'</button>';
       }
       hh+='</div>';
-      hh+='<div class="hint" style="margin-top:6px;font-size:11px">'+(t("ads_level0_hint")||"0 — без дохода партнёра, бонус 5% приглашённому")+'</div>';
       hh+='</div>';
       if(!items.length){
         hh+='<div class="empty">'+(t("no_partners")||"Партнёров пока нет")+'</div>';
@@ -3927,11 +3938,24 @@ async function renderPanelAdsAnalytics(){
       box.querySelectorAll("[data-def-lv]").forEach(b=>{
         b.onclick=async()=>{
           const lv=Number(b.getAttribute("data-def-lv"));
+          if(state.defaultPartnerLevel===lv)return;
+          const prev=state.defaultPartnerLevel;
+          state.defaultPartnerLevel=lv;
+          // optimistic highlight
+          box.querySelectorAll("[data-def-lv]").forEach(x=>{
+            const on=Number(x.getAttribute("data-def-lv"))===lv;
+            x.style.background=on?"var(--brand)":"var(--surface)";
+            x.style.borderColor=on?"var(--brand)":"var(--line)";
+            x.style.color=on?"#fff":"var(--text)";
+          });
           try{
-            await apiPost("/api/miniapp/panel/referral/default-level",{user_id:USER_ID,level:lv});
-            state.defaultPartnerLevel=lv;
-            renderPanelAdsAnalytics();
-          }catch(e){alert(e.message||e);}
+            const r=await apiPost("/api/miniapp/panel/referral/default-level",{user_id:USER_ID,level:lv});
+            if(r&&r.level!=null)state.defaultPartnerLevel=Number(r.level);
+          }catch(e){
+            state.defaultPartnerLevel=prev;
+            try{renderPanelAdsAnalytics()}catch(err){}
+            alert(e.message||e);
+          }
         };
       });
       box.querySelectorAll("[data-partner-id]").forEach(el=>{
@@ -4055,25 +4079,39 @@ async function openPanelSupportChat(targetId){
   state.supportChatUserId=targetId;
   state.panelBack="panel-mod-tickets";
   show("panel-support-chat");
-  const title=document.getElementById("panel-support-chat-title");
-  if(title) title.textContent=t("mod_tickets")||"Обращения";
-  const userEl=document.getElementById("panel-support-chat-user");
+  const nameEl=document.getElementById("panel-support-chat-name");
+  const subEl=document.getElementById("panel-support-chat-sub");
+  const avaEl=document.getElementById("panel-support-chat-ava");
   const box=document.getElementById("panel-support-chat-messages");
   if(box) box.innerHTML='<div class="empty">…</div>';
+  if(nameEl){nameEl.textContent="…";nameEl.className="psc-name nolink";nameEl.removeAttribute("href");nameEl.onclick=null}
+  if(subEl)subEl.textContent="";
+  if(avaEl)avaEl.innerHTML="?";
   try{
     const r=await apiGet("/api/miniapp/panel/support/thread/"+encodeURIComponent(targetId)+"?user_id="+encodeURIComponent(USER_ID));
     const th=(r&&r.thread)||{};
     const msgs=(r&&r.messages)||[];
     const un=(th.username||"").replace(/^@/,"");
-    const dname=panelEsc(th.display_name||targetId);
-    if(userEl){
-      userEl.innerHTML=un
-        ?('<a class="uname-link" href="https://t.me/'+encodeURIComponent(un)+'" data-tg="'+panelEsc(un)+'">'+dname+'</a> · ID '+panelEsc(targetId))
-        :('<span>'+dname+'</span> · ID '+panelEsc(targetId));
-      userEl.querySelectorAll("a.uname-link[data-tg]").forEach(a=>{
-        a.onclick=function(e){e.preventDefault();const u=a.getAttribute("data-tg");if(u){try{openTgLink("https://t.me/"+u)}catch(err){window.open("https://t.me/"+u,"_blank")}}};
-      });
+    const dname=th.display_name||(un?("@"+un):String(targetId));
+    const initial=(dname.replace(/^@/,"").trim().charAt(0)||"?").toUpperCase();
+    if(avaEl){
+      avaEl.innerHTML="";
+      avaEl.textContent=initial;
     }
+    if(nameEl){
+      nameEl.textContent=dname;
+      if(un){
+        nameEl.className="psc-name";
+        nameEl.href="https://t.me/"+encodeURIComponent(un);
+        nameEl.onclick=function(e){e.preventDefault();try{openTgLink("https://t.me/"+un)}catch(err){window.open("https://t.me/"+un,"_blank")}};
+      }else{
+        nameEl.className="psc-name nolink";
+        nameEl.removeAttribute("href");
+        nameEl.onclick=null;
+      }
+    }
+    if(subEl)subEl.textContent="ID "+targetId;
+
     if(box){
       if(!msgs.length){
         box.innerHTML='<div class="empty">'+(t("no_messages")||"Нет сообщений")+'</div>';
@@ -4455,16 +4493,43 @@ state.jobEmp = state.jobEmp || "";
 function openUrlSafe(u){
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink)Telegram.WebApp.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}
 }
+function setRefCodeUI(code){
+  const view=document.getElementById("ref-code-view");
+  const edit=document.getElementById("ref-code-edit");
+  const label=document.getElementById("ref-code-label");
+  const inp=document.getElementById("ref-code-input");
+  const has=!!(code&&String(code).trim());
+  if(has){
+    if(label)label.textContent=String(code).trim().toUpperCase();
+    if(inp){inp.value=String(code).trim().toUpperCase();inp.dataset.hasCode="1"}
+    if(view)view.style.display="flex";
+    if(edit)edit.classList.remove("show");
+  }else{
+    if(label)label.textContent="—";
+    if(inp){inp.dataset.hasCode="0"}
+    if(view)view.style.display="none";
+    if(edit)edit.classList.add("show");
+  }
+}
+function openRefCodeEdit(){
+  const view=document.getElementById("ref-code-view");
+  const edit=document.getElementById("ref-code-edit");
+  const inp=document.getElementById("ref-code-input");
+  const label=document.getElementById("ref-code-label");
+  if(inp&&label&&label.textContent&&label.textContent!=="—")inp.value=label.textContent;
+  if(view)view.style.display="none";
+  if(edit)edit.classList.add("show");
+  try{if(inp)inp.focus()}catch(e){}
+}
 async function loadReferralMe(){
   const st=document.getElementById("ref-stats");
-  const inp=document.getElementById("ref-code-input");
   const rs=document.getElementById("ref-status");
   if(rs)rs.textContent="";
-  if(!USER_ID){if(st)st.textContent="—";return}
+  if(!USER_ID){if(st)st.textContent="—";setRefCodeUI("");return}
   try{
     const r=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),8000);
-    if(inp && r.ref_code) inp.value=r.ref_code;
-    const line=(t("ref_stats_line")||"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽")
+    setRefCodeUI(r&&r.ref_code?r.ref_code:"");
+    const line=(t("ref_stats_line")||"Уровень: {level} · Рефералы: {total} · 10д: {d10} · Заработано: {earn} ₽")
       .replace("{level}", String(r.ref_level!=null?r.ref_level:1))
       .replace("{total}", String((r.stats&&r.stats.refs_total)||0))
       .replace("{d10}", String((r.stats&&r.stats.refs_10d)||0))
@@ -4487,7 +4552,8 @@ async function saveRefCode(){
     }catch(e){}
     const r=await apiPost(endpoint,{user_id:USER_ID,code:code});
     if(r.ok||r.ref_code){
-      if(rs)rs.textContent="OK: "+(r.ref_code||code);
+      if(rs)rs.textContent="";
+      setRefCodeUI(r.ref_code||code);
       await loadReferralMe();
     }else{
       if(rs)rs.textContent=r.error||r.message||"error";
@@ -4555,8 +4621,10 @@ function wireCollaborate(){
   if(workMgr)workMgr.onclick=openMgr;
   const save=document.getElementById("ref-save-btn");
   if(save)save.onclick=saveRefCode;
-  const promo=document.getElementById("promo-apply-btn");
-  if(promo)promo.onclick=applyPromoCode;
+  const refEdit=document.getElementById("ref-edit-btn");
+  if(refEdit)refEdit.onclick=openRefCodeEdit;
+  const refLabel=document.getElementById("ref-code-label");
+  if(refLabel)refLabel.onclick=openRefCodeEdit;
   const jobFormBtn=document.getElementById("collab-job-form");
   if(jobFormBtn)jobFormBtn.onclick=function(){
     show("job-form");applyI18n();
@@ -5370,5 +5438,103 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   width:100% !important;
   margin:12px 0 0 !important;
 }
+
+/* Panel tiles: always square 2-col grid */
+#screen-panel #panel-tile-grid,
+#screen-panel .tile-grid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+#screen-panel #panel-tile-grid .tile,
+#screen-panel .tile-grid .tile{
+  aspect-ratio:1 / 1 !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  padding:12px 8px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  grid-column:auto !important;
+  grid-row:auto !important;
+}
+#screen-panel #panel-tile-grid .tile .t-title{
+  font-size:13px !important;
+  line-height:1.25 !important;
+  text-align:center !important;
+}
+
+/* Ref code display (registered) */
+.ref-code-display{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:14px 14px;margin:8px 0 10px;
+}
+.ref-code-display .ref-code-text{
+  font-weight:800;font-size:18px;letter-spacing:.04em;color:var(--brand);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.ref-code-display .ref-edit-btn{
+  width:40px;height:40px;border-radius:12px;border:1px solid var(--line);
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+}
+.ref-code-display .ref-edit-btn:active{opacity:.8}
+.ref-code-display .ref-edit-btn svg{width:20px;height:20px;display:block}
+.ref-edit-form{display:none;margin-top:8px}
+.ref-edit-form.show{display:block}
+
+/* Staff support chat like TG */
+#screen-panel-support-chat.screen.active{
+  display:flex !important;flex-direction:column !important;min-height:0 !important;
+}
+#screen-panel-support-chat .psc-head{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 4px 12px;margin-bottom:4px;
+  border-bottom:1px solid var(--line);
+}
+#screen-panel-support-chat .psc-ava{
+  width:42px;height:42px;border-radius:50%;object-fit:cover;
+  background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;flex-shrink:0;overflow:hidden;
+}
+#screen-panel-support-chat .psc-ava img{width:100%;height:100%;object-fit:cover;display:block}
+#screen-panel-support-chat .psc-meta{min-width:0;flex:1}
+#screen-panel-support-chat .psc-name{
+  font-weight:700;font-size:15px;color:var(--brand);cursor:pointer;
+  text-decoration:none;display:inline-block;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#screen-panel-support-chat .psc-name.nolink{color:var(--text);cursor:default}
+#screen-panel-support-chat .psc-sub{font-size:12px;color:var(--hint);margin-top:2px}
+#screen-panel-support-chat #panel-support-chat-messages{
+  flex:1 1 auto;min-height:160px;max-height:none;overflow:auto;
+  display:flex;flex-direction:column;gap:8px;padding:8px 2px 12px;
+}
+#screen-panel-support-chat .chat-bubble{
+  max-width:82%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.35;
+  word-break:break-word;
+}
+#screen-panel-support-chat .chat-bubble.user{
+  align-self:flex-start;background:var(--surface);border:1px solid var(--line);
+}
+#screen-panel-support-chat .chat-bubble.staff{
+  align-self:flex-end;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);
+}
+#screen-panel-support-chat .chat-meta{font-size:11px;color:var(--hint);margin-top:4px}
+#screen-panel-support-chat .psc-footer{
+  flex-shrink:0;margin-top:auto;padding-top:8px;
+}
+#screen-panel-support-chat .psc-footer .chat-input-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
+}
+
 </style>
 </html>
