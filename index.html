@@ -1138,14 +1138,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           </div>
           <!-- режим регистрации / редактирования -->
           <div id="ref-code-edit" class="ref-edit-form show">
-            <label class="form-label" data-i18n="promo_code_label">Промокод</label>
-            <div class="ref-row">
-              <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Промокод" data-i18n-placeholder="promo_code_label"/>
-              <button type="button" class="btn primary" id="ref-save-btn" data-i18n="save">Сохранить</button>
+            <div class="form-group" style="margin:0">
+              <label class="form-label" for="ref-code-input">Промокод</label>
+              <div class="ref-row" style="margin-top:6px">
+                <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Например: ADV2026" autocomplete="off"/>
+                <button type="button" class="btn primary" id="ref-save-btn">Сохранить</button>
+              </div>
             </div>
           </div>
-          <div class="ref-stats" id="ref-stats">—</div>
-          <div id="ref-status"></div>
+          <div class="ref-stats" id="ref-stats" style="margin-top:10px;font-size:13px;color:var(--hint)"></div>
+          <div id="ref-status" style="margin-top:6px;font-size:13px;color:var(--hint)"></div>
         </div>
         <button type="button" class="btn primary wide" id="collab-ads-mgr" data-i18n="write_manager">Написать менеджеру</button>
       </div>
@@ -4515,7 +4517,7 @@ async function loadReferralMe(){
   const st=document.getElementById("ref-stats");
   const rs=document.getElementById("ref-status");
   if(rs)rs.textContent="";
-  if(!USER_ID){if(st)st.textContent="—";setRefCodeUI("");return}
+  if(!USER_ID){if(st)st.textContent="";setRefCodeUI("");return}
   try{
     const r=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),8000);
     setRefCodeUI(r&&r.ref_code?r.ref_code:"");
@@ -4525,7 +4527,7 @@ async function loadReferralMe(){
       .replace("{d10}", String((r.stats&&r.stats.refs_10d)||0))
       .replace("{earn}", String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00"));
     if(st)st.textContent=line;
-  }catch(e){if(st)st.textContent="—"}
+  }catch(e){if(st)st.textContent=""}
 }
 async function saveRefCode(){
   const inp=document.getElementById("ref-code-input");
@@ -4546,9 +4548,15 @@ async function saveRefCode(){
       setRefCodeUI(r.ref_code||code);
       await loadReferralMe();
     }else{
-      if(rs)rs.textContent=r.error||r.message||"error";
+      const err=r.error||r.message||"error";
+      const map={code_taken:"Этот код уже занят",code_too_short:"Минимум 3 символа",already_registered:"Код уже зарегистрирован",no_access:"Нет доступа"};
+      if(rs)rs.textContent=map[err]||err;
     }
-  }catch(e){if(rs)rs.textContent=String(e.message||e)}
+  }catch(e){
+    const msg=String(e.message||e);
+    const map={code_taken:"Этот код уже занят",code_too_short:"Минимум 3 символа",already_registered:"Код уже зарегистрирован","HTTP 405":"API не обновлён — залейте бота на Amvera"};
+    if(rs)rs.textContent=map[msg]||msg;
+  }
 }
 async function applyPromoCode(){
   const inp=document.getElementById("promo-code-input");
@@ -5486,9 +5494,12 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
   display:flex !important;flex-direction:column !important;min-height:0 !important;
 }
 #screen-panel-support-chat .psc-head{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 4px 12px;margin-bottom:4px;
-  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;margin:0 0 10px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
 }
 #screen-panel-support-chat .psc-ava{
   width:42px;height:42px;border-radius:50%;object-fit:cover;
