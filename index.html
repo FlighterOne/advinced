@@ -2412,66 +2412,56 @@ function _apiUrl(path){return API_BASE.replace(/\/$/,"")+path}
 async function apiFetch(path,opts,timeoutMs){
   const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
   const ms=timeoutMs==null?10000:timeoutMs;
-  const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
+  const timer=ctrl?setTimeout(function(){try{ctrl.abort()}catch(e){}},ms):null;
+  opts=opts||{};
+  const headers=Object.assign({},opts.headers||{});
   try{
-    opts=opts||{};
-    opts.cache="no-store";
-    const headers=Object.assign({},opts.headers||{});
-
-    // Telegram Mini App: передаём подписанные initData серверу.
-    try{
-      const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
-      if(wa&&wa.initData)headers["X-Telegram-Init-Data"]=String(wa.initData);
-    }catch(e){}
-
-    // Сайт после Telegram Login: передаём токен сессии, если он есть.
+    const wa=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null;
+    if(wa&&wa.initData)headers["X-Telegram-Init-Data"]=String(wa.initData);
+  }catch(e){}
+  try{
     const tok=typeof getAuthToken==="function"?getAuthToken():null;
     if(tok){
       headers["Authorization"]="Bearer "+tok;
       headers["X-Session-Token"]=tok;
     }
-
-    let url=_apiUrl(path);
-
-    // Главный совместимый способ для существующего Mini App/API:
-    // user_id остаётся в запросе, как в рабочем index(1).
+  }catch(e){}
+  let url=_apiUrl(path);
+  try{
     if(typeof USER_ID!=="undefined"&&USER_ID&&url.indexOf("user_id=")<0&&url.indexOf("/api/")>=0){
       if(url.indexOf("/api/auth/")<0){
         url+=(url.indexOf("?")>=0?"&":"?")+"user_id="+encodeURIComponent(USER_ID);
       }
     }
-
-    const fetchOpts={
-      method:opts.method||"GET",
-      mode:"cors",
-      cache:"no-store",
-      credentials:"omit",
-      headers:headers
-    };
-    if(opts.body!=null)fetchOpts.body=opts.body;
-    if(ctrl)fetchOpts.signal=ctrl.signal;
-
-    let lastErr=null;
-    for(let attempt=0; attempt<2; attempt++){
-      try{
-        const r=await fetch(url,fetchOpts);
-        if(timer)clearTimeout(timer);
-        return r;
-      }catch(e){
-        lastErr=e;
-        // один повтор при сетевом сбое (Failed to fetch)
-        if(attempt===0 && e && e.name!=="AbortError"){
-          await new Promise(res=>setTimeout(res,400));
-          continue;
-        }
-        break;
+  }catch(e){}
+  const fetchOpts={
+    method:opts.method||"GET",
+    mode:"cors",
+    cache:"no-store",
+    credentials:"omit",
+    headers:headers
+  };
+  if(opts.body!=null)fetchOpts.body=opts.body;
+  if(ctrl)fetchOpts.signal=ctrl.signal;
+  let lastErr=null;
+  for(let attempt=0; attempt<2; attempt++){
+    try{
+      const r=await fetch(url,fetchOpts);
+      if(timer)clearTimeout(timer);
+      return r;
+    }catch(e){
+      lastErr=e;
+      if(attempt===0 && e && e.name!=="AbortError"){
+        await new Promise(function(res){setTimeout(res,400)});
+        continue;
       }
+      break;
     }
-    if(timer)clearTimeout(timer);
-    if(lastErr&&lastErr.name==="AbortError")throw new Error("API request timeout");
-    const hint=String(lastErr&&lastErr.message||lastErr||"Failed to fetch");
-    throw new Error(hint.indexOf("Failed to fetch")>=0?(hint+" · "+url):hint);
   }
+  if(timer)clearTimeout(timer);
+  if(lastErr&&lastErr.name==="AbortError")throw new Error("API request timeout");
+  const hint=String((lastErr&&lastErr.message)||lastErr||"Failed to fetch");
+  throw new Error(hint.indexOf("Failed to fetch")>=0?(hint+" · "+url):hint);
 }
 async function apiGet(path,timeoutMs){
   const r=await apiFetch(path,{method:"GET",headers:{"Accept":"application/json"}},timeoutMs);
