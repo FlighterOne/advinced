@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru" data-traffic="web" data-theme="light" data-build="v20260918e">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
 <meta charset="UTF-8"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Advinced Management · 20261009-1811</title>
+<title>ADVINCED_BUILD 20261009-2212 · Advinced Management · 20261009-1811</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root,[data-theme="light"]{
@@ -2683,11 +2685,27 @@ async function loadRequests(){
 }
 async function loadProjects(){
   const list=document.getElementById("proj-list");
-  if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';return}
+  const meta=document.getElementById("proj-meta");
+  if(!list)return;
+  // восстановить USER_ID если потерян
+  if(!USER_ID){
+    try{
+      const u=typeof getTgUser==="function"?getTgUser():null;
+      if(u&&u.id)USER_ID=Number(u.id)||u.id;
+    }catch(e){}
+  }
+  if(!USER_ID){
+    try{
+      const s=typeof loadWebSession==="function"?loadWebSession():null;
+      if(s&&s.user_id)USER_ID=Number(s.user_id)||s.user_id;
+    }catch(e){}
+  }
+  if(!USER_ID){list.innerHTML='<div class="empty">Telegram</div>';if(meta)meta.textContent="";return}
   list.innerHTML='<div class="empty">…</div>';
+  if(meta)meta.textContent="";
   try{
     // page=1&page_size=100 — одна лента без пагинации
-    const data=await apiGet("/api/miniapp/projects?user_id="+encodeURIComponent(USER_ID)+"&page=1&page_size=100");
+    const data=await apiGet("/api/miniapp/projects?user_id="+encodeURIComponent(USER_ID)+"&page=1&page_size=100",20000);
     const items=data.projects||[];
     if(!items.length){list.innerHTML='<div class="empty">'+t("no_projects")+"</div>";return}
     list.innerHTML=items.map(p=>{
@@ -2725,7 +2743,7 @@ async function loadProjects(){
         btn.disabled=false;
       };
     });
-  }catch(e){list.innerHTML='<div class="empty">err</div>';meta.textContent=String(e.message||e)}
+  }catch(e){console.error('loadProjects',e);list.innerHTML='<div class="empty">'+(e&&e.message?String(e.message):'error')+'</div>';if(meta)meta.textContent=String(e&&e.message||e||'');}
 }
 const PROJECT_DETAIL_I18N={
   ru:{coop:"Тип сотрудничества",resource:"Тип ресурса",topic:"Тематика канала",admin:"Статус администратора",subs:"Подписчики",cr:"CR подписчиков",price:"Цена за подписчика",themes:"Тематики узконаправленных подписчиков",allThemes:"все тематики",snippet:"Сниппет",subscribed:"Подписавшихся",profit:"Прибыль за одну подписку",myAds:"Реклама моих проектов",unknown:"Неизвестно",installed:"Установлен",notSet:"Не указана",channel:"📣 Канал",bot:"🤖 Бот",buy:"Покупка трафика",sell:"Продажа трафика"},
@@ -2973,7 +2991,7 @@ async function openProject(pid){
           }
           if(a==="balance"){
             try{
-              const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID));
+              const me=await apiGet("/api/miniapp/me?user_id="+encodeURIComponent(USER_ID),15000);
               const bal=Number((me&&me.balance)!=null?me.balance:(state.me&&state.me.balance)||0);
               alert((t("balance")||"Баланс")+": "+bal.toFixed(2)+" ₽");
             }catch(e){alert(String(e.message||e))}
