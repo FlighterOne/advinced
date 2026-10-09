@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Advinced Management</title>
+<title>Advinced Management · 20261009-1811</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root,[data-theme="light"]{
@@ -626,7 +626,173 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 }
 .snip-instr-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
 .snip-instr-body{font-size:13px;line-height:1.45;color:var(--text2);white-space:pre-wrap}
-</style></head>
+</style>
+<style id="panel-tickets-ads-visibility-fix">
+/* Panel must scroll; 6 tiles must stay visible */
+#screen-panel.screen.active,
+#screen-panel-analytics.screen.active,
+#screen-panel-mod-tickets.screen.active,
+#screen-panel-support-chat.screen.active{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch;
+}
+.content{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch;
+}
+/* Compact panel tiles so all 6 fit without depending on huge squares */
+#screen-panel .tile-grid,
+#screen-panel #panel-tile-grid{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:10px !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 0 16px 0 !important;
+  box-sizing:border-box !important;
+}
+#screen-panel .tile,
+#screen-panel #panel-tile-grid .tile{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  width:100% !important;
+  min-width:0 !important;
+  aspect-ratio:auto !important;
+  min-height:56px !important;
+  height:auto !important;
+  padding:14px 12px !important;
+  box-sizing:border-box !important;
+}
+#screen-panel .tile[data-panel="mod_tickets"],
+#screen-panel .tile[data-panel="analytics"]{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+/* Analytics action buttons always visible + scroll */
+#screen-panel-analytics .panel-an-actions{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  width:100% !important;
+  padding-bottom:20px !important;
+}
+#screen-panel-analytics .panel-an-actions .btn,
+#screen-panel-analytics .panel-an-actions .btn.wide{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  width:100% !important;
+  min-height:48px !important;
+}
+#screen-panel-analytics .panel-an-actions .btn[data-pan-an="ads"]{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+</style>
+
+
+<style id="ads-seg-and-chat-styles">
+.seg-toggle.ads-seg,.ads-seg{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  width:100%;
+  box-sizing:border-box;
+  margin-bottom:12px;
+}
+.seg-toggle.ads-seg button,.ads-seg button{
+  min-height:42px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--text);
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+}
+.seg-toggle.ads-seg button.active,.ads-seg button.active{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+.chat-list-item:active{opacity:.85}
+</style>
+
+
+<style id="topbar-flag-logout-fix">
+/* Language flag always visible in topbar */
+.topbar-right{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+.lang-btn#btn-flag,
+#btn-flag.lang-btn{
+  display:inline-flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:36px !important;
+  height:32px !important;
+  padding:0 8px !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif !important;
+  overflow:visible !important;
+  color:inherit !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important;
+  border-radius:8px !important;
+  cursor:pointer !important;
+  box-shadow:var(--shadow);
+}
+
+/* Back + Logout on the SAME horizontal line */
+.menu-back-bar{
+  display:none;
+  flex-direction:row !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  margin:0 0 12px !important;
+  min-height:34px !important;
+  pointer-events:none;
+}
+.menu-back-bar.show{
+  display:flex !important;
+}
+.menu-back-bar .menu-back-btn,
+.menu-back-bar .btn-logout{
+  pointer-events:auto !important;
+  align-self:center !important;
+  height:32px !important;
+  line-height:32px !important;
+  margin:0 !important;
+}
+.menu-back-bar .btn-logout{
+  display:none; /* shown only on profile when web session */
+  height:32px !important;
+  line-height:32px !important;
+  padding:0 12px !important;
+  border-radius:10px !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  background:#DC2626 !important;
+  color:#fff !important;
+  border:none !important;
+  white-space:nowrap;
+}
+.profile-logout-row{display:none !important;}
+</style>
+
+</head>
 <body>
 
 <div id="login-overlay" class="login-overlay" aria-hidden="true">
@@ -656,6 +822,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   <div class="content">
     <div class="menu-back-bar" id="menu-back-bar" style="display:none">
       <button type="button" class="menu-back-btn" id="btn-menu-back" data-i18n="back">Назад</button>
+      <button type="button" class="btn-logout" id="btn-web-logout" style="display:none" data-i18n="logout">Log out</button>
     </div>
     <div id="screen-main" class="screen active">
       <div class="carousel" id="carousel">
@@ -756,9 +923,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
     </div>
 
     <div id="screen-profile" class="screen">
-      <div class="profile-logout-row">
-        <button type="button" class="btn-logout" id="btn-web-logout" style="display:none" data-i18n="logout">Log out</button>
-      </div>
       <div class="profile-wrap">
           <div class="avatar-lg" id="p-av"><span id="p-av-fb">A</span><img id="p-av-img" style="display:none" alt=""/></div>
           <div class="profile-name" id="p-name">—</div>
@@ -1040,12 +1204,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
           <span class="role-badge" id="panel-role">—</span>
         </div>
       </div>
-      <div class="tile-grid">
+      <div class="tile-grid" id="panel-tile-grid">
         <button type="button" class="tile" data-panel="staff"><div class="t-title" data-i18n="staff">Сотрудники</div></button>
         <button type="button" class="tile" data-panel="mod_sell"><div class="t-title" data-i18n="mod_sell">Продажа</div></button>
         <button type="button" class="tile" data-panel="mod_buy"><div class="t-title" data-i18n="mod_buy">Покупка</div></button>
         <button type="button" class="tile" data-panel="mod_tx"><div class="t-title" data-i18n="mod_tx">Транзакции</div></button>
-        <button type="button" class="tile" style="grid-column:1/-1;aspect-ratio:auto;min-height:72px" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
+        <button type="button" class="tile" data-panel="mod_tickets"><div class="t-title" data-i18n="mod_tickets">Обращения</div></button>
+        <button type="button" class="tile" data-panel="analytics"><div class="t-title" data-i18n="analytics">Аналитика</div></button>
       </div>
     </div>
 
@@ -1142,7 +1307,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
       </div>
     </div>
 
-    <div id="screen-panel-mod-tx" class="screen">
+    
+    <div id="screen-panel-mod-tickets" class="screen">
+      <div class="section-title" data-i18n="mod_tickets">Обращения</div>
+      <div class="list" id="panel-mod-tickets-list"></div>
+    </div>
+
+    <div id="screen-panel-support-chat" class="screen">
+      <div class="section-title" id="panel-support-chat-title">Чат</div>
+      <div class="panel" style="padding:10px;margin-bottom:8px">
+        <div id="panel-support-chat-user" class="muted" style="font-size:13px"></div>
+      </div>
+      <div id="panel-support-chat-messages" class="list" style="max-height:55vh;overflow:auto;display:flex;flex-direction:column;gap:8px"></div>
+      <div class="btn-row" style="margin-top:10px;gap:8px;align-items:stretch">
+        <input type="text" class="input" id="panel-support-chat-input" data-i18n-placeholder="support_msg_ph" placeholder="Сообщение…" style="flex:1;min-width:0">
+        <button type="button" class="btn" id="panel-support-chat-send" data-i18n="send">Отправить</button>
+      </div>
+    </div>
+<div id="screen-panel-mod-tx" class="screen">
       <div class="section-title" data-i18n="mod_tx">Транзакции</div>
       <div class="list" id="panel-mod-tx-list"></div>
       <div class="btn-row" id="panel-mod-tx-nav" style="display:none;margin-top:8px">
@@ -1165,11 +1347,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
         <button type="button" class="btn wide" data-pan-an="revenue" data-i18n="an_revenue">Оборот и выручка</button>
         <button type="button" class="btn wide" data-pan-an="expenses" data-i18n="an_expenses">Расходы</button>
         <button type="button" class="btn wide" data-pan-an="income" data-i18n="an_income">Доходы</button>
+        <button type="button" class="btn wide" data-pan-an="ads" data-i18n="analytics_ads">Реклама</button>
         <button type="button" class="btn wide" data-pan-an="other" data-i18n="an_other">Другое</button>
       </div>
     </div>
 
-    <div 
     <div id="screen-panel-period" class="screen">
       <div class="section-title" data-i18n="an_period">Период</div>
       <div class="list" id="panel-period-list"></div>
@@ -1244,7 +1426,7 @@ const LANGS=[
 
 function baseI18n(o){return o}
 const I18N={
-ru:baseI18n({download_excel:"Скачать Excel",snippet_pick_lang:"Выберите язык бота",snippet_pick_lib:"Выберите библиотеку",snippet_download:"Скачать файл",snippet_instruction:"Инструкция",cancel:"Отмена",an_all_period:"За весь период",an_period:"Период",an_revenue:"Оборот и выручка",an_other:"Другое",an_total:"всего",an_rev_detail:"Пополнения и выводы",an_net:"Итого",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль (−20%)",an_net_usn:"Чистая прибыль (−15% УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
+ru:baseI18n({mod_tickets:"Обращения",mod_tickets_empty:"Заявок на рассмотрении нет",analytics_ads:"Реклама",ads_tab_stats:"Статистика",ads_tab_partners:"Партнёры",ads_invited_total:"Приглашено партнёрами всего",ads_pay1_total:"1-степенные платежи",ads_pay1_10d:"1-степенные за 10 дн.",ads_pay2_total:"2-степенные платежи",ads_pay2_10d:"2-степенные за 10 дн.",ads_spend_total:"Потрачено на рекламу всего",ads_spend_1:"Траты на 1-степенные",ads_spend_2:"Траты на 2-степенные",ads_default_level_label:"Уровень партнёров по умолчанию",ads_level:"Уровень",ads_refs_total:"Рефералов",no_partners:"Нет партнёров с промокодом",no_messages:"Нет сообщений",send:"Отправить",support_msg_ph:"Сообщение…",staff_label:"Сотрудник",download_excel:"Скачать Excel",snippet_pick_lang:"Выберите язык бота",snippet_pick_lib:"Выберите библиотеку",snippet_download:"Скачать файл",snippet_instruction:"Инструкция",cancel:"Отмена",an_all_period:"За весь период",an_period:"Период",an_revenue:"Оборот и выручка",an_other:"Другое",an_total:"всего",an_rev_detail:"Пополнения и выводы",an_net:"Итого",an_gross:"Валовая прибыль",an_operating:"Операционная прибыль (−20%)",an_net_usn:"Чистая прибыль (−15% УСН)",snippet_installed:"Сниппет установлен",snippet_not_installed:"Сниппет не установлен",snippet_reset:"Сбросить статус",snippet_mark:"Отметить установленным",snippet_hint_ok:"Файл сниппета уже отмечен как установленный.",snippet_hint_get:"Получите файл сниппета в Telegram-боте, вставьте в своего бота, затем отметьте установку.",staff_show_all:"Все сотрудники",staff_all:"Все сотрудники",mod_queue_empty:"Заявок на рассмотрении нет",method_sbp:"SBP",method_crypto:"Криптовалюта",method_stars:"Telegram звёзды",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",empty:"Нет заявок",btn_snippet:"Сниппет",btn_delete:"Удалить",btn_start:"Запустить",btn_stop:"Остановить",proj_err_moderation:"Проект на модерации",proj_err_rejected:"Проект отклонён",proj_err_snippet:"Сниппет не установлен",err_not_channel_admin:"Бот не в администраторах канала",admin_ok:"В админах",admin_no:"Не в админах",admin_unk:"Админ статус",confirm_delete:"Удалить проект?",staff_change_role:"Изменить роль",staff_set_balance:"Изменить баланс",staff_new_balance:"Новый баланс",staff_balance_now:"Баланс сейчас",staff_invalid_balance:"Введите число",staff_ban:"Заблокировать",staff_unban:"Разблокировать",staff_ban_reason:"Причина",staff_ban_days:"Срок (дней)",staff_ban_forever:"Навсегда",staff_ban_reason_required:"Укажите причину",staff_ban_until:"До",staff_remove_role:"Снять с должности",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",insufficient_rights:"У вас недостаточно прав для этой функции",staff_mandatory:"Обязательный пользователь",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",logout:"Выйти",ref_my_code:"Мой реферальный код",save:"Сохранить",apply:"Применить",ref_stats_line:"Уровень: {level} · Рефералов: {total} · За 10 дней: {d10} · Заработано: {earn} ₽",ref_apply_title:"Применить промокод",back:"Назад",balance:"Баланс",settings:"Настройки",projects:"Проекты",help:"Помощь",support:"Поддержка",panel:"Панель",
 language:"Язык",theme:"Тема",theme_light:"Светлая",theme_dark:"Тёмная",theme_auto:"Как в Telegram",original:"Оригинал",collab_ads:"Реклама",collab_work:"Работа",write_manager:"Написать менеджеру",application_form:"Составить анкету",job_form_title:"Анкета",fio:"ФИО",age_min16:"Возраст (минимум 16)",employment:"Занятость",school:"Школьник",student:"Студент",working:"Работаю",retired:"На пенсии",searching:"В поиске",username:"Username",phone_number:"Номер телефона",email:"Почта",submit_app:"Отправить анкету",role_mod:"Модератор",salary:"Зарплата",hours:"ч",hire_shifts_req:"Смены",hire_shifts_week:"в неделю",internship:"Стажировка",period:"Срок",month:"мес.",intern_shift:"Смена стажёра",intern_pay:"Оплата стажёра",hire_duties:"Обязанности",duty_mod_listings:"Модерация объявлений",duty_mod_complaints:"Модерация жалоб",job_form_required:"Заполните обязательные поля",job_form_sent:"Анкета отправлена",collab_ads_hint:"Размещение рекламы и партнёрские материалы — напишите менеджеру.",support_ticket:"Написать обращение",support_chat_manager:"Чат с менеджером",support_manager:"Менеджер в Telegram",support_bot:"Бот поддержки",support_mail:"Написать на почту",support_hire:"Сотрудничать",ads_and_jobs:"Реклама и вакансии",support_faq:"FAQ",support_privacy:"Политика конфиденциальности",support_terms:"Пользовательское соглашение",support_other_info:"Другая информация",support_other_info_empty:"Раздел в разработке",manager_eta:"*менеджер напишет вам в течение 96ч",message_ph:"Сообщение...",send:"Отправить",support_chat_empty:"Напишите первое сообщение",on_moderation:"на модерации",status:"Статус",no_projects:"Нет проектов",btn_start:"Запустить",btn_stop:"Остановить",my_transactions:"Мои транзакции",no_transactions:"Нет транзакций",transaction:"Транзакция",close:"Закрыть",tx_type:"Тип",date_time:"Дата и время",operation_id:"Id операции",tx_deposit:"Пополнение",tx_withdraw:"Вывод",tx_purchase:"Покупка",tx_monetization:"Монетизация",tx_salary:"Зарплата",tx_admin:"Изменение баланса админом",
 role:"Роль",deposit:"Пополнение",withdraw:"Вывод",my_requests:"Мои заявки",no_requests:"Нет заявок",
 amount_rub:"Сумма (₽)",method:"Способ оплаты",comment:"Комментарий",continue:"Продолжить",pay:"Оплатить",confirm:"Подтвердить",
@@ -1257,7 +1439,7 @@ support_manager:"Менеджер",support_bot:"Бот",support_email:"Почт�
 staff:"Сотрудники",mod_sell:"Продажа",mod_buy:"Покупка",mod_tx:"Транзакции",analytics:"Аналитика",an_expenses:"Расходы",an_income:"Доходы",an_projects:"Проекты",approve:"Одобрить",reject:"Отклонить",staff_mandatory:"Обязательный пользователь",staff_add:"Добавить",staff_apps:"Заявки",staff_enter_id:"ID пользователя",staff_search:"Найти",staff_not_found:"Пользователь не найден",staff_invalid_id:"Введите числовой ID",staff_apps_empty:"Нет заявок",staff_no_rights:"Недостаточно прав",role_partner:"Партнер",role_corp:"Корп",role_intern:"Стажер",role_mod:"Модер",role_admin:"Админ",role_owner:"Владелец",empty:"Нет данных",
 prev:"Назад",next:"Вперёд",
 roles:{user:"Пользователь",partner:"Партнер",corp:"Корпоративный",intern:"Стажер",mod:"Модератор",admin:"Админ",owner:"Владелец"},collab_work_hint:"<strong>Модератор</strong><br><br>• Зарплата: <strong>25$ / 12 ч</strong><br>• Требуется: <strong>3 смены в неделю</strong><br><br><strong>Стажировка</strong><br><br>• Период: <strong>1 месяц</strong><br>• Смена стажёра: <strong>6 ч</strong><br>• Оплата за смену стажёра: <strong>10$</strong><br><br><strong>Обязанности</strong><br><br>• Модерация объявлений<br>• Модерация жалоб<br>• Модерация обращений в поддержку<br>• Аналитика (просмотр)<br>• Рабочий центр / смены<br>• Контроль смен (только просмотр)"}),
-en:baseI18n({download_excel:"Download Excel",snippet_pick_lang:"Choose bot language",snippet_pick_lib:"Choose library",snippet_download:"Download file",snippet_instruction:"Instructions",cancel:"Cancel",an_all_period:"All time",an_period:"Period",an_revenue:"Turnover & revenue",an_other:"Other",an_total:"total",an_rev_detail:"Deposits and withdrawals",an_net:"Net",an_gross:"Gross profit",an_operating:"Operating profit (−20%)",an_net_usn:"Net profit (−15% STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
+en:baseI18n({mod_tickets:"Appeals",mod_tickets_empty:"No open tickets",analytics_ads:"Advertising",ads_tab_stats:"Stats",ads_tab_partners:"Partners",ads_invited_total:"Invited by partners total",ads_pay1_total:"Tier-1 payments",ads_pay1_10d:"Tier-1 last 10d",ads_pay2_total:"Tier-2 payments",ads_pay2_10d:"Tier-2 last 10d",ads_spend_total:"Ad spend total",ads_spend_1:"Tier-1 spend",ads_spend_2:"Tier-2 spend",ads_default_level_label:"Default partner level",ads_level:"Level",ads_refs_total:"Referrals",no_partners:"No partners with promo",no_messages:"No messages",send:"Send",support_msg_ph:"Message…",staff_label:"Staff",download_excel:"Download Excel",snippet_pick_lang:"Choose bot language",snippet_pick_lib:"Choose library",snippet_download:"Download file",snippet_instruction:"Instructions",cancel:"Cancel",an_all_period:"All time",an_period:"Period",an_revenue:"Turnover & revenue",an_other:"Other",an_total:"total",an_rev_detail:"Deposits and withdrawals",an_net:"Net",an_gross:"Gross profit",an_operating:"Operating profit (−20%)",an_net_usn:"Net profit (−15% STS)",snippet_installed:"Snippet installed",snippet_not_installed:"Snippet not installed",snippet_reset:"Reset status",snippet_mark:"Mark as installed",snippet_hint_ok:"Snippet is marked as installed.",snippet_hint_get:"Get the snippet file in the Telegram bot, add it to your bot, then mark as installed.",staff_show_all:"All staff",staff_all:"All staff",mod_queue_empty:"No applications under review",method_sbp:"SBP",method_crypto:"Cryptocurrency",method_stars:"Telegram Stars",mod_sell:"Sales",mod_buy:"Purchases",mod_tx:"Transactions",an_expenses:"Expenses",an_income:"Income",an_projects:"Projects",approve:"Approve",reject:"Reject",empty:"No applications",btn_snippet:"Snippet",btn_delete:"Delete",btn_start:"Start",btn_stop:"Stop",proj_err_moderation:"Project under review",proj_err_rejected:"Project rejected",proj_err_snippet:"Snippet not installed",err_not_channel_admin:"Bot is not a channel admin",admin_ok:"Is admin",admin_no:"Not admin",admin_unk:"Admin status",confirm_delete:"Delete project?",staff_change_role:"Change role",staff_set_balance:"Change balance",staff_new_balance:"New balance",staff_balance_now:"Current balance",staff_invalid_balance:"Enter a number",staff_ban:"Block",staff_unban:"Unblock",staff_ban_reason:"Reason",staff_ban_days:"Duration (days)",staff_ban_forever:"Forever",staff_ban_reason_required:"Enter a reason",staff_ban_until:"Until",staff_remove_role:"Remove role",staff_add:"Add",staff_apps:"Applications",staff_enter_id:"User ID",staff_search:"Search",staff_not_found:"User not found",staff_invalid_id:"Enter a numeric ID",staff_apps_empty:"No applications",staff_no_rights:"Insufficient rights",insufficient_rights:"You do not have enough permissions for this action",staff_mandatory:"Mandatory user",role_partner:"Partner",role_corp:"Corporate",role_intern:"Intern",role_mod:"Moderator",role_admin:"Admin",role_owner:"Owner",logout:"Log out",ref_my_code:"My referral code",save:"Save",apply:"Apply",ref_stats_line:"Level: {level} · Refs: {total} · 10d: {d10} · Earned: {earn} ₽",ref_apply_title:"Apply promo code",back:"Back",balance:"Balance",settings:"Settings",projects:"Projects",help:"Help",support:"Support",panel:"Panel",
 language:"Language",theme:"Theme",theme_light:"Light",theme_dark:"Dark",theme_auto:"As in Telegram",original:"Original",collab_ads:"Ads",collab_work:"Jobs",write_manager:"Message manager",application_form:"Application form",job_form_title:"Application",fio:"Full name",age_min16:"Age (min 16)",employment:"Employment",school:"School",student:"Student",working:"Employed",retired:"Retired",searching:"Looking for work",username:"Username",phone_number:"Phone",email:"Email",submit_app:"Submit",role_mod:"Moderator",salary:"Salary",hours:"h",hire_shifts_req:"Shifts",hire_shifts_week:"per week",internship:"Internship",period:"Period",month:"mo.",intern_shift:"Intern shift",intern_pay:"Intern pay",hire_duties:"Duties",duty_mod_listings:"Listing moderation",duty_mod_complaints:"Complaint moderation",job_form_required:"Fill required fields",job_form_sent:"Application sent",collab_ads_hint:"Ads and partner materials — message the manager.",support_ticket:"Submit a request",support_chat_manager:"Chat with manager",support_manager:"Manager on Telegram",support_bot:"Support bot",support_mail:"Email us",support_hire:"Collaborate",ads_and_jobs:"Ads and jobs",support_faq:"FAQ",support_privacy:"Privacy policy",support_terms:"Terms of service",support_other_info:"Other information",support_other_info_empty:"Section under development",manager_eta:"*manager will reply within 96h",message_ph:"Message...",send:"Send",support_chat_empty:"Write the first message",on_moderation:"on moderation",status:"Status",no_projects:"No projects",btn_start:"Start",btn_stop:"Stop",my_transactions:"My transactions",no_transactions:"No transactions",transaction:"Transaction",close:"Close",tx_type:"Type",date_time:"Date and time",operation_id:"Operation ID",tx_deposit:"Deposit",tx_withdraw:"Withdraw",tx_purchase:"Purchase",tx_monetization:"Monetization",tx_salary:"Salary",tx_admin:"Admin balance change",
 role:"Role",deposit:"Deposit",withdraw:"Withdraw",my_requests:"My requests",no_requests:"No requests",
 amount_rub:"Amount (₽)",method:"Payment method",comment:"Comment",continue:"Continue",pay:"Pay",confirm:"Confirm",
@@ -1759,7 +1941,20 @@ function applyTheme(theme,saveLocal){
   document.querySelectorAll(".theme-item").forEach(b=>b.classList.toggle("active",b.getAttribute("data-theme-set")===state.theme));
 }
 function updateThemeTile(){const el=document.getElementById("tile-theme-sub");if(!el)return;el.textContent=state.theme==="auto"?t("theme_auto"):(state.theme==="dark"?t("theme_dark"):t("theme_light"))}
-function updateLangTile(){const meta=LANGS.find(l=>l.code===state.lang)||LANGS[0];document.getElementById("btn-flag").textContent=meta.flag;const sub=document.getElementById("tile-lang-sub");if(sub)sub.textContent=meta.flag+" "+meta.native}
+function updateLangTile(){
+  const meta=LANGS.find(l=>l.code===state.lang)||LANGS[0];
+  const flag=meta&&meta.flag?meta.flag:"🇷🇺";
+  const bf=document.getElementById("btn-flag");
+  if(bf){
+    bf.textContent=flag;
+    bf.style.display="inline-flex";
+    bf.style.visibility="visible";
+    bf.style.opacity="1";
+    bf.setAttribute("aria-label", (meta&&meta.native)||state.lang||"lang");
+  }
+  const sub=document.getElementById("tile-lang-sub");
+  if(sub) sub.textContent=flag+" "+((meta&&meta.native)||"");
+}
 function renderLangList(){
   const box=document.getElementById("lang-list");if(!box)return;
   box.innerHTML=LANGS.map(l=>{
@@ -2160,6 +2355,23 @@ function show(id,push){
       if(content)content.classList.add("has-back");
     }
   }
+  // Logout sits on the same row as Back; only on profile (web session)
+  try{
+    const lb=document.getElementById("btn-web-logout");
+    if(lb){
+      const webOn=!!(typeof loadWebSession==="function" && loadWebSession());
+      if(id==="profile" && webOn){
+        lb.style.display="inline-flex";
+        lb.style.alignItems="center";
+      }else if(id==="profile"){
+        // miniapp without web session — hide logout
+        lb.style.display="none";
+      }else{
+        lb.style.display="none";
+      }
+    }
+  }catch(e){}
+  try{ if(typeof updateLangTile==="function") updateLangTile(); }catch(e){}
   try{applyI18n()}catch(e){}
   if(tg){try{if(id==="main")tg.BackButton.hide();else{tg.BackButton.show();tg.BackButton.onClick(goBack)}}catch(e){}}
 }
@@ -2189,7 +2401,8 @@ async function apiFetch(path,opts,timeoutMs){
   const timer=ctrl?setTimeout(()=>ctrl.abort(),ms):null;
   try{
     opts=opts||{};
-    const headers=Object.assign({},opts.headers||{});
+    opts.cache="no-store";
+    const headers=Object.assign({},opts.headers||{},{"Cache-Control":"no-cache","Pragma":"no-cache"});
 
     // Telegram Mini App: передаём подписанные initData серверу.
     try{
@@ -2816,6 +3029,7 @@ async function loadPanel(){
     const el=document.getElementById("panel-role");
     if(el) el.textContent="—";
   }
+  try{ if(typeof wirePanelMenus==="function") wirePanelMenus(); }catch(e){}
 }
 
 // ---- Panel submenus ----
@@ -2829,6 +3043,7 @@ async function openPanelSection(key){
   if(key==="mod_sell"){ state.panelPages.sell=1; show("panel-mod-sell"); await loadPanelMod("sell"); return; }
   if(key==="mod_buy"){ state.panelPages.buy=1; show("panel-mod-buy"); await loadPanelMod("buy"); return; }
   if(key==="mod_tx"){ state.panelPages.tx=1; show("panel-mod-tx"); await loadPanelMod("tx"); return; }
+  if(key==="mod_tickets"){ show("panel-mod-tickets"); await loadPanelSupportThreads(); return; }
   if(key==="analytics"){ show("panel-analytics"); try{wirePeriodBars()}catch(e){}; return; }
 }
 
@@ -3524,6 +3739,7 @@ function panelLegend(items){
 }
 async function openPanelAnalyticsView(kind){
   state.panelBack="panel-analytics";
+  if(kind==="ads"){ return openPanelAdsAnalytics(); }
   show("panel-analytics-view");
   const titleMap={
     expenses:t("an_expenses")||"Расходы",
@@ -3595,6 +3811,282 @@ async function openPanelAnalyticsView(kind){
     }).join("");
   }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
 }
+
+
+
+function adsStatsHtml(s){
+  s=s||{};
+  const line=(l,v)=>'<div class="pa-meta-row"><span>'+panelEsc(l)+'</span><b>'+panelEsc(v)+'</b></div>';
+  let h='<div class="pa-meta" style="border-top:none;padding-top:0">';
+  h+=line(t("ads_invited_total")||"Приглашено партнёрами всего", s.invited_total!=null?s.invited_total:(s.invited_by_partners||0));
+  h+=line(t("ads_pay1_total")||"1-степенные платежи", s.pay1_total||0);
+  h+=line(t("ads_pay1_10d")||"1-степенные за 10 дн.", s.pay1_10d||0);
+  h+=line(t("ads_pay2_total")||"2-степенные платежи", s.pay2_total||0);
+  h+=line(t("ads_pay2_10d")||"2-степенные за 10 дн.", s.pay2_10d||0);
+  h+=line(t("ads_spend_total")||"Потрачено на рекламу всего", Number(s.spend_total||0).toFixed(2)+" ₽");
+  h+=line(t("ads_spend_1")||"Траты на 1-степенные", Number(s.spend_1||0).toFixed(2)+" ₽");
+  h+=line(t("ads_spend_2")||"Траты на 2-степенные", Number(s.spend_2||0).toFixed(2)+" ₽");
+  h+='</div>';
+  return h;
+}
+
+async function openPanelAdsAnalytics(){
+  state.panelBack="panel-analytics";
+  show("panel-analytics-view");
+  const title=document.getElementById("panel-an-view-title");
+  if(title) title.textContent=t("analytics_ads")||"Реклама";
+  await renderPanelAdsAnalytics();
+}
+
+async function renderPanelAdsAnalytics(){
+  const body=document.getElementById("panel-an-view-body");
+  if(!body)return;
+  state.adsTab=state.adsTab||"stats";
+  const tab=state.adsTab;
+  let h='<div class="seg-toggle ads-seg">';
+  h+='<button type="button" class="'+(tab==="stats"?"active":"")+'" id="ads-tab-stats">'+(t("ads_tab_stats")||"Статистика")+'</button>';
+  h+='<button type="button" class="'+(tab==="partners"?"active":"")+'" id="ads-tab-partners">'+(t("ads_tab_partners")||"Партнёры")+'</button>';
+  h+='</div><div id="ads-body"><div class="muted">…</div></div>';
+  body.innerHTML=h;
+  const sBtn=document.getElementById("ads-tab-stats");
+  const pBtn=document.getElementById("ads-tab-partners");
+  if(sBtn) sBtn.onclick=()=>{state.adsTab="stats";renderPanelAdsAnalytics();};
+  if(pBtn) pBtn.onclick=()=>{state.adsTab="partners";renderPanelAdsAnalytics();};
+  const box=document.getElementById("ads-body");
+  try{
+    if(tab==="stats"){
+      const d=await apiGet("/api/miniapp/panel/referral/stats?user_id="+encodeURIComponent(USER_ID));
+      box.innerHTML=adsStatsHtml(d);
+    }else{
+      let def={level:1};
+      try{def=await apiGet("/api/miniapp/panel/referral/default-level?user_id="+encodeURIComponent(USER_ID));}catch(e){}
+      state.defaultPartnerLevel=Number(def.level!=null?def.level:1);
+      const d=await apiGet("/api/miniapp/panel/referral/partners?user_id="+encodeURIComponent(USER_ID));
+      const items=(d&&d.partners)||[];
+      let hh='<div class="panel" style="margin-bottom:12px">';
+      hh+='<div class="hint" style="margin-bottom:8px">'+(t("ads_default_level_label")||"Все партнёры сначала получают уровень")+'</div>';
+      hh+='<div style="display:flex;gap:6px">';
+      for(let lv=0;lv<=3;lv++){
+        const sel=state.defaultPartnerLevel===lv;
+        hh+='<button type="button" class="btn" data-def-lv="'+lv+'" style="flex:1;min-height:42px;font-size:13px;'+(sel?"background:var(--brand);border-color:var(--brand);color:#fff;":"background:var(--surface);color:var(--text);border:1px solid var(--line);")+'">'+lv+'</button>';
+      }
+      hh+='</div>';
+      hh+='<div class="hint" style="margin-top:6px;font-size:11px">'+(t("ads_level0_hint")||"0 — без дохода партнёра, бонус 5% приглашённому")+'</div>';
+      hh+='</div>';
+      if(!items.length){
+        hh+='<div class="empty">'+(t("no_partners")||"Партнёров пока нет")+'</div>';
+      }else{
+        hh+=items.map(p=>{
+          const un=(p.username||"").replace(/^@/,"");
+          const name=panelEsc(p.name||p.user_id);
+          const nameHtml=un
+            ?('<a class="uname-link" href="https://t.me/'+encodeURIComponent(un)+'" data-tg="'+panelEsc(un)+'" onclick="event.stopPropagation()">'+name+'</a>')
+            :name;
+          return '<div class="item" style="cursor:pointer" data-partner-id="'+p.user_id+'">'
+            +'<div style="display:flex;align-items:center;gap:10px">'
+            +'<div style="flex:1;min-width:0;font-weight:700">'+nameHtml+'</div>'
+            +'<div style="font-family:monospace;font-size:13px;color:var(--hint)">'+panelEsc(p.ref_code||"")+'</div>'
+            +'<div style="font-weight:800;color:var(--brand)">'+(t("ads_level")||"Ур.")+' '+panelEsc(p.ref_level)+'</div>'
+            +'</div>'
+            +'<div class="hint" style="margin-top:4px">'+(t("ads_refs_total")||"Рефералов")+': '+panelEsc(p.refs_total)+' · 10д: '+panelEsc(p.refs_10d)+'</div>'
+            +'</div>';
+        }).join("");
+      }
+      box.innerHTML=hh;
+      box.querySelectorAll("[data-def-lv]").forEach(b=>{
+        b.onclick=async()=>{
+          const lv=Number(b.getAttribute("data-def-lv"));
+          try{
+            await apiPost("/api/miniapp/panel/referral/default-level",{user_id:USER_ID,level:lv});
+            state.defaultPartnerLevel=lv;
+            renderPanelAdsAnalytics();
+          }catch(e){alert(e.message||e);}
+        };
+      });
+      box.querySelectorAll("[data-partner-id]").forEach(el=>{
+        el.onclick=function(e){
+          if(e.target&&e.target.closest&&e.target.closest("a.uname-link"))return;
+          openPanelPartnerAdsDetail(Number(el.getAttribute("data-partner-id")));
+        };
+      });
+      box.querySelectorAll("a.uname-link[data-tg]").forEach(a=>{
+        a.onclick=function(e){
+          e.preventDefault();e.stopPropagation();
+          const u=a.getAttribute("data-tg");
+          if(u){try{openTgLink("https://t.me/"+u)}catch(err){window.open("https://t.me/"+u,"_blank")}}
+        };
+      });
+    }
+  }catch(e){
+    box.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>';
+  }
+}
+
+async function openPanelPartnerAdsDetail(pid){
+  state.panelBack="panel-analytics-view";
+  state.adsTab="partners";
+  show("panel-analytics-view");
+  const title=document.getElementById("panel-an-view-title");
+  if(title) title.textContent=t("ads_partner_detail")||"Статистика партнёра";
+  const body=document.getElementById("panel-an-view-body");
+  if(!body)return;
+  body.innerHTML='<div class="muted">…</div>';
+  // back from detail goes to partners list
+  const back=document.getElementById("panel-an-view-back");
+  if(back){
+    back.onclick=()=>{state.adsTab="partners";openPanelAdsAnalytics();};
+  }
+  try{
+    const d=await apiGet("/api/miniapp/panel/referral/partner/"+encodeURIComponent(pid)+"?user_id="+encodeURIComponent(USER_ID));
+    const un=(d.username||"").replace(/^@/,"");
+    const name=panelEsc(d.name||d.user_id);
+    const nameHtml=un
+      ?('<a class="uname-link" href="https://t.me/'+encodeURIComponent(un)+'" data-tg="'+panelEsc(un)+'">'+name+'</a>')
+      :name;
+    let h='<div class="panel" style="text-align:center;margin-bottom:12px">';
+    h+='<div style="font-weight:700;font-size:15px;margin-bottom:6px">'+nameHtml+'</div>';
+    h+='<div style="font-family:monospace;font-size:18px;font-weight:800">'+panelEsc(d.ref_code||"")+'</div>';
+    h+='</div>';
+    h+=adsStatsHtml(d.stats||{});
+    h+='<div class="hint" style="margin:12px 0 8px">'+(t("ads_partner_level")||"Уровень партнёра")+'</div>';
+    h+='<div style="display:flex;gap:6px">';
+    for(let lv=0;lv<=3;lv++){
+      const sel=Number(d.ref_level)===lv;
+      h+='<button type="button" class="btn" data-set-lv="'+lv+'" style="flex:1;min-height:42px;'+(sel?"background:var(--brand);border-color:var(--brand);color:#fff;":"background:var(--surface);color:var(--text);border:1px solid var(--line);")+'">'+lv+'</button>';
+    }
+    h+='</div>';
+    body.innerHTML=h;
+    body.querySelectorAll("a.uname-link[data-tg]").forEach(a=>{
+      a.onclick=function(e){e.preventDefault();const u=a.getAttribute("data-tg");if(u){try{openTgLink("https://t.me/"+u)}catch(err){window.open("https://t.me/"+u,"_blank")}}};
+    });
+    body.querySelectorAll("[data-set-lv]").forEach(b=>{
+      b.onclick=async()=>{
+        const lv=Number(b.getAttribute("data-set-lv"));
+        try{
+          await apiPost("/api/miniapp/panel/referral/set-level",{user_id:USER_ID,target_id:pid,level:lv});
+          openPanelPartnerAdsDetail(pid);
+        }catch(e){alert(e.message||e);}
+      };
+    });
+  }catch(e){
+    body.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>';
+  }
+}
+
+async function loadPanelSupportThreads(){
+  const box=document.getElementById("panel-mod-tickets-list");
+  if(!box)return;
+  box.innerHTML='<div class="empty">…</div>';
+  try{
+    const r=await apiGet("/api/miniapp/panel/support/threads?user_id="+encodeURIComponent(USER_ID));
+    const items=(r&&r.threads)||[];
+    if(!items.length){
+      box.innerHTML='<div class="empty">'+(t("mod_tickets_empty")||"Заявок на рассмотрении нет")+'</div>';
+      return;
+    }
+    box.innerHTML=items.map(th=>{
+      const un=(th.username||"").replace(/^@/,"");
+      const name=panelEsc(th.display_name||th.user_id);
+      const nameHtml=un
+        ?('<a class="uname-link" href="https://t.me/'+encodeURIComponent(un)+'" data-tg="'+panelEsc(un)+'">'+name+'</a>')
+        :('<span style="font-weight:700">'+name+'</span>');
+      const unread=Number(th.unread||th.staff_unread||0);
+      const prev=panelEsc((th.last_message_preview||"").slice(0,100));
+      const when=panelEsc(String(th.last_message_at||"").slice(0,16).replace("T"," "));
+      return '<div class="item chat-list-item" style="cursor:pointer" data-chat-uid="'+th.user_id+'">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">'
+        +'<div style="font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis">'+nameHtml+'</div>'
+        +(unread>0?('<span class="chat-unread">'+unread+'</span>'):'')
+        +'</div>'
+        +'<div class="hint" style="margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+prev+'</div>'
+        +'<div class="hint" style="margin-top:2px">'+when+' · ID '+panelEsc(th.user_id)+'</div>'
+        +'</div>';
+    }).join("");
+    box.querySelectorAll("[data-chat-uid]").forEach(el=>{
+      el.onclick=function(e){
+        if(e.target&&e.target.closest&&e.target.closest("a.uname-link"))return;
+        openPanelSupportChat(Number(el.getAttribute("data-chat-uid")));
+      };
+    });
+    box.querySelectorAll("a.uname-link[data-tg]").forEach(a=>{
+      a.onclick=function(e){
+        e.preventDefault();e.stopPropagation();
+        const u=a.getAttribute("data-tg");
+        if(u){try{openTgLink("https://t.me/"+u)}catch(err){window.open("https://t.me/"+u,"_blank")}}
+      };
+    });
+  }catch(e){
+    box.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>';
+  }
+}
+
+async function openPanelSupportChat(targetId){
+  state.supportChatUserId=targetId;
+  state.panelBack="panel-mod-tickets";
+  show("panel-support-chat");
+  const title=document.getElementById("panel-support-chat-title");
+  if(title) title.textContent=t("mod_tickets")||"Обращения";
+  const userEl=document.getElementById("panel-support-chat-user");
+  const box=document.getElementById("panel-support-chat-messages");
+  if(box) box.innerHTML='<div class="empty">…</div>';
+  try{
+    const r=await apiGet("/api/miniapp/panel/support/thread/"+encodeURIComponent(targetId)+"?user_id="+encodeURIComponent(USER_ID));
+    const th=(r&&r.thread)||{};
+    const msgs=(r&&r.messages)||[];
+    const un=(th.username||"").replace(/^@/,"");
+    const dname=panelEsc(th.display_name||targetId);
+    if(userEl){
+      userEl.innerHTML=un
+        ?('<a class="uname-link" href="https://t.me/'+encodeURIComponent(un)+'" data-tg="'+panelEsc(un)+'">'+dname+'</a> · ID '+panelEsc(targetId))
+        :('<span>'+dname+'</span> · ID '+panelEsc(targetId));
+      userEl.querySelectorAll("a.uname-link[data-tg]").forEach(a=>{
+        a.onclick=function(e){e.preventDefault();const u=a.getAttribute("data-tg");if(u){try{openTgLink("https://t.me/"+u)}catch(err){window.open("https://t.me/"+u,"_blank")}}};
+      });
+    }
+    if(box){
+      if(!msgs.length){
+        box.innerHTML='<div class="empty">'+(t("no_messages")||"Нет сообщений")+'</div>';
+      }else{
+        box.innerHTML=msgs.map(m=>{
+          const staff=String(m.sender||"")==="staff";
+          return '<div class="chat-bubble '+(staff?"staff":"user")+'">'
+            +panelEsc(m.text||"")
+            +'<div class="chat-meta">'+(staff?(t("staff_label")||"Сотрудник"):(t("user")||"Пользователь"))
+            +" · "+panelEsc(String(m.created_at||"").slice(0,16).replace("T"," "))
+            +'</div></div>';
+        }).join("");
+        try{box.scrollTop=box.scrollHeight;}catch(e){}
+      }
+    }
+  }catch(e){
+    if(box) box.innerHTML='<div class="empty">'+panelEsc(e.message||e)+'</div>';
+  }
+  const sendBtn=document.getElementById("panel-support-chat-send");
+  const input=document.getElementById("panel-support-chat-input");
+  if(sendBtn){
+    sendBtn.onclick=async function(){
+      const text=(input&&input.value||"").trim();
+      if(!text||!state.supportChatUserId)return;
+      sendBtn.disabled=true;
+      try{
+        await apiPost("/api/miniapp/panel/support/reply",{user_id:USER_ID,target_id:state.supportChatUserId,text:text});
+        if(input) input.value="";
+        await openPanelSupportChat(state.supportChatUserId);
+      }catch(e){
+        alert(e.message||e);
+      }finally{
+        sendBtn.disabled=false;
+      }
+    };
+  }
+  if(input&&!input._wiredEnter){
+    input._wiredEnter=true;
+    input.addEventListener("keydown",function(e){
+      if(e.key==="Enter"){e.preventDefault();sendBtn&&sendBtn.click();}
+    });
+  }
+}
+
 
 function wirePanelMenus(){
   document.querySelectorAll("[data-panel]").forEach(b=>{
