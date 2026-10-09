@@ -2404,7 +2404,7 @@ async function apiFetch(path,opts,timeoutMs){
   try{
     opts=opts||{};
     opts.cache="no-store";
-    const headers=Object.assign({},opts.headers||{},{"Cache-Control":"no-cache","Pragma":"no-cache"});
+    const headers=Object.assign({},opts.headers||{});
 
     // Telegram Mini App: передаём подписанные initData серверу.
     try{
@@ -2439,13 +2439,26 @@ async function apiFetch(path,opts,timeoutMs){
     if(opts.body!=null)fetchOpts.body=opts.body;
     if(ctrl)fetchOpts.signal=ctrl.signal;
 
-    const r=await fetch(url,fetchOpts);
+    let lastErr=null;
+    for(let attempt=0; attempt<2; attempt++){
+      try{
+        const r=await fetch(url,fetchOpts);
+        if(timer)clearTimeout(timer);
+        return r;
+      }catch(e){
+        lastErr=e;
+        // один повтор при сетевом сбое (Failed to fetch)
+        if(attempt===0 && e && e.name!=="AbortError"){
+          await new Promise(res=>setTimeout(res,400));
+          continue;
+        }
+        break;
+      }
+    }
     if(timer)clearTimeout(timer);
-    return r;
-  }catch(e){
-    if(timer)clearTimeout(timer);
-    if(e&&e.name==="AbortError")throw new Error("API request timeout");
-    throw e;
+    if(lastErr&&lastErr.name==="AbortError")throw new Error("API request timeout");
+    const hint=String(lastErr&&lastErr.message||lastErr||"Failed to fetch");
+    throw new Error(hint.indexOf("Failed to fetch")>=0?(hint+" · "+url):hint);
   }
 }
 async function apiGet(path,timeoutMs){
