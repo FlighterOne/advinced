@@ -3840,12 +3840,15 @@ function panelDonut(segments, centerHtml, size){
     +'<div class="pa-donut-center">'+centerHtml+'</div></div>';
 }
 function panelLegend(items){
-  return '<div class="pa-legend">'+(items||[]).map(it=>
-    '<div class="pa-legend-item"><span class="pa-swatch" style="background:'+(it.color||'#94A3B8')+'"></span>'
-    +'<span class="pa-legend-label">'+panelEsc(it.label||'')+'</span>'
+  return '<div class="pa-legend">'+(items||[]).map(it=>{
+    const lab = (typeof translateSegLabel==="function")
+      ? translateSegLabel(it.label, it.key)
+      : (it.label||"");
+    return '<div class="pa-legend-item"><span class="pa-swatch" style="background:'+(it.color||'#94A3B8')+'"></span>'
+    +'<span class="pa-legend-label">'+panelEsc(lab)+'</span>'
     +(it.value!=null?'<span class="pa-legend-val">'+panelEsc(Number(it.value).toFixed(2))+' ₽</span>':'')
-    +'</div>'
-  ).join('')+'</div>';
+    +'</div>';
+  }).join('')+'</div>';
 }
 
 function translateSegLabel(label, key){
@@ -3907,7 +3910,7 @@ async function openPanelAnalyticsView(kind){
       let html='<div class="pa-block">';
       html+=panelDonut(segs, '<div class="pa-cr-label">'+(kind==="expenses"?(t("an_expenses")||"Расходы"):(t("an_income")||"Доходы"))+'</div><div class="pa-cr-val">'+total.toFixed(0)+'</div>', 190);
       html+='<div class="pa-total-line">'+total.toFixed(2)+' ₽ — '+(t("an_total")||"всего")+'</div>';
-      html+=panelLegend(segs.map(localizeSeg));
+      html+=panelLegend(segs);
       html+='</div>';
       const fname=(kind==="expenses"?"expenses":"income")+"_"+((state.anPeriod&&state.anPeriod.mode==="all")?"all_time":("q"+(state.anPeriod&&state.anPeriod.q||"")))+".xlsx";
       html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", analyticsExportUrl(kind, state.anPeriod), fname);
@@ -3921,14 +3924,14 @@ async function openPanelAnalyticsView(kind){
       const cr=Number(r.cr||0);
       let html='<div class="pa-block">';
       html+=panelDonut(main, '<div class="pa-cr-label">CR</div><div class="pa-cr-val">~ '+cr.toFixed(1).replace(".",",")+'%</div>', 190);
-      html+=panelLegend(main.map(localizeSeg));
+      html+=panelLegend(main);
       html+='</div>';
       html+='<div class="pa-block" style="margin-top:8px">';
       html+='<div class="pa-section-label">'+(t("an_rev_detail")||"Пополнения и выводы")+'</div>';
       const net=Number(r.revenue_net||0);
       html+=panelDonut(rev, '<div class="pa-cr-label">'+(t("an_net")||"Итого")+'</div><div class="pa-cr-val" style="font-size:16px">'+net.toFixed(0)+'</div>', 150);
       html+='<div class="pa-total-line">'+net.toFixed(2)+' ₽</div>';
-      html+=panelLegend(rev.map(localizeSeg));
+      html+=panelLegend(rev);
       html+='</div>';
       html+='<div class="pa-meta">';
       html+='<div class="pa-meta-row"><span>'+(t("an_gross")||"Валовая прибыль")+'</span><b>'+Number(r.gross_profit||0).toFixed(2)+' ₽</b></div>';
@@ -3941,18 +3944,169 @@ async function openPanelAnalyticsView(kind){
       return;
     }
 
-    // other / projects text summary
+    // other / projects — structured + i18n
+    const OTHER_LABELS = {
+      ru:{summary:"Сводка",projects:"Проекты",bot_themes:"Темы ботов",ch_themes:"Темы каналов",countries:"Страны",
+        users_total:"Зарегистрировано пользователей",users_recent:"В сети за 10 дней",tx_count:"Всего транзакций",
+        gross_profit:"Выручка (доходы − расходы)",net_profit:"Чистая прибыль",proj_total:"Проектов в системе",
+        buy_total:"Проектов на покупку",sell_total:"Проектов на продажу",active_now:"Активных сейчас",
+        buy_active:"Активных покупка",sell_active:"Активных продажа",subs_all:"Оборот подписчиков за всё время",
+        reserve_balance:"Резервный баланс",reserve_total:"Всего 20% отчислений"},
+      en:{summary:"Summary",projects:"Projects",bot_themes:"Bot themes",ch_themes:"Channel themes",countries:"Countries",
+        users_total:"Registered users",users_recent:"Online in 10 days",tx_count:"Total transactions",
+        gross_profit:"Revenue (income − expenses)",net_profit:"Net profit",proj_total:"Projects in system",
+        buy_total:"Buy projects",sell_total:"Sell projects",active_now:"Active now",
+        buy_active:"Active buy",sell_active:"Active sell",subs_all:"Subscriber turnover all time",
+        reserve_balance:"Reserve balance",reserve_total:"Total 20% deductions"},
+      uk:{summary:"Зведення",projects:"Проєкти",bot_themes:"Теми ботів",ch_themes:"Теми каналів",countries:"Країни",
+        users_total:"Зареєстровано користувачів",users_recent:"В мережі за 10 днів",tx_count:"Усього транзакцій",
+        gross_profit:"Виручка (доходи − витрати)",net_profit:"Чистий прибуток",proj_total:"Проєктів у системі",
+        buy_total:"Проєктів на купівлю",sell_total:"Проєктів на продаж",active_now:"Активних зараз",
+        buy_active:"Активних купівля",sell_active:"Активних продаж",subs_all:"Оборот підписників за весь час",
+        reserve_balance:"Резервний баланс",reserve_total:"Усього 20% відрахувань"},
+      de:{summary:"Übersicht",projects:"Projekte",bot_themes:"Bot-Themen",ch_themes:"Kanal-Themen",countries:"Länder",
+        users_total:"Registrierte Nutzer",users_recent:"Online in 10 Tagen",tx_count:"Transaktionen gesamt",
+        gross_profit:"Umsatz (Einnahmen − Ausgaben)",net_profit:"Nettogewinn",proj_total:"Projekte im System",
+        buy_total:"Kaufprojekte",sell_total:"Verkaufsprojekte",active_now:"Jetzt aktiv",
+        buy_active:"Aktiv Kauf",sell_active:"Aktiv Verkauf",subs_all:"Abonnenten-Umsatz gesamt",
+        reserve_balance:"Reservebilanz",reserve_total:"Gesamt 20% Abzüge"},
+      fr:{summary:"Résumé",projects:"Projets",bot_themes:"Thèmes bots",ch_themes:"Thèmes canaux",countries:"Pays",
+        users_total:"Utilisateurs inscrits",users_recent:"En ligne sur 10 jours",tx_count:"Transactions totales",
+        gross_profit:"Chiffre (revenus − dépenses)",net_profit:"Bénéfice net",proj_total:"Projets dans le système",
+        buy_total:"Projets achat",sell_total:"Projets vente",active_now:"Actifs maintenant",
+        buy_active:"Actifs achat",sell_active:"Actifs vente",subs_all:"Volume abonnés total",
+        reserve_balance:"Solde de réserve",reserve_total:"Total déductions 20%"},
+      es:{summary:"Resumen",projects:"Proyectos",bot_themes:"Temas de bots",ch_themes:"Temas de canales",countries:"Países",
+        users_total:"Usuarios registrados",users_recent:"En línea en 10 días",tx_count:"Transacciones totales",
+        gross_profit:"Ingresos (ingresos − gastos)",net_profit:"Beneficio neto",proj_total:"Proyectos en el sistema",
+        buy_total:"Proyectos compra",sell_total:"Proyectos venta",active_now:"Activos ahora",
+        buy_active:"Activos compra",sell_active:"Activos venta",subs_all:"Volumen de suscriptores",
+        reserve_balance:"Saldo de reserva",reserve_total:"Total deducciones 20%"},
+      it:{summary:"Riepilogo",projects:"Progetti",bot_themes:"Temi bot",ch_themes:"Temi canali",countries:"Paesi",
+        users_total:"Utenti registrati",users_recent:"Online in 10 giorni",tx_count:"Transazioni totali",
+        gross_profit:"Ricavi (entrate − spese)",net_profit:"Utile netto",proj_total:"Progetti nel sistema",
+        buy_total:"Progetti acquisto",sell_total:"Progetti vendita",active_now:"Attivi ora",
+        buy_active:"Attivi acquisto",sell_active:"Attivi vendita",subs_all:"Volume iscritti totale",
+        reserve_balance:"Saldo di riserva",reserve_total:"Totale detrazioni 20%"},
+      pt:{summary:"Resumo",projects:"Projetos",bot_themes:"Temas de bots",ch_themes:"Temas de canais",countries:"Países",
+        users_total:"Usuários registrados",users_recent:"Online em 10 dias",tx_count:"Total de transações",
+        gross_profit:"Receita (receitas − despesas)",net_profit:"Lucro líquido",proj_total:"Projetos no sistema",
+        buy_total:"Projetos compra",sell_total:"Projetos venda",active_now:"Ativos agora",
+        buy_active:"Ativos compra",sell_active:"Ativos venda",subs_all:"Volume de assinantes",
+        reserve_balance:"Saldo reserva",reserve_total:"Total deduções 20%"},
+      tr:{summary:"Özet",projects:"Projeler",bot_themes:"Bot temaları",ch_themes:"Kanal temaları",countries:"Ülkeler",
+        users_total:"Kayıtlı kullanıcılar",users_recent:"10 günde çevrimiçi",tx_count:"Toplam işlem",
+        gross_profit:"Gelir (gelir − gider)",net_profit:"Net kâr",proj_total:"Sistemdeki projeler",
+        buy_total:"Satın alma projeleri",sell_total:"Satış projeleri",active_now:"Şu an aktif",
+        buy_active:"Aktif satın alma",sell_active:"Aktif satış",subs_all:"Toplam abone hacmi",
+        reserve_balance:"Rezerv bakiye",reserve_total:"Toplam %20 kesinti"},
+      id:{summary:"Ringkasan",projects:"Proyek",bot_themes:"Tema bot",ch_themes:"Tema saluran",countries:"Negara",
+        users_total:"Pengguna terdaftar",users_recent:"Online 10 hari",tx_count:"Total transaksi",
+        gross_profit:"Pendapatan (pendapatan − pengeluaran)",net_profit:"Laba bersih",proj_total:"Proyek di sistem",
+        buy_total:"Proyek beli",sell_total:"Proyek jual",active_now:"Aktif sekarang",
+        buy_active:"Aktif beli",sell_active:"Aktif jual",subs_all:"Volume pelanggan total",
+        reserve_balance:"Saldo cadangan",reserve_total:"Total potongan 20%"},
+      ar:{summary:"ملخص",projects:"المشاريع",bot_themes:"مواضيع البوتات",ch_themes:"مواضيع القنوات",countries:"الدول",
+        users_total:"المستخدمون المسجلون",users_recent:"متصل خلال 10 أيام",tx_count:"إجمالي المعاملات",
+        gross_profit:"الإيرادات (دخل − مصروف)",net_profit:"صافي الربح",proj_total:"المشاريع في النظام",
+        buy_total:"مشاريع الشراء",sell_total:"مشاريع البيع",active_now:"نشط الآن",
+        buy_active:"شراء نشط",sell_active:"بيع نشط",subs_all:"حجم المشتركين الكلي",
+        reserve_balance:"رصيد الاحتياطي",reserve_total:"إجمالي اقتطاعات 20%"},
+      zh:{summary:"汇总",projects:"项目",bot_themes:"机器人主题",ch_themes:"频道主题",countries:"国家",
+        users_total:"注册用户",users_recent:"10天内在线",tx_count:"交易总数",
+        gross_profit:"营收（收入−支出）",net_profit:"净利润",proj_total:"系统中的项目",
+        buy_total:"购买项目",sell_total:"销售项目",active_now:"当前活跃",
+        buy_active:"活跃购买",sell_active:"活跃销售",subs_all:"订阅者总流转",
+        reserve_balance:"储备余额",reserve_total:"20%扣除合计"},
+      ja:{summary:"概要",projects:"プロジェクト",bot_themes:"ボットテーマ",ch_themes:"チャンネルテーマ",countries:"国",
+        users_total:"登録ユーザー",users_recent:"10日間オンライン",tx_count:"取引総数",
+        gross_profit:"売上（収入−支出）",net_profit:"純利益",proj_total:"システム内プロジェクト",
+        buy_total:"購入プロジェクト",sell_total:"販売プロジェクト",active_now:"現在アクティブ",
+        buy_active:"アクティブ購入",sell_active:"アクティブ販売",subs_all:"登録者総ボリューム",
+        reserve_balance:"予備残高",reserve_total:"20%控除合計"},
+      ko:{summary:"요약",projects:"프로젝트",bot_themes:"봇 주제",ch_themes:"채널 주제",countries:"국가",
+        users_total:"등록 사용자",users_recent:"10일 내 온라인",tx_count:"총 거래",
+        gross_profit:"매출(수입−지출)",net_profit:"순이익",proj_total:"시스템 프로젝트",
+        buy_total:"구매 프로젝트",sell_total:"판매 프로젝트",active_now:"현재 활성",
+        buy_active:"활성 구매",sell_active:"활성 판매",subs_all:"구독자 총 회전",
+        reserve_balance:"예비 잔액",reserve_total:"20% 공제 합계"}
+    };
+    const lang=(state&&state.lang)||"ru";
+    const L=OTHER_LABELS[lang]||OTHER_LABELS.en||OTHER_LABELS.ru;
+    const moneyKeys={gross_profit:1,net_profit:1,reserve_balance:1,reserve_total:1};
+    let html="";
+    const metrics=r.metrics||[];
+    if(metrics.length){
+      html+='<div class="an-h">'+(L.summary||"Summary")+'</div>';
+      const order=["users_total","users_recent","tx_count","gross_profit","net_profit"];
+      order.forEach(k=>{
+        const m=metrics.find(x=>x.key===k);
+        if(!m) return;
+        const val=moneyKeys[k]?(Number(m.value).toFixed(2)+" ₽"):String(m.value);
+        html+='<div class="an-line">'+panelEsc((L[k]||k)+": "+val)+'</div>';
+      });
+      html+='<div class="an-h">'+(L.projects||"Projects")+'</div>';
+      ["proj_total","buy_total","sell_total","active_now","buy_active","sell_active","subs_all"].forEach(k=>{
+        const m=metrics.find(x=>x.key===k);
+        if(!m) return;
+        html+='<div class="an-line">'+panelEsc((L[k]||k)+": "+String(m.value))+'</div>';
+      });
+      const rb=metrics.find(x=>x.key==="reserve_balance");
+      const rt=metrics.find(x=>x.key==="reserve_total");
+      if(rb||rt){
+        html+='<div style="height:8px"></div>';
+        if(rb) html+='<div class="an-emph">'+panelEsc((L.reserve_balance||"Reserve")+": "+Number(rb.value).toFixed(2)+" ₽")+'</div>';
+        if(rt) html+='<div class="an-emph">'+panelEsc((L.reserve_total||"20%")+": "+Number(rt.value).toFixed(2)+" ₽")+'</div>';
+      }
+      const bt=r.bot_themes||{};
+      const ct=r.ch_themes||{};
+      const keysBt=Object.keys(bt);
+      if(keysBt.length){
+        html+='<div class="an-h">'+(L.bot_themes||"Bot themes")+'</div>';
+        keysBt.forEach(th=>{ html+='<div class="an-line">'+panelEsc(th+": "+String(bt[th]))+'</div>'; });
+      }
+      const keysCt=Object.keys(ct);
+      if(keysCt.length){
+        html+='<div class="an-h">'+(L.ch_themes||"Channel themes")+'</div>';
+        keysCt.forEach(th=>{ html+='<div class="an-line">'+panelEsc(th+": "+String(ct[th]))+'</div>'; });
+      }
+      let countries=r.countries||[];
+      if(countries && !Array.isArray(countries) && typeof countries==="object"){
+        countries=Object.entries(countries).sort((a,b)=>Number(b[1]||0)-Number(a[1]||0)).slice(0,10);
+      }
+      if(Array.isArray(countries) && countries.length){
+        html+='<div class="an-h">'+(L.countries||"Countries")+'</div>';
+        countries.slice(0,10).forEach(row=>{
+          if(Array.isArray(row)) html+='<div class="an-line">'+panelEsc(String(row[0])+": "+String(row[1]))+'</div>';
+          else if(row&&row.country!=null) html+='<div class="an-line">'+panelEsc(String(row.country)+": "+String(row.count||row.n||""))+'</div>';
+        });
+      }
+      body.innerHTML=html||('<div class="muted">'+(t("empty")||"No data")+'</div>');
+      return;
+    }
+    // fallback: translate known Russian prefixes in lines
     const lines=(r.lines)||[];
     if(!lines.length){ body.innerHTML='<div class="muted">'+(t("empty")||"Нет данных")+'</div>'; return; }
+    const prefixMap={
+      "Зарегистрировано пользователей":L.users_total,"В сети за 10 дней":L.users_recent,
+      "Всего транзакций":L.tx_count,"Выручка (доходы − расходы)":L.gross_profit,"Чистая прибыль":L.net_profit,
+      "Проектов в системе":L.proj_total,"Проектов на покупку":L.buy_total,"Проектов на продажу":L.sell_total,
+      "Активных сейчас":L.active_now,"Активных покупка":L.buy_active,"Активных продажа":L.sell_active,
+      "Оборот подписчиков за всё время":L.subs_all,"Резервный баланс":L.reserve_balance,"Всего 20% отчислений":L.reserve_total
+    };
+    const headMap={"Сводка":L.summary,"Проекты":L.projects,"Темы ботов":L.bot_themes,"Темы каналов":L.ch_themes,"Страны":L.countries};
     body.innerHTML=lines.map(l=>{
       if(l==null || l==="") return '<div style="height:8px"></div>';
-      const s=String(l);
+      let s=String(l);
       if(s.indexOf("##")===0){
-        return '<div class="an-h">'+panelEsc(s.slice(2))+'</div>';
+        const h=s.slice(2); return '<div class="an-h">'+panelEsc(headMap[h]||h)+'</div>';
       }
       if(s.indexOf("!!")===0){
-        return '<div class="an-emph">'+panelEsc(s.slice(2))+'</div>';
+        let rest=s.slice(2);
+        for(const [ru,tr] of Object.entries(prefixMap)){ if(rest.indexOf(ru)===0){ rest=tr+rest.slice(ru.length); break; } }
+        return '<div class="an-emph">'+panelEsc(rest)+'</div>';
       }
+      for(const [ru,tr] of Object.entries(prefixMap)){ if(s.indexOf(ru)===0){ s=tr+s.slice(ru.length); break; } }
       return '<div class="an-line">'+panelEsc(s)+'</div>';
     }).join("");
   }catch(e){ body.innerHTML='<div class="muted">'+panelEsc(e.message||e)+'</div>'; }
