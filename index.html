@@ -1143,7 +1143,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
             <div class="form-group" style="margin:0">
               <label class="form-label" for="ref-code-input">Промокод</label>
               <div class="ref-row" style="margin-top:6px">
-                <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Промокод" autocomplete="off"/>
+                <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Промокод" data-i18n-placeholder="promo_code_label" autocomplete="off"/>
                 <button type="button" class="btn primary" id="ref-save-btn">Сохранить</button>
               </div>
             </div>
@@ -1921,6 +1921,31 @@ function carPrev(){carIndex=(carIndex-1+SLIDE_COUNT)%SLIDE_COUNT;renderCarousel(
 
 let state={lang:"ru",theme:"light",history:["main"],depMethod:"sbp",wdMethod:"sbp",projPage:1,me:null,
   dep:{amount:0,fee:0,total:0},wd:{amount:0,fee:0,total:0}};
+
+const I18N_EXTRA={
+  ru:{ref_stat_level:"Уровень",ref_stat_refs:"Рефералов",ref_stat_10d:"За 10 дней",ref_stat_earned:"Заработано",promo_code_label:"Промокод",an_all_period:"За весь период",quarter_label:"{q} квартал {year}г ({start}–{end})",no_messages:"Нет сообщений",no_partners:"Партнёров пока нет",mod_tickets:"Обращения",mod_tickets_empty:"Заявок на рассмотрении нет",analytics_ads:"Реклама",ads_tab_stats:"Статистика",ads_tab_partners:"Партнёры",ads_default_level_label:"Все партнёры сначала получают уровень",ads_level:"Ур.",ads_refs_total:"Рефералов",save:"Сохранить",send:"Отправить",staff_label:"Сотрудник",user:"Пользователь",support_msg_ph:"Сообщение…"},
+  en:{ref_stat_level:"Level",ref_stat_refs:"Referrals",ref_stat_10d:"Last 10 days",ref_stat_earned:"Earned",promo_code_label:"Promo code",an_all_period:"All time",quarter_label:"Q{q} {year} ({start}–{end})",no_messages:"No messages",no_partners:"No partners yet",mod_tickets:"Tickets",mod_tickets_empty:"No tickets under review",analytics_ads:"Ads",ads_tab_stats:"Statistics",ads_tab_partners:"Partners",ads_default_level_label:"All partners start at level",ads_level:"Lv.",ads_refs_total:"Referrals",save:"Save",send:"Send",staff_label:"Staff",user:"User",support_msg_ph:"Message…"},
+  uk:{ref_stat_level:"Рівень",ref_stat_refs:"Рефералів",ref_stat_10d:"За 10 днів",ref_stat_earned:"Зароблено",promo_code_label:"Промокод",an_all_period:"За весь період",quarter_label:"{q} квартал {year}р ({start}–{end})",no_messages:"Немає повідомлень",no_partners:"Партнерів поки немає",mod_tickets:"Звернення",mod_tickets_empty:"Немає заявок на розгляді",analytics_ads:"Реклама",ads_tab_stats:"Статистика",ads_tab_partners:"Партнери",ads_default_level_label:"Усі партнери спочатку отримують рівень",ads_level:"Рів.",ads_refs_total:"Рефералів",save:"Зберегти",send:"Надіслати",staff_label:"Співробітник",user:"Користувач",support_msg_ph:"Повідомлення…"},
+  de:{ref_stat_level:"Stufe",ref_stat_refs:"Empfehlungen",ref_stat_10d:"Letzte 10 Tage",ref_stat_earned:"Verdient",promo_code_label:"Promo-Code",an_all_period:"Gesamter Zeitraum",quarter_label:"Q{q} {year} ({start}–{end})",no_messages:"Keine Nachrichten",no_partners:"Noch keine Partner",mod_tickets:"Anfragen",mod_tickets_empty:"Keine Anfragen zur Prüfung",analytics_ads:"Werbung",ads_tab_stats:"Statistik",ads_tab_partners:"Partner",ads_default_level_label:"Alle Partner starten auf Stufe",ads_level:"St.",ads_refs_total:"Empfehlungen",save:"Speichern",send:"Senden",staff_label:"Mitarbeiter",user:"Benutzer",support_msg_ph:"Nachricht…"},
+  fr:{ref_stat_level:"Niveau",ref_stat_refs:"Parrainages",ref_stat_10d:"10 derniers jours",ref_stat_earned:"Gagné",promo_code_label:"Code promo",an_all_period:"Toute la période",quarter_label:"T{q} {year} ({start}–{end})",no_messages:"Aucun message",no_partners:"Pas encore de partenaires",mod_tickets:"Tickets",mod_tickets_empty:"Aucun ticket en cours",analytics_ads:"Publicité",ads_tab_stats:"Statistiques",ads_tab_partners:"Partenaires",ads_default_level_label:"Tous les partenaires commencent au niveau",ads_level:"Niv.",ads_refs_total:"Parrainages",save:"Enregistrer",send:"Envoyer",staff_label:"Staff",user:"Utilisateur",support_msg_ph:"Message…"},
+  es:{ref_stat_level:"Nivel",ref_stat_refs:"Referidos",ref_stat_10d:"Últimos 10 días",ref_stat_earned:"Ganado",promo_code_label:"Código promocional",an_all_period:"Todo el período",quarter_label:"T{q} {year} ({start}–{end})",no_messages:"Sin mensajes",no_partners:"Aún no hay socios",mod_tickets:"Solicitudes",mod_tickets_empty:"No hay solicitudes en revisión",analytics_ads:"Publicidad",ads_tab_stats:"Estadísticas",ads_tab_partners:"Socios",ads_default_level_label:"Todos los socios empiezan en el nivel",ads_level:"Niv.",ads_refs_total:"Referidos",save:"Guardar",send:"Enviar",staff_label:"Personal",user:"Usuario",support_msg_ph:"Mensaje…"},
+  it:{ref_stat_level:"Livello",ref_stat_refs:"Referral",ref_stat_10d:"Ultimi 10 giorni",ref_stat_earned:"Guadagnato",promo_code_label:"Codice promo",an_all_period:"Tutto il periodo",quarter_label:"T{q} {year} ({start}–{end})",no_messages:"Nessun messaggio",no_partners:"Nessun partner ancora",mod_tickets:"Richieste",mod_tickets_empty:"Nessuna richiesta in revisione",analytics_ads:"Pubblicità",ads_tab_stats:"Statistiche",ads_tab_partners:"Partner",ads_default_level_label:"Tutti i partner iniziano al livello",ads_level:"Liv.",ads_refs_total:"Referral",save:"Salva",send:"Invia",staff_label:"Staff",user:"Utente",support_msg_ph:"Messaggio…"},
+  pt:{ref_stat_level:"Nível",ref_stat_refs:"Indicações",ref_stat_10d:"Últimos 10 dias",ref_stat_earned:"Ganho",promo_code_label:"Código promocional",an_all_period:"Todo o período",quarter_label:"T{q} {year} ({start}–{end})",no_messages:"Sem mensagens",no_partners:"Ainda sem parceiros",mod_tickets:"Solicitações",mod_tickets_empty:"Nenhuma solicitação em análise",analytics_ads:"Publicidade",ads_tab_stats:"Estatísticas",ads_tab_partners:"Parceiros",ads_default_level_label:"Todos os parceiros começam no nível",ads_level:"Nív.",ads_refs_total:"Indicações",save:"Salvar",send:"Enviar",staff_label:"Equipe",user:"Usuário",support_msg_ph:"Mensagem…"},
+  tr:{ref_stat_level:"Seviye",ref_stat_refs:"Referanslar",ref_stat_10d:"Son 10 gün",ref_stat_earned:"Kazanılan",promo_code_label:"Promosyon kodu",an_all_period:"Tüm dönem",quarter_label:"{year} Ç{q} ({start}–{end})",no_messages:"Mesaj yok",no_partners:"Henüz ortak yok",mod_tickets:"Talepler",mod_tickets_empty:"İncelenecek talep yok",analytics_ads:"Reklam",ads_tab_stats:"İstatistikler",ads_tab_partners:"Ortaklar",ads_default_level_label:"Tüm ortaklar şu seviyeden başlar",ads_level:"Sv.",ads_refs_total:"Referanslar",save:"Kaydet",send:"Gönder",staff_label:"Personel",user:"Kullanıcı",support_msg_ph:"Mesaj…"},
+  id:{ref_stat_level:"Level",ref_stat_refs:"Referral",ref_stat_10d:"10 hari terakhir",ref_stat_earned:"Pendapatan",promo_code_label:"Kode promo",an_all_period:"Semua periode",quarter_label:"Q{q} {year} ({start}–{end})",no_messages:"Tidak ada pesan",no_partners:"Belum ada mitra",mod_tickets:"Tiket",mod_tickets_empty:"Tidak ada tiket ditinjau",analytics_ads:"Iklan",ads_tab_stats:"Statistik",ads_tab_partners:"Mitra",ads_default_level_label:"Semua mitra mulai dari level",ads_level:"Lv.",ads_refs_total:"Referral",save:"Simpan",send:"Kirim",staff_label:"Staf",user:"Pengguna",support_msg_ph:"Pesan…"},
+  ar:{ref_stat_level:"المستوى",ref_stat_refs:"الإحالات",ref_stat_10d:"آخر 10 أيام",ref_stat_earned:"المكتسب",promo_code_label:"رمز ترويجي",an_all_period:"كل الفترة",quarter_label:"ر{q} {year} ({start}–{end})",no_messages:"لا توجد رسائل",no_partners:"لا يوجد شركاء بعد",mod_tickets:"الطلبات",mod_tickets_empty:"لا توجد طلبات قيد المراجعة",analytics_ads:"الإعلانات",ads_tab_stats:"الإحصائيات",ads_tab_partners:"الشركاء",ads_default_level_label:"يبدأ جميع الشركاء من المستوى",ads_level:"مس.",ads_refs_total:"الإحالات",save:"حفظ",send:"إرسال",staff_label:"الموظف",user:"المستخدم",support_msg_ph:"رسالة…"},
+  zh:{ref_stat_level:"等级",ref_stat_refs:"推荐",ref_stat_10d:"近10天",ref_stat_earned:"已赚取",promo_code_label:"促销码",an_all_period:"全部时间",quarter_label:"{year}年第{q}季度 ({start}–{end})",no_messages:"暂无消息",no_partners:"暂无合作伙伴",mod_tickets:"工单",mod_tickets_empty:"暂无待审工单",analytics_ads:"广告",ads_tab_stats:"统计",ads_tab_partners:"合作伙伴",ads_default_level_label:"所有合作伙伴起始等级",ads_level:"等级",ads_refs_total:"推荐",save:"保存",send:"发送",staff_label:"员工",user:"用户",support_msg_ph:"消息…"},
+  ja:{ref_stat_level:"レベル",ref_stat_refs:"紹介数",ref_stat_10d:"直近10日",ref_stat_earned:"獲得額",promo_code_label:"プロモコード",an_all_period:"全期間",quarter_label:"{year}年Q{q} ({start}–{end})",no_messages:"メッセージなし",no_partners:"パートナーはまだいません",mod_tickets:"お問い合わせ",mod_tickets_empty:"審査中の申請はありません",analytics_ads:"広告",ads_tab_stats:"統計",ads_tab_partners:"パートナー",ads_default_level_label:"全パートナーの初期レベル",ads_level:"Lv.",ads_refs_total:"紹介数",save:"保存",send:"送信",staff_label:"スタッフ",user:"ユーザー",support_msg_ph:"メッセージ…"},
+  ko:{ref_stat_level:"레벨",ref_stat_refs:"추천",ref_stat_10d:"최근 10일",ref_stat_earned:"수익",promo_code_label:"프로모 코드",an_all_period:"전체 기간",quarter_label:"{year}년 {q}분기 ({start}–{end})",no_messages:"메시지 없음",no_partners:"파트너 없음",mod_tickets:"문의",mod_tickets_empty:"검토 중인 신청 없음",analytics_ads:"광고",ads_tab_stats:"통계",ads_tab_partners:"파트너",ads_default_level_label:"모든 파트너 시작 레벨",ads_level:"Lv.",ads_refs_total:"추천",save:"저장",send:"보내기",staff_label:"직원",user:"사용자",support_msg_ph:"메시지…"},
+};
+(function(){
+  try{
+    Object.keys(I18N_EXTRA).forEach(function(lang){
+      if(!I18N[lang]) I18N[lang]={};
+      Object.assign(I18N[lang], I18N_EXTRA[lang]);
+    });
+  }catch(e){}
+})();
 
 function t(key){const p=I18N[state.lang]||I18N.ru;return p[key]!=null?p[key]:((I18N.en[key]!=null?I18N.en[key]:I18N.ru[key])||key)}
 function roleName(role){const k=ROLE_NAMES[role]||"user";const p=I18N[state.lang]||I18N.ru;return(p.roles&&p.roles[k])||k}
@@ -3628,7 +3653,15 @@ async function ensureQuarters(target){
     if(target.mode!=="all" && target.q==null && r.current!=null){
       target.q=r.current;
       const hit=list.find(x=>x.index===r.current);
-      if(hit) target.label=hit.label;
+      if(hit) target.label=formatQuarterLabel(hit)||hit.label;
+    }
+    // обновить подпись текущего квартала на выбранном языке
+    if(target.mode==="quarter" && target.q!=null){
+      const hit=list.find(x=>Number(x.index)===Number(target.q));
+      if(hit) target.label=formatQuarterLabel(hit)||hit.label;
+    }
+    if(target.mode==="all"){
+      target.label=t("an_all_period")||target.label;
     }
     return list;
   }catch(e){ return target.quarters||[]; }
@@ -3641,11 +3674,11 @@ function shiftPeriod(target, dir){
     if(dir>0){
       // с «весь период» вперёд → 1-й квартал
       const q=list[0];
-      target.mode="quarter"; target.q=q.index; target.label=q.label;
+      target.mode="quarter"; target.q=q.index; target.label=formatQuarterLabel(q)||q.label;
     }else if(dir<0){
       // назад с «весь период» → последний (текущий) квартал
       const q=list[list.length-1];
-      target.mode="quarter"; target.q=q.index; target.label=q.label;
+      target.mode="quarter"; target.q=q.index; target.label=formatQuarterLabel(q)||q.label;
     }
     return;
   }
@@ -3662,7 +3695,7 @@ function shiftPeriod(target, dir){
     return;
   }
   const q=list[ni];
-  target.mode="quarter"; target.q=q.index; target.label=q.label;
+  target.mode="quarter"; target.q=q.index; target.label=formatQuarterLabel(q)||q.label;
 }
 function closePeriodDropdowns(){
   ["panel-period-dd","proj-period-dd"].forEach(id=>{
@@ -3670,6 +3703,28 @@ function closePeriodDropdowns(){
     if(el){ el.hidden=true; el.innerHTML=""; }
   });
 }
+
+function formatQuarterLabel(q){
+  if(!q) return "";
+  let start="", end="";
+  try{
+    if(q.start){const d=new Date(q.start); if(!isNaN(d)) start=("0"+d.getUTCDate()).slice(-2)+"."+("0"+(d.getUTCMonth()+1)).slice(-2)+"."+d.getUTCFullYear();}
+  }catch(e){}
+  try{
+    if(q.end){const d=new Date(q.end); if(!isNaN(d)) end=("0"+d.getUTCDate()).slice(-2)+"."+("0"+(d.getUTCMonth()+1)).slice(-2)+"."+d.getUTCFullYear();}
+  }catch(e){}
+  if(!start && q.label){
+    const m=String(q.label).match(/(\d{2}\.\d{2}\.\d{4})/g);
+    if(m&&m[0]) start=m[0];
+    if(m&&m[1]) end=m[1];
+  }
+  const year=q.year!=null?q.year:(start?start.slice(6):"");
+  const qq=q.q!=null?q.q:"";
+  let tpl=t("quarter_label");
+  if(!tpl||tpl==="quarter_label") tpl="{q} · {year} ({start}–{end})";
+  return tpl.replace(/\{q\}/g,String(qq)).replace(/\{year\}/g,String(year)).replace(/\{start\}/g,start).replace(/\{end\}/g,end);
+}
+
 async function openPeriodPicker(which){
   which = which || "panel";
   const target = which==="proj" ? state.projPeriod : state.anPeriod;
@@ -3683,7 +3738,7 @@ async function openPeriodPicker(which){
   let html='<button type="button" class="pd-item'+(target.mode==="all"?" active":"")+'" data-pq="all">'+(t("an_all_period")||"За весь период")+'</button>';
   (target.quarters||[]).forEach(q=>{
     const act=(target.mode==="quarter" && Number(target.q)===Number(q.index))?" active":"";
-    html+='<button type="button" class="pd-item'+act+'" data-pq="'+q.index+'">'+panelEsc(q.label)+'</button>';
+    html+='<button type="button" class="pd-item'+act+'" data-pq="'+q.index+'">'+panelEsc(formatQuarterLabel(q)||q.label)+'</button>';
   });
   dd.innerHTML=html;
   dd.hidden=false;
@@ -3696,7 +3751,7 @@ async function openPeriodPicker(which){
       }else{
         const q=(target.quarters||[]).find(x=>String(x.index)===String(v));
         target.mode="quarter"; target.q=Number(v);
-        target.label=q?q.label:("Q "+v);
+        target.label=q?(formatQuarterLabel(q)||q.label):("Q "+v);
       }
       closePeriodDropdowns();
       if(which==="proj"){
@@ -4543,10 +4598,10 @@ async function loadReferralMe(){
     const earn=String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00");
     if(st){
       st.innerHTML=
-        '<div class="ref-stat-line">Уровень: <b>'+level+'</b></div>'+
-        '<div class="ref-stat-line">Рефералов: <b>'+total+'</b></div>'+
-        '<div class="ref-stat-line">За 10 дней: <b>'+d10+'</b></div>'+
-        '<div class="ref-stat-line">Заработано: <b>'+earn+' ₽</b></div>';
+        '<div class="ref-stat-line">'+t("ref_stat_level")+': <b>'+level+'</b></div>'+
+        '<div class="ref-stat-line">'+t("ref_stat_refs")+': <b>'+total+'</b></div>'+
+        '<div class="ref-stat-line">'+t("ref_stat_10d")+': <b>'+d10+'</b></div>'+
+        '<div class="ref-stat-line">'+t("ref_stat_earned")+': <b>'+earn+' ₽</b></div>';
     }
   }catch(e){if(st)st.textContent=""}
 }
