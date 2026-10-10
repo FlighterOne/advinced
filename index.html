@@ -3848,33 +3848,40 @@ function panelLegend(items){
   ).join('')+'</div>';
 }
 
-function translateSegLabel(label){
-  const s=String(label||"");
-  const map={
-    "Выводы пользователям":"seg_withdrawals",
-    "Реферальная система":"seg_referral",
-    "Зарплаты сотрудникам":"seg_salary",
-    "Компенсации":"seg_compensation",
-    "Прочие расходы":"seg_other_exp",
-    "Пополнения":"seg_deposits",
-    "Прочие доходы":"seg_other_inc",
-    "Доходы":"seg_income",
-    "Расходы":"seg_expense",
-    "Выводы":"seg_withdraw",
-    "Отписались":"unsub",
-    "Остались":"remain",
-    "С аватаркой":"avatar"
-  };
-  const key=map[s];
-  if(key){
-    // try main i18n then PS
-    let v=t(key);
-    if(v&&v!==key) return v;
-    v=(typeof psT==="function")?psT(key):null;
-    if(v&&v!==key) return v;
+function translateSegLabel(label, key){
+  const lang = (state && state.lang) || "ru";
+  const dict = {"ru": {"withdraw": "Выводы пользователям", "referral": "Реферальная система", "salary": "Зарплаты сотрудникам", "compensation": "Компенсации", "other": "Прочие расходы", "deposits": "Пополнения", "other_inc": "Прочие доходы", "income": "Доходы", "expense": "Расходы", "withdrawals": "Выводы", "deposit": "Пополнения", "Выводы пользователям": "Выводы пользователям", "Реферальная система": "Реферальная система", "Зарплаты сотрудникам": "Зарплаты сотрудникам", "Компенсации": "Компенсации", "Прочие расходы": "Прочие расходы", "Пополнения": "Пополнения", "Прочие доходы": "Прочие доходы", "Доходы": "Доходы", "Расходы": "Расходы", "Выводы": "Выводы"}, "en": {"withdraw": "User withdrawals", "referral": "Referral system", "salary": "Staff salaries", "compensation": "Compensations", "other": "Other expenses", "deposits": "Deposits", "other_inc": "Other income", "income": "Income", "expense": "Expenses", "withdrawals": "Withdrawals", "deposit": "Deposits", "Выводы пользователям": "User withdrawals", "Реферальная система": "Referral system", "Зарплаты сотрудникам": "Staff salaries", "Компенсации": "Compensations", "Прочие расходы": "Other expenses", "Пополнения": "Deposits", "Прочие доходы": "Other income", "Доходы": "Income", "Расходы": "Expenses", "Выводы": "Withdrawals"}, "uk": {"withdraw": "Виводи користувачам", "referral": "Реферальна система", "salary": "Зарплати співробітникам", "compensation": "Компенсації", "other": "Інші витрати", "deposits": "Поповнення", "other_inc": "Інші доходи", "income": "Доходи", "expense": "Витрати", "withdrawals": "Виводи", "deposit": "Поповнення", "Выводы пользователям": "Виводи користувачам", "Реферальная система": "Реферальна система", "Зарплаты сотрудникам": "Зарплати співробітникам", "Компенсации": "Компенсації", "Прочие расходы": "Інші витрати", "Пополнения": "Поповнення", "Прочие доходы": "Інші доходи", "Доходы": "Доходи", "Расходы": "Витрати", "Выводы": "Виводи"}, "de": {"withdraw": "Auszahlungen an Nutzer", "referral": "Empfehlungssystem", "salary": "Gehälter", "compensation": "Kompensationen", "other": "Sonstige Ausgaben", "deposits": "Einzahlungen", "other_inc": "Sonstige Einnahmen", "income": "Einnahmen", "expense": "Ausgaben", "withdrawals": "Auszahlungen", "deposit": "Einzahlungen", "Выводы пользователям": "Auszahlungen an Nutzer", "Реферальная система": "Empfehlungssystem", "Зарплаты сотрудникам": "Gehälter", "Компенсации": "Kompensationen", "Прочие расходы": "Sonstige Ausgaben", "Пополнения": "Einzahlungen", "Прочие доходы": "Sonstige Einnahmen", "Доходы": "Einnahmen", "Расходы": "Ausgaben", "Выводы": "Auszahlungen"}, "fr": {"withdraw": "Retraits utilisateurs", "referral": "Système de parrainage", "salary": "Salaires", "compensation": "Compensations", "other": "Autres dépenses", "deposits": "Dépôts", "other_inc": "Autres revenus", "income": "Revenus", "expense": "Dépenses", "withdrawals": "Retraits", "deposit": "Dépôts", "Выводы пользователям": "Retraits utilisateurs", "Реферальная система": "Système de parrainage", "Зарплаты сотрудникам": "Salaires", "Компенсации": "Compensations", "Прочие расходы": "Autres dépenses", "Пополнения": "Dépôts", "Прочие доходы": "Autres revenus", "Доходы": "Revenus", "Расходы": "Dépenses", "Выводы": "Retraits"}, "es": {"withdraw": "Retiros de usuarios", "referral": "Sistema de referidos", "salary": "Salarios", "compensation": "Compensaciones", "other": "Otros gastos", "deposits": "Depósitos", "other_inc": "Otros ingresos", "income": "Ingresos", "expense": "Gastos", "withdrawals": "Retiros", "deposit": "Depósitos", "Выводы пользователям": "Retiros de usuarios", "Реферальная система": "Sistema de referidos", "Зарплаты сотрудникам": "Salarios", "Компенсации": "Compensaciones", "Прочие расходы": "Otros gastos", "Пополнения": "Depósitos", "Прочие доходы": "Otros ingresos", "Доходы": "Ingresos", "Расходы": "Gastos", "Выводы": "Retiros"}, "it": {"withdraw": "Prelievi utenti", "referral": "Sistema referral", "salary": "Stipendi", "compensation": "Compensi", "other": "Altre spese", "deposits": "Depositi", "other_inc": "Altri ricavi", "income": "Entrate", "expense": "Spese", "withdrawals": "Prelievi", "deposit": "Depositi", "Выводы пользователям": "Prelievi utenti", "Реферальная система": "Sistema referral", "Зарплаты сотрудникам": "Stipendi", "Компенсации": "Compensi", "Прочие расходы": "Altre spese", "Пополнения": "Depositi", "Прочие доходы": "Altri ricavi", "Доходы": "Entrate", "Расходы": "Spese", "Выводы": "Prelievi"}, "pt": {"withdraw": "Saques de usuários", "referral": "Sistema de indicação", "salary": "Salários", "compensation": "Compensações", "other": "Outras despesas", "deposits": "Depósitos", "other_inc": "Outras receitas", "income": "Receitas", "expense": "Despesas", "withdrawals": "Saques", "deposit": "Depósitos", "Выводы пользователям": "Saques de usuários", "Реферальная система": "Sistema de indicação", "Зарплаты сотрудникам": "Salários", "Компенсации": "Compensações", "Прочие расходы": "Outras despesas", "Пополнения": "Depósitos", "Прочие доходы": "Outras receitas", "Доходы": "Receitas", "Расходы": "Despesas", "Выводы": "Saques"}, "tr": {"withdraw": "Kullanıcı çekimleri", "referral": "Referans sistemi", "salary": "Maaşlar", "compensation": "Tazminatlar", "other": "Diğer giderler", "deposits": "Yatırımlar", "other_inc": "Diğer gelirler", "income": "Gelirler", "expense": "Giderler", "withdrawals": "Çekimler", "deposit": "Yatırımlar", "Выводы пользователям": "Kullanıcı çekimleri", "Реферальная система": "Referans sistemi", "Зарплаты сотрудникам": "Maaşlar", "Компенсации": "Tazminatlar", "Прочие расходы": "Diğer giderler", "Пополнения": "Yatırımlar", "Прочие доходы": "Diğer gelirler", "Доходы": "Gelirler", "Расходы": "Giderler", "Выводы": "Çekimler"}, "id": {"withdraw": "Penarikan pengguna", "referral": "Sistem referral", "salary": "Gaji staf", "compensation": "Kompensasi", "other": "Pengeluaran lain", "deposits": "Deposit", "other_inc": "Pendapatan lain", "income": "Pendapatan", "expense": "Pengeluaran", "withdrawals": "Penarikan", "deposit": "Deposit", "Выводы пользователям": "Penarikan pengguna", "Реферальная система": "Sistem referral", "Зарплаты сотрудникам": "Gaji staf", "Компенсации": "Kompensasi", "Прочие расходы": "Pengeluaran lain", "Пополнения": "Deposit", "Прочие доходы": "Pendapatan lain", "Доходы": "Pendapatan", "Расходы": "Pengeluaran", "Выводы": "Penarikan"}, "ar": {"withdraw": "سحوبات المستخدمين", "referral": "نظام الإحالة", "salary": "رواتب الموظفين", "compensation": "التعويضات", "other": "مصاريف أخرى", "deposits": "الإيداعات", "other_inc": "دخل آخر", "income": "الإيرادات", "expense": "المصروفات", "withdrawals": "السحوبات", "deposit": "الإيداعات", "Выводы пользователям": "سحوبات المستخدمين", "Реферальная система": "نظام الإحالة", "Зарплаты сотрудникам": "رواتب الموظفين", "Компенсации": "التعويضات", "Прочие расходы": "مصاريف أخرى", "Пополнения": "الإيداعات", "Прочие доходы": "دخل آخر", "Доходы": "الإيرادات", "Расходы": "المصروفات", "Выводы": "السحوبات"}, "zh": {"withdraw": "用户提现", "referral": "推荐系统", "salary": "员工工资", "compensation": "补偿", "other": "其他支出", "deposits": "充值", "other_inc": "其他收入", "income": "收入", "expense": "支出", "withdrawals": "提现", "deposit": "充值", "Выводы пользователям": "用户提现", "Реферальная система": "推荐系统", "Зарплаты сотрудникам": "员工工资", "Компенсации": "补偿", "Прочие расходы": "其他支出", "Пополнения": "充值", "Прочие доходы": "其他收入", "Доходы": "收入", "Расходы": "支出", "Выводы": "提现"}, "ja": {"withdraw": "ユーザー出金", "referral": "紹介システム", "salary": "給与", "compensation": "補償", "other": "その他支出", "deposits": "入金", "other_inc": "その他収入", "income": "収入", "expense": "支出", "withdrawals": "出金", "deposit": "入金", "Выводы пользователям": "ユーザー出金", "Реферальная система": "紹介システム", "Зарплаты сотрудникам": "給与", "Компенсации": "補償", "Прочие расходы": "その他支出", "Пополнения": "入金", "Прочие доходы": "その他収入", "Доходы": "収入", "Расходы": "支出", "Выводы": "出金"}, "ko": {"withdraw": "사용자 출금", "referral": "추천 시스템", "salary": "직원 급여", "compensation": "보상", "other": "기타 지출", "deposits": "입금", "other_inc": "기타 수입", "income": "수입", "expense": "지출", "withdrawals": "출금", "deposit": "입금", "Выводы пользователям": "사용자 출금", "Реферальная система": "추천 시스템", "Зарплаты сотрудникам": "직원 급여", "Компенсации": "보상", "Прочие расходы": "기타 지출", "Пополнения": "입금", "Прочие доходы": "기타 수입", "Доходы": "수입", "Расходы": "지출", "Выводы": "출금"}};
+  const pack = dict[lang] || dict.en || dict.ru || {};
+  const s = String(label||"");
+  // key "other" ambiguous (expense vs income)
+  if(key === "other"){
+    if(/доход/i.test(s) || /income/i.test(s) || /revenu/i.test(s))
+      return pack.other_inc || pack["Прочие доходы"] || s;
+    return pack.other || pack["Прочие расходы"] || s;
   }
-  return s;
+  // prefer API key
+  if(key && pack[key]) return pack[key];
+  if(pack[s]) return pack[s];
+  // try t() i18n keys
+  const keyMap = {
+    "Выводы пользователям":"seg_withdrawals","Реферальная система":"seg_referral",
+    "Зарплаты сотрудникам":"seg_salary","Компенсации":"seg_compensation",
+    "Прочие расходы":"seg_other_exp","Пополнения":"seg_deposits","Прочие доходы":"seg_other_inc",
+    "Доходы":"seg_income","Расходы":"seg_expense","Выводы":"seg_withdraw",
+    withdraw:"seg_withdrawals",referral:"seg_referral",salary:"seg_salary",
+    compensation:"seg_compensation",other:"seg_other_exp",deposits:"seg_deposits"
+  };
+  const ik = keyMap[key] || keyMap[s];
+  if(ik){
+    const v = t(ik);
+    if(v && v !== ik) return v;
+  }
+  return pack[s] || s;
 }
+function localizeSeg(s){
+  return {color:s.color, label:translateSegLabel(s.label, s.key), value:s.value};
+}
+
 
 async function openPanelAnalyticsView(kind){
   state.panelBack="panel-analytics";
@@ -3900,7 +3907,7 @@ async function openPanelAnalyticsView(kind){
       let html='<div class="pa-block">';
       html+=panelDonut(segs, '<div class="pa-cr-label">'+(kind==="expenses"?(t("an_expenses")||"Расходы"):(t("an_income")||"Доходы"))+'</div><div class="pa-cr-val">'+total.toFixed(0)+'</div>', 190);
       html+='<div class="pa-total-line">'+total.toFixed(2)+' ₽ — '+(t("an_total")||"всего")+'</div>';
-      html+=panelLegend(segs.map(s=>({color:s.color,label:translateSegLabel(s.label),value:s.value})));
+      html+=panelLegend(segs.map(localizeSeg));
       html+='</div>';
       const fname=(kind==="expenses"?"expenses":"income")+"_"+((state.anPeriod&&state.anPeriod.mode==="all")?"all_time":("q"+(state.anPeriod&&state.anPeriod.q||"")))+".xlsx";
       html+=renderExcelDownloadCard(t("download_excel")||"Скачать Excel", analyticsExportUrl(kind, state.anPeriod), fname);
@@ -3914,14 +3921,14 @@ async function openPanelAnalyticsView(kind){
       const cr=Number(r.cr||0);
       let html='<div class="pa-block">';
       html+=panelDonut(main, '<div class="pa-cr-label">CR</div><div class="pa-cr-val">~ '+cr.toFixed(1).replace(".",",")+'%</div>', 190);
-      html+=panelLegend(main.map(s=>({color:s.color,label:translateSegLabel(s.label),value:s.value})));
+      html+=panelLegend(main.map(localizeSeg));
       html+='</div>';
       html+='<div class="pa-block" style="margin-top:8px">';
       html+='<div class="pa-section-label">'+(t("an_rev_detail")||"Пополнения и выводы")+'</div>';
       const net=Number(r.revenue_net||0);
       html+=panelDonut(rev, '<div class="pa-cr-label">'+(t("an_net")||"Итого")+'</div><div class="pa-cr-val" style="font-size:16px">'+net.toFixed(0)+'</div>', 150);
       html+='<div class="pa-total-line">'+net.toFixed(2)+' ₽</div>';
-      html+=panelLegend(rev.map(s=>({color:s.color,label:translateSegLabel(s.label),value:s.value})));
+      html+=panelLegend(rev.map(localizeSeg));
       html+='</div>';
       html+='<div class="pa-meta">';
       html+='<div class="pa-meta-row"><span>'+(t("an_gross")||"Валовая прибыль")+'</span><b>'+Number(r.gross_profit||0).toFixed(2)+' ₽</b></div>';
