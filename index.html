@@ -1141,7 +1141,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
             <div class="form-group" style="margin:0">
               <label class="form-label" for="ref-code-input">Промокод</label>
               <div class="ref-row" style="margin-top:6px">
-                <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Например: ADV2026" autocomplete="off"/>
+                <input class="form-input" type="text" id="ref-code-input" maxlength="24" placeholder="Промокод" autocomplete="off"/>
                 <button type="button" class="btn primary" id="ref-save-btn">Сохранить</button>
               </div>
             </div>
@@ -4521,12 +4521,17 @@ async function loadReferralMe(){
   try{
     const r=await apiGet("/api/referral/me?user_id="+encodeURIComponent(USER_ID),8000);
     setRefCodeUI(r&&r.ref_code?r.ref_code:"");
-    const line=(t("ref_stats_line")||"Уровень: {level} · Рефералы: {total} · 10д: {d10} · Заработано: {earn} ₽")
-      .replace("{level}", String(r.ref_level!=null?r.ref_level:1))
-      .replace("{total}", String((r.stats&&r.stats.refs_total)||0))
-      .replace("{d10}", String((r.stats&&r.stats.refs_10d)||0))
-      .replace("{earn}", String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00"));
-    if(st)st.textContent=line;
+    const level=String(r.ref_level!=null?r.ref_level:1);
+    const total=String((r.stats&&r.stats.refs_total)||0);
+    const d10=String((r.stats&&r.stats.refs_10d)||0);
+    const earn=String((r.stats&&r.stats.earned_total)!=null?Number(r.stats.earned_total).toFixed(2):"0.00");
+    if(st){
+      st.innerHTML=
+        '<div class="ref-stat-line">'+(t("ref_stat_level")||"Уровень")+': <b>'+level+'</b></div>'+
+        '<div class="ref-stat-line">'+(t("ref_stat_refs")||"Рефералов")+': <b>'+total+'</b></div>'+
+        '<div class="ref-stat-line">'+(t("ref_stat_10d")||"За 10 дней")+': <b>'+d10+'</b></div>'+
+        '<div class="ref-stat-line">'+(t("ref_stat_earned")||"Заработано")+': <b>'+earn+' ₽</b></div>';
+    }
   }catch(e){if(st)st.textContent=""}
 }
 async function saveRefCode(){
@@ -5536,6 +5541,11 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 #screen-panel-support-chat .psc-footer .chat-input-row{
   display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
 }
+
+
+.ref-stats{display:flex;flex-direction:column;gap:6px;line-height:1.35}
+.ref-stat-line{font-size:13px;color:var(--hint)}
+.ref-stat-line b{color:var(--text);font-weight:700}
 
 </style>
 </html>
