@@ -3615,7 +3615,15 @@ async function ensureQuarters(target){
   if(target.quarters && target.quarters.length) return target.quarters;
   try{
     const r=await apiGet("/api/miniapp/panel/analytics?user_id="+encodeURIComponent(USER_ID)+"&kind=quarters");
-    const list=(r&&r.quarters)||[];
+    let list=(r&&r.quarters)||[];
+    // убрать дубли кварталов (одинаковые year+q или label)
+    const seen={};
+    list=list.filter(q=>{
+      const key=(q.year!=null&&q.q!=null)?(String(q.year)+"-"+String(q.q)):String(q.label||q.index);
+      if(seen[key]) return false;
+      seen[key]=true;
+      return true;
+    });
     target.quarters=list;
     if(target.mode!=="all" && target.q==null && r.current!=null){
       target.q=r.current;
@@ -5018,6 +5026,7 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
     const box=document.getElementById("ppa-content");
     box.innerHTML="…";
     try{
+      try{await wirePeriodBars()}catch(e){}
       await ensureQuarters(state.projPeriod); updatePeriodLabel("proj-period-label", state.projPeriod);
       const r=await apiGet("/api/miniapp/project/"+pid+"/analytics?user_id="+encodeURIComponent(USER_ID)+periodQuery(state.projPeriod));
       const a=r.analytics||{};
@@ -5554,6 +5563,20 @@ window.AdvincedAPI={API_BASE,USER_ID,setLang,setTheme,navigate,show,applyRouteFr
 .ref-stats{display:flex;flex-direction:column;gap:6px;line-height:1.35}
 .ref-stat-line{font-size:13px;color:var(--hint)}
 .ref-stat-line b{color:var(--text);font-weight:700}
+
+
+#screen-project-analytics.screen.active,
+#screen-panel-analytics.screen.active,
+#screen-panel-analytics-view.screen.active{
+  overflow:visible !important;
+}
+#proj-period-wrap, #panel-period-wrap{
+  position:relative;
+  z-index:40;
+}
+#proj-period-dd, #panel-period-dd{
+  z-index:50;
+}
 
 </style>
 </html>
